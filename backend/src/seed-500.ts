@@ -502,7 +502,7 @@ const beautyProduct = (data: any[], i: number): ProductInput => ({
   is_featured: false,
 });
 
-// SPORTS & OUTDOORS — 62 products
+// SPORTS & OUTDOORS — 112 products
 const sportsBrands = ['Nike', 'Adidas', 'Puma', 'Decathlon', 'Reebok', 'Skechers', 'Campus', 'Bounce', 'Wildcraft', 'Quechua', 'Force 10', 'Cosco', 'SG', 'MRF', 'Yonex'];
 const sportsItems = [
   ['Nike Air Max Impact 4', 'Men\'s basketball shoes with Max Air unit. Breathable mesh, rubber outsole.', 8995, 11995, 60, 4.4, 23450],
@@ -566,6 +566,56 @@ const sportsItems = [
   ['Decathlon Yoga Block 2-Pack', 'Set of 2 EVA foam yoga blocks. 15 x 10 x 7.5cm, lightweight and sturdy.', 499, 799, 200, 4.0, 67890],
   ['Wildcraft Sleeping Bag', '3-season sleeping bag comfort rated 5°C. Mummy shape, synthetic fill, 2.3kg.', 3999, 5499, 40, 4.3, 23450],
   ['Cosco Tennis Racket', 'Aluminum tennis racket pre-strung. Lightweight, vibration dampener, with cover.', 1999, 2999, 60, 4.0, 56780],
+  ['Nike Precision 7 Basketball Shoes', 'Men\'s basketball shoes with rubber outsole and padded ankle collar. Breathable mesh upper.', 6995, 8995, 45, 4.3, 18900],
+  ['Adidas Squadra 21 Training Jacket', 'Full zip training jacket with AEROREADY. Stand-up collar, ribbed cuffs, team style.', 3499, 4999, 80, 4.2, 23450],
+  ['Puma Evospeed Cricket Shoes', 'Lightweight cricket shoes with spike plate. Synthetic upper, cushioned insole, firm ground.', 4999, 6999, 35, 4.1, 12340],
+  ['Decathlon Kayak 1 Person Inflatable', 'Single person inflatable kayak with pump and paddle. Portable, lightweight, 10min setup.', 7999, 10999, 25, 4.2, 18900],
+  ['Reebok Nano X4 Training Shoes', 'Men\'s cross-training shoes with Floatride Energy foam. Flexible, stable for lifting.', 9999, 12999, 30, 4.4, 23450],
+  ['Skechers Ultra Flex 3.0 Sneakers', 'Women\'s slip-on sneakers with flexible sole. Knit upper, memory foam insole, machine washable.', 5999, 7999, 60, 4.3, 34560],
+  ['Campus Pro Basketball', 'Rubber basketball size 7 with deep channels. Indoor/outdoor use, good grip.', 999, 1499, 200, 4.0, 56780],
+  ['Bounce Neoprene Sauna Belt', 'Neoprene waist trimmer belt for workouts. Adjustable velcro, one size fits most.', 299, 499, 500, 3.8, 123400],
+  ['Wildcraft Hiking Pole Set', 'Pair of aluminum trekking poles with cork grip. Adjustable 110-135cm, anti-shock.', 2499, 3499, 60, 4.2, 23450],
+  ['Force 10 Kettlebell 8kg', 'Cast iron kettlebell with flat base. Powder coated, ergonomic handle, home gym.', 999, 1499, 150, 4.0, 56780],
+  ['Cosco Volleyball Set', 'Beach volleyball set with net, poles, ball, and pump. Portable, 2.4m width.', 2999, 3999, 40, 4.0, 23450],
+  ['SG Cricket Thigh Guard', 'Professional cricket thigh pad with foam protection. Adjustable straps, lightweight.', 1499, 2299, 50, 4.1, 23450],
+  ['Yonex Nanodrive 68Ti Badminton Strings', 'High performance badminton strings with titanium. 0.68mm gauge, repulsion power.', 899, 1299, 200, 4.3, 56780],
+  ['Nike Yoga Mat 6mm', 'Premium yoga mat with alignment lines. Extra grip, non-slip surface, includes strap.', 3499, 4999, 80, 4.1, 34560],
+  ['Adidas EQ21 Run Running Shoes', 'Men\'s running shoes with Cloudfoam midsole. Mesh upper, durable outsole,日常 training.', 4999, 6999, 90, 4.2, 45670],
+  ['Puma Shorts Squad 21', 'Men\'s training shorts with dryCELL moisture-wicking. Elastic waist, mesh side panels.', 1799, 2499, 200, 4.0, 123400],
+  ['Decathlon Snorkeling Set', 'Full face mask + snorkel set. Anti-fog, dry top snorkel, 180° visibility.', 1999, 2999, 80, 4.1, 34560],
+  ['Wildcraft Down Jacket 700 Fill', 'Men\'s down jacket with 700 fill power. Water repellent, packable, lightweight warmth.', 7999, 10999, 30, 4.4, 23450],
+  ['Reebok Joggers Tricot', 'Men\'s tricot joggers with elastic waist. Zip pockets, tapered leg, everyday comfort.', 2499, 3499, 120, 4.1, 56780],
+  ['Skechers Equalizer 2.0', 'Men\'s slip-on shoes with memory foam. Stretch fit, flexible outsole, casual style.', 4499, 5999, 100, 4.2, 34560],
+  ['Campus Metal Bat', 'Cricket bat with Kashmir willow. Full size, toe guard, comfortable handle.', 2499, 3499, 60, 4.0, 34560],
+  ['Bounce Gym Bag 30L', '30L gym duffel with shoe compartment. Water-resistant, adjustable strap, multiple pockets.', 1499, 2299, 100, 4.0, 56780],
+  ['Force 10 Weight Bench', 'Adjustable weight bench for home gym. 300kg max load, foldable, 6 positions.', 8999, 12999, 20, 4.1, 12340],
+  ['SG Cricket Helmet Gold Edition', 'Premium cricket helmet with gold grill. Lightweight ABS shell, comfortable padding.', 3999, 5499, 30, 4.2, 23450],
+  ['Cosco Hand Grip Strengthener', 'Adjustable hand grip strengthener 10-60kg. Foam handle, counter display.', 299, 499, 600, 3.8, 189000],
+  ['Yonex Badminton Net Portable', 'Portable badminton net set with poles. 6.1m width, adjustable height, carry bag.', 3499, 4999, 50, 4.0, 23450],
+  ['Nike Legend Essential Training Shoes', 'Men\'s training shoes with mesh upper and rubber sole. Flexible, breathable, lightweight.', 5499, 7499, 70, 4.2, 34560],
+  ['Adidas Linear Tights', 'Women\'s training tights with AEROREADY. High waist, tight fit, moisture wicking.', 2999, 3999, 100, 4.2, 45670],
+  ['Puma Quarter Socks Pack 6', 'Pack of 6 quarter length socks. Cotton blend, cushioned sole, arch support.', 799, 1199, 500, 4.0, 234500],
+  ['Decathlon Paddle Board Inflatable', 'Inflatable stand-up paddle board with pump and leash. 305cm length, 320L volume.', 14999, 19999, 15, 4.3, 12340],
+  ['Wildcraft Fleece Jacket', 'Men\'s polar fleece jacket with half zip. Lightweight, warm, breathable, outdoor layer.', 2499, 3499, 80, 4.2, 34560],
+  ['Force 10 Pull Up Bar', 'Doorway pull up bar with foam grips. 120kg max weight, no drilling required.', 1499, 2299, 100, 4.1, 56780],
+  ['Cosco Bowling Set', '10-pin bowling set with 2 balls and pins. Indoor/outdoor, family fun game.', 1999, 2999, 40, 3.9, 23450],
+  ['SG Wicket Keeping Pads', 'Professional wicket keeping leg guards. High density foam, reinforced knee roll.', 3999, 5499, 25, 4.2, 18900],
+  ['Yonex Badminton Grip Pack 3', 'Set of 3 overgrips with absorbent feel. Tacky surface, 0.6mm thin, comfort.', 349, 549, 600, 4.1, 123400],
+  ['Nike Victory Next% 2 Running Shoes', 'Elite carbon fiber running shoes for race day. ZoomX foam, Flyknit upper.', 21999, 25999, 15, 4.7, 12340],
+  ['Adidas Tiro 23 Pants', 'Men\'s training pants with AEROREADY. Slim fit, zip pockets, iconic 3-stripes.', 3499, 4999, 120, 4.2, 56780],
+  ['Puma Training Mat 10mm', 'Premium exercise mat 180x60cm. High density foam, non-slip surface, with carry strap.', 2499, 3499, 70, 4.0, 34560],
+  ['Decathlon Swimming Goggles', 'Competition swimming goggles with UV protection. Anti-fog, adjustable, leak-proof seal.', 999, 1499, 300, 4.1, 123400],
+  ['Wildcraft Rain Jacket', 'Men\'s waterproof rain jacket with hood. Seam sealed, packable, 5000mm rating.', 3999, 5499, 50, 4.3, 23450],
+  ['Reebok Lux 2.0 Women Training Shoes', 'Women\'s training shoes with Floatride Energy. Knit upper, flexible sole, stylish.', 7999, 9999, 40, 4.3, 23450],
+  ['Skechers D\'Lux Walker', 'Women\'s walking shoes with air cushioned sole. Knit upper, arch fit, slip-on design.', 5499, 7499, 60, 4.2, 34560],
+  ['Campus Skating Shoes', 'Adjustable inline skates with ABEC-7 bearings. 4-wheel, aluminium frame, brake included.', 3499, 4999, 30, 3.9, 12340],
+  ['Bounce Foam Roller 45cm', 'High density foam roller 45cm. Muscle recovery, myofascial release, firm density.', 999, 1499, 120, 4.0, 56780],
+  ['Force 10 Battle Rope 15m', '15m battle rope for fitness training. 38mm thickness, polyester material, included anchor.', 2999, 4499, 30, 4.1, 12340],
+  ['SG Cricket Kit Bag', 'Large cricket kit bag with multiple compartments. 120cm length, padded shoulder strap.', 4999, 6999, 25, 4.2, 18900],
+  ['Cosco Roller Skates', 'Adjustable quad roller skates for kids. Aluminium frame, ABEC-7 bearings, brake.', 2499, 3499, 40, 3.9, 23450],
+  ['Yonex Badminton Racket Bag 6', '6-racket badminton bag with thermal compartment. Padded, shoulder strap, storage pocket.', 4499, 5999, 35, 4.2, 23450],
+  ['Nike Everyday Plus Cushioned Socks', 'Pack of 3 no-show socks with Dri-FIT. Cushioned sole, arch support, ribbed cuff.', 1499, 2199, 400, 4.2, 189000],
+  ['Adidas Ultraboost Light Women', 'Women\'s running shoes with Light BOOST. Primeknit+, continental rubber, stylish.', 12999, 15999, 25, 4.5, 23450],
 ];
 
 const sportsProduct = (data: any[], i: number): ProductInput => ({
@@ -605,8 +655,8 @@ const catSlug = (idx: number): string => {
 
 async function seed500Products() {
   const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
-  if (count && count >= 500) {
-    console.log(`Already have ${count} products (target: 500). Skipping seed.`);
+  if (count && count >= 550) {
+    console.log(`Already have ${count} products (target: 550). Skipping seed.`);
     return;
   }
 
@@ -620,7 +670,7 @@ async function seed500Products() {
   categories.forEach((c: any) => { catMap[c.slug] = c.id; });
 
   const existingCount = count || 0;
-  const needed = 500 - existingCount;
+  const needed = 550 - existingCount;
   const toInsert = allProducts.slice(0, needed);
 
   if (toInsert.length === 0) {

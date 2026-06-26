@@ -6,14 +6,16 @@ const nextConfig = {
     config.resolve.alias['react-router-dom'] = path.join(__dirname, 'src/lib/legacy-router.tsx');
     return config;
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://127.0.0.1:5000/api/:path*',
-      },
-    ];
-  },
 };
+
+// Only proxy API in dev mode (npm run dev) — production uses Next.js API routes
+if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_API_URL) {
+  nextConfig.rewrites = async () => [
+    {
+      source: '/api/:path*',
+      destination: 'http://127.0.0.1:5000/api/:path*',
+    },
+  ];
+}
 
 module.exports = nextConfig;
