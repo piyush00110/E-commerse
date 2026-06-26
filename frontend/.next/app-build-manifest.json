@@ -1,0 +1,45 @@
+{
+  "pages": {
+    "/(buyer)/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(buyer)/page.js"
+    ],
+    "/(buyer)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(buyer)/layout.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/(seller)/seller/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(seller)/seller/page.js"
+    ],
+    "/(seller)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(seller)/layout.js"
+    ],
+    "/(buyer)/products/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(buyer)/products/[id]/page.js"
+    ],
+    "/(buyer)/checkout/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(buyer)/checkout/page.js"
+    ],
+    "/(buyer)/order-confirmation/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(buyer)/order-confirmation/[id]/page.js"
+    ]
+  }
+}

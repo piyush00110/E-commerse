@@ -1,0 +1,7 @@
+{
+  "/(buyer)/page": "app/(buyer)/page.js",
+  "/(buyer)/checkout/page": "app/(buyer)/checkout/page.js",
+  "/(buyer)/products/[id]/page": "app/(buyer)/products/[id]/page.js",
+  "/(buyer)/order-confirmation/[id]/page": "app/(buyer)/order-confirmation/[id]/page.js",
+  "/(seller)/seller/page": "app/(seller)/seller/page.js"
+}
