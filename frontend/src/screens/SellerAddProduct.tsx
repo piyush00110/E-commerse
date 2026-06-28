@@ -3,9 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { productAPI, categoryAPI } from '../services/api';
 import { Category } from '../types';
 
+const FALLBACK_CATEGORIES: Category[] = [
+  { _id: 'electronics', name: 'Electronics', slug: 'electronics' },
+  { _id: 'fashion', name: 'Fashion', slug: 'fashion' },
+  { _id: 'home-kitchen', name: 'Home & Kitchen', slug: 'home-kitchen' },
+  { _id: 'books', name: 'Books', slug: 'books' },
+  { _id: 'beauty', name: 'Beauty', slug: 'beauty' },
+  { _id: 'sports-outdoors', name: 'Sports & Outdoors', slug: 'sports-outdoors' },
+];
+
 const SellerAddProduct: React.FC = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +30,7 @@ const SellerAddProduct: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const res = await categoryAPI.getAll();
-        setCategories(res.data.data);
+        if (res.data?.data?.length) setCategories(res.data.data);
       } catch { /* ignore */ }
       finally { setLoading(false); }
     };

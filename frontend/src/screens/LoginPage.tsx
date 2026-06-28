@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
       <div className="auth-box">
         <h1>Sign In</h1>
         {error && (
-          <div style={{ color: '#b12704', marginBottom: 16, fontSize: 14, textAlign: 'center' }}>
+          <div style={{ color: 'var(--error)', marginBottom: 16, fontSize: 14, textAlign: 'center' }}>
             {error}
           </div>
         )}
@@ -63,14 +63,14 @@ const LoginPage: React.FC = () => {
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
-          <button type="button" className="guest-btn" onClick={() => navigate('/')} style={{ width: '100%', padding: '10px 0', marginTop: 8, background: 'transparent', border: '1px solid #ddd', borderRadius: 8, fontSize: 14, cursor: 'pointer', color: '#555' }}>
+          <button type="button" className="guest-btn" onClick={() => navigate('/')} style={{ width: '100%', padding: '10px 0', marginTop: 8, background: 'transparent', border: '1px solid var(--outline)', borderRadius: 8, fontSize: 14, cursor: 'pointer', color: 'var(--on-surface-variant)' }}>
             Continue as Guest
           </button>
         </form>
         <div className="auth-link">
           New here? <Link to="/register">Create your account</Link>
         </div>
-        <div style={{ marginTop: 16, padding: 12, background: '#f8f8f8', borderRadius: 8, fontSize: 13, color: '#565959' }}>
+        <div style={{ marginTop: 16, padding: 12, background: 'var(--surface-container-low)', borderRadius: 8, fontSize: 13, color: 'var(--on-surface-variant)' }}>
           <strong>Demo accounts:</strong><br />
           Admin: admin@shop.com / admin123<br />
           User: user@shop.com / user123

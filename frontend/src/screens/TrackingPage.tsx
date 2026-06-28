@@ -110,8 +110,8 @@ const TrackingPage: React.FC = () => {
                 <div key={idx} className={`tracking-event ${isLatest ? 'latest' : ''} ${isPast ? 'past' : ''}`}>
                   <div className="tracking-icon-wrapper">
                     <div className="tracking-icon" style={{
-                      background: isPast ? 'var(--color-primary, #067d62)' : isLatest ? 'var(--color-accent, #ff9900)' : 'var(--bg-card, #e0e0e0)',
-                      color: isPast || isLatest ? 'white' : 'var(--text-secondary, #565959)',
+                      background: isPast ? 'var(--success)' : isLatest ? 'var(--tertiary)' : 'var(--surface-container)',
+                      color: isPast || isLatest ? 'white' : 'var(--text-secondary)',
                     }}>
                       {event.icon}
                     </div>

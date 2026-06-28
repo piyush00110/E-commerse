@@ -121,11 +121,11 @@ const ShippingDashboard: React.FC = () => {
 
   const statusBadge = (s: string) => {
     const map: Record<string, { color: string; bg: string; label: string }> = {
-      pending: { color: '#856404', bg: '#fff3cd', label: 'Awaiting Pickup' },
-      processing: { color: '#004085', bg: '#cce5ff', label: 'Packing' },
-      shipped: { color: '#155724', bg: '#d4edda', label: 'In Transit' },
-      delivered: { color: '#155724', bg: '#d4edda', label: 'Delivered' },
-      cancelled: { color: '#721c24', bg: '#f8d7da', label: 'Cancelled' },
+      pending: { color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)', label: 'Awaiting Pickup' },
+      processing: { color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)', label: 'Packing' },
+      shipped: { color: 'var(--success)', bg: 'var(--success-light)', label: 'In Transit' },
+      delivered: { color: 'var(--success)', bg: 'var(--success-light)', label: 'Delivered' },
+      cancelled: { color: 'var(--error)', bg: 'var(--error-light)', label: 'Cancelled' },
     };
     const m = map[s] || map.pending;
     return <span className="sd-badge" style={{ background: m.bg, color: m.color }}>{m.label}</span>;
@@ -151,11 +151,11 @@ const ShippingDashboard: React.FC = () => {
 
       <div className="sd-stats">
         {[
-          { key: 'pending', label: 'Pending Pickup', icon: '\u{1F4E6}', count: stats.pending, color: '#856404', bg: '#fff3cd' },
-          { key: 'processing', label: 'Packing', icon: '\u{1F4E3}', count: stats.processing, color: '#004085', bg: '#cce5ff' },
-          { key: 'shipped', label: 'In Transit', icon: '\u{1F69A}', count: stats.shipped, color: '#155724', bg: '#d4edda' },
-          { key: 'delivered', label: 'Delivered', icon: '\u2705', count: stats.delivered, color: '#155724', bg: '#d4edda' },
-          { key: 'cancelled', label: 'Cancelled', icon: '\u{1F6AB}', count: stats.cancelled, color: '#721c24', bg: '#f8d7da' },
+          { key: 'pending', label: 'Pending Pickup', icon: '\u{1F4E6}', count: stats.pending, color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
+          { key: 'processing', label: 'Packing', icon: '\u{1F4E3}', count: stats.processing, color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
+          { key: 'shipped', label: 'In Transit', icon: '\u{1F69A}', count: stats.shipped, color: 'var(--success)', bg: 'var(--success-light)' },
+          { key: 'delivered', label: 'Delivered', icon: '\u2705', count: stats.delivered, color: 'var(--success)', bg: 'var(--success-light)' },
+          { key: 'cancelled', label: 'Cancelled', icon: '\u{1F6AB}', count: stats.cancelled, color: 'var(--error)', bg: 'var(--error-light)' },
         ].map((s) => (
           <div key={s.key} className="sd-stat-card" style={{ borderLeft: `4px solid ${s.color}` }}
             onClick={() => setActiveTab(s.key as ShipTab)}>
@@ -166,7 +166,7 @@ const ShippingDashboard: React.FC = () => {
             </div>
           </div>
         ))}
-        <div className="sd-stat-card total" style={{ borderLeft: '4px solid #232f3e' }}>
+        <div className="sd-stat-card total" style={{ borderLeft: '4px solid var(--tertiary-dim)' }}>
           <div className="sd-stat-icon">{'\u{1F4CA}'}</div>
           <div className="sd-stat-info">
             <span className="sd-stat-num">{orders.length}</span>

@@ -316,7 +316,7 @@ const CheckoutPage: React.FC = () => {
                   <span className="payment-icon">{pm.icon}</span>
                   <div>
                     <strong>{pm.label}</strong>
-                    <div style={{ fontSize: 12, color: '#565959' }}>{pm.desc}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{pm.desc}</div>
                   </div>
                   {paymentMethod === pm.id && <span className="payment-check">{'\u2713'}</span>}
                 </div>
@@ -351,7 +351,7 @@ const CheckoutPage: React.FC = () => {
             )}
 
             {paymentMethod === 'cod' && (
-              <div style={{ background: '#fff8e1', borderRadius: 8, padding: 16, fontSize: 14, color: '#856404', marginTop: 12 }}>
+              <div style={{ background: 'var(--tertiary-container)', borderRadius: 8, padding: 16, fontSize: 14, color: 'var(--on-secondary-container)', marginTop: 12 }}>
                 Pay with cash when your order is delivered. No additional fees.
               </div>
             )}
@@ -418,8 +418,8 @@ const CheckoutPage: React.FC = () => {
                     <img src={item.image} alt={item.name} />
                     <div className="review-item-info">
                       <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}
-                        style={{ color: '#007185', fontSize: 14 }}>{item.name}</Link>
-                      <div style={{ fontSize: 13, color: '#565959' }}>Qty: {item.quantity}</div>
+                        style={{ color: 'var(--tertiary)', fontSize: 14 }}>{item.name}</Link>
+                      <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
                     </div>
                     <div className="review-item-price">${(item.price * item.quantity).toFixed(2)}</div>
                   </div>
@@ -446,7 +446,7 @@ const CheckoutPage: React.FC = () => {
         </div>
         <div className="summary-row">
           <span>Shipping</span>
-          <span style={{ color: shippingPrice === 0 ? '#067d62' : 'inherit', fontWeight: shippingPrice === 0 ? 600 : 400 }}>
+          <span style={{ color: shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: shippingPrice === 0 ? 600 : 400 }}>
             {shippingPrice === 0 ? 'FREE' : `$${shippingPrice.toFixed(2)}`}
           </span>
         </div>
@@ -461,19 +461,19 @@ const CheckoutPage: React.FC = () => {
           </div>
         )}
         {promoDiscount > 0 && (
-          <div className="summary-row" style={{ color: '#067d62' }}>
+          <div className="summary-row" style={{ color: 'var(--success)' }}>
             <span>Promo Discount</span>
             <span>-${promoDiscountValue.toFixed(2)}</span>
           </div>
         )}
         {applyWallet && walletApplied > 0 && (
-          <div className="summary-row" style={{ color: '#067d62' }}>
+          <div className="summary-row" style={{ color: 'var(--success)' }}>
             <span>Gift Card</span>
             <span>-${walletApplied.toFixed(2)}</span>
           </div>
         )}
         {cart.totalPrice < 50 && cart.totalPrice > 0 && (
-          <div style={{ fontSize: 12, color: '#b12704', marginTop: -8, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--tertiary)', marginTop: -8, marginBottom: 8 }}>
             Add ${(50 - cart.totalPrice).toFixed(2)} more for FREE shipping
           </div>
         )}
@@ -504,8 +504,8 @@ const CheckoutPage: React.FC = () => {
         )}
 
         {step === 1 && (
-          <div style={{ background: '#f0f8ff', borderRadius: 8, padding: 12, fontSize: 12, color: '#565959', marginTop: 16 }}>
-            <strong style={{ color: '#067d62' }}>{'\u2713'} Free returns</strong>
+          <div style={{ background: 'var(--tertiary-container)', borderRadius: 8, padding: 12, fontSize: 12, color: 'var(--text-secondary)', marginTop: 16 }}>
+            <strong style={{ color: 'var(--success)' }}>{'\u2713'} Free returns</strong>
             <div>Free 30-day returns on all eligible items.</div>
           </div>
         )}

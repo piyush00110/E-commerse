@@ -13,7 +13,7 @@ const SellerDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const [prodRes, orderRes] = await Promise.all([
-          productAPI.getAll({ limit: 100 }),
+          productAPI.getAll({ limit: 1000 }),
           orderAPI.getAll(),
         ]);
         const products = prodRes.data.data;
@@ -45,10 +45,10 @@ const SellerDashboard: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 700 }}>Seller Dashboard</h1>
-          <p style={{ color: '#565959', fontSize: 14 }}>Manage your store and track performance</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Manage your store and track performance</p>
         </div>
         <Link to="/seller/products/add">
-          <button style={{ padding: '12px 24px', background: '#1a472a', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+          <button style={{ padding: '12px 24px', background: 'var(--tertiary)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
             + Add New Product
           </button>
         </Link>
@@ -56,16 +56,16 @@ const SellerDashboard: React.FC = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16, marginBottom: 32 }}>
         {[
-          { label: 'Total Products', value: stats.totalProducts, color: '#1a472a', icon: '\u{1F4E6}' },
-          { label: 'Orders', value: stats.totalOrders, color: '#232f3e', icon: '\u{1F4CB}' },
-          { label: 'Revenue', value: `$${stats.revenue.toFixed(2)}`, color: '#067d62', icon: '\u{1F4B5}' },
-          { label: 'Low Stock Items', value: stats.lowStock, color: stats.lowStock > 0 ? '#b12704' : '#067d62', icon: '\u{26A0}' },
+          { label: 'Total Products', value: stats.totalProducts, color: 'var(--tertiary)', icon: '\u{1F4E6}' },
+          { label: 'Orders', value: stats.totalOrders, color: 'var(--tertiary-dim)', icon: '\u{1F4CB}' },
+          { label: 'Revenue', value: `$${stats.revenue.toFixed(2)}`, color: 'var(--success)', icon: '\u{1F4B5}' },
+          { label: 'Low Stock Items', value: stats.lowStock, color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)', icon: '\u{26A0}' },
         ].map((item) => (
           <div key={item.label} style={{
             background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>{item.icon}</div>
-            <div style={{ fontSize: 13, color: '#565959', marginBottom: 4 }}>{item.label}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>{item.label}</div>
             <div style={{ fontSize: 28, fontWeight: 700, color: item.color }}>{item.value}</div>
           </div>
         ))}
@@ -75,7 +75,7 @@ const SellerDashboard: React.FC = () => {
         <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Recent Orders</h2>
           {recentOrders.length === 0 ? (
-            <p style={{ color: '#565959', textAlign: 'center', padding: 32 }}>No orders yet.</p>
+            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 32 }}>No orders yet.</p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
               <thead>
@@ -96,13 +96,13 @@ const SellerDashboard: React.FC = () => {
                     <td style={{ padding: '12px 8px' }}>
                       <span style={{
                         padding: '4px 10px', borderRadius: 4, fontSize: 12, fontWeight: 600,
-                        background: order.isDelivered ? '#d4edda' : order.isPaid ? '#fff3cd' : '#f8d7da',
-                        color: order.isDelivered ? '#155724' : order.isPaid ? '#856404' : '#721c24',
+                        background: order.isDelivered ? 'var(--success-light)' : order.isPaid ? 'var(--secondary-container)' : 'var(--error-light)',
+                        color: order.isDelivered ? 'var(--success)' : order.isPaid ? 'var(--on-secondary-container)' : 'var(--error)',
                       }}>
                         {order.isDelivered ? 'Delivered' : order.isPaid ? 'Paid' : 'Pending'}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 8px', color: '#565959' }}>
+                    <td style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
@@ -116,22 +116,22 @@ const SellerDashboard: React.FC = () => {
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Quick Actions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Link to="/seller/products/add" style={{
-              padding: '14px 20px', background: '#f0fff0', borderRadius: 8,
-              border: '1px solid #90ee90', color: '#1a472a', fontWeight: 600, fontSize: 14,
+              padding: '14px 20px', background: 'var(--surface-container)', borderRadius: 8,
+              border: '1px solid var(--success-light)', color: 'var(--tertiary)', fontWeight: 600, fontSize: 14,
               textDecoration: 'none',
             }}>
               + Add New Product
             </Link>
             <Link to="/seller/products" style={{
-              padding: '14px 20px', background: '#f0f8ff', borderRadius: 8,
-              border: '1px solid #b0c4de', color: '#232f3e', fontWeight: 600, fontSize: 14,
+              padding: '14px 20px', background: 'var(--surface-container)', borderRadius: 8,
+              border: '1px solid var(--outline-variant)', color: 'var(--tertiary-dim)', fontWeight: 600, fontSize: 14,
               textDecoration: 'none',
             }}>
               &#9998; Manage Products
             </Link>
             <Link to="/seller/orders" style={{
-              padding: '14px 20px', background: '#fff8f0', borderRadius: 8,
-              border: '1px solid #ffd700', color: '#8a5100', fontWeight: 600, fontSize: 14,
+              padding: '14px 20px', background: 'var(--surface-container)', borderRadius: 8,
+              border: '1px solid var(--secondary-container)', color: 'var(--on-secondary-container)', fontWeight: 600, fontSize: 14,
               textDecoration: 'none',
             }}>
               &#128230; View Orders

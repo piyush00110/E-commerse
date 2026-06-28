@@ -7,7 +7,8 @@ import { mapProduct, mapProducts, mapReview } from '../utils/mapFields';
 export const getProducts = async (req: AuthRequest & { query: PaginationQuery }, res: Response, next: NextFunction): Promise<void> => {
   try {
     const page = parseInt(req.query.page || '1', 10);
-    const limit = parseInt(req.query.limit || '12', 10);
+    const reqLimit = parseInt(req.query.limit || '0', 10);
+    const limit = reqLimit > 0 ? reqLimit : 200;
     const sort = req.query.sort || '-created_at';
     const from = (page - 1) * limit;
     const to = from + limit - 1;
@@ -45,7 +46,7 @@ export const getProducts = async (req: AuthRequest & { query: PaginationQuery },
         page,
         limit,
         total: count || 0,
-        pages: Math.ceil((count || 0) / limit),
+        pages: Math.ceil((count || 0) / Math.max(limit, 1)),
       },
     });
   } catch (error) {

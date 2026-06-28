@@ -98,11 +98,11 @@ const generateTracking = (status: string, createdDate: string): TrackingEvent[] 
 const shippingCities = ['San Francisco, CA', 'Austin, TX', 'Portland, OR', 'Denver, CO'];
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
-  pending: { label: 'Pending', color: '#856404', bg: '#fff3cd' },
-  processing: { label: 'Processing', color: '#004085', bg: '#cce5ff' },
-  shipped: { label: 'Shipped', color: '#155724', bg: '#d4edda' },
-  delivered: { label: 'Delivered', color: '#155724', bg: '#d4edda' },
-  cancelled: { label: 'Cancelled', color: '#721c24', bg: '#f8d7da' },
+  pending: { label: 'Pending', color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
+  processing: { label: 'Processing', color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
+  shipped: { label: 'Shipped', color: 'var(--success)', bg: 'var(--success-light)' },
+  delivered: { label: 'Delivered', color: 'var(--success)', bg: 'var(--success-light)' },
+  cancelled: { label: 'Cancelled', color: 'var(--error)', bg: 'var(--error-light)' },
 };
 
 const OrderDetailPage: React.FC = () => {
@@ -152,12 +152,12 @@ const OrderDetailPage: React.FC = () => {
 
       {/* Order Header */}
       <div style={{
-        background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
+        background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: 'monospace' }}>Order #{order._id.slice(-8).toUpperCase()}</h1>
-            <p style={{ color: '#565959', fontSize: 14, marginTop: 4 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>
               Placed on {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
@@ -169,28 +169,28 @@ const OrderDetailPage: React.FC = () => {
               {statusInfo.label}
             </span>
             {order.deliveredAt && (
-              <div style={{ fontSize: 13, color: '#565959', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
                 Delivered {new Date(order.deliveredAt).toLocaleDateString()}
               </div>
             )}
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, borderTop: '1px solid #eee', paddingTop: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, borderTop: '1px solid var(--outline-variant)', paddingTop: 16 }}>
           <div>
-            <div style={{ fontSize: 12, color: '#565959', marginBottom: 2 }}>Total</div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Total</div>
             <div style={{ fontSize: 20, fontWeight: 700 }}>${order.totalPrice.toFixed(2)}</div>
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#565959', marginBottom: 2 }}>Items</div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Items</div>
             <div style={{ fontSize: 16, fontWeight: 600 }}>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</div>
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#565959', marginBottom: 2 }}>Payment</div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Payment</div>
             <div style={{ fontSize: 16, fontWeight: 600, textTransform: 'capitalize' }}>{order.paymentMethod.replace('_', ' ')}</div>
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#565959', marginBottom: 2 }}>Ship to</div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Ship to</div>
             <div style={{ fontSize: 16, fontWeight: 600 }}>{order.shippingAddress.city}, {order.shippingAddress.state}</div>
           </div>
         </div>
@@ -198,20 +198,20 @@ const OrderDetailPage: React.FC = () => {
 
       {/* Tracking Section */}
       <div style={{
-        background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
+        background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700 }}>Shipment Tracking</h2>
           {order.status !== 'pending' && order.status !== 'cancelled' && (
-            <div style={{ fontSize: 13, color: '#565959' }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
               Carrier: <strong>{CARRIERS[Math.floor(Math.random() * CARRIERS.length)]}</strong>
-              &nbsp;| Tracking #: <strong style={{ fontFamily: 'monospace', color: '#007185' }}>{trackingNumber}</strong>
+              &nbsp;| Tracking #: <strong style={{ fontFamily: 'monospace', color: 'var(--tertiary)' }}>{trackingNumber}</strong>
             </div>
           )}
         </div>
 
         {order.status === 'cancelled' ? (
-          <div style={{ textAlign: 'center', padding: 32, background: '#f8d7da', borderRadius: 8, color: '#721c24' }}>
+          <div style={{ textAlign: 'center', padding: 32, background: 'var(--error-light)', borderRadius: 8, color: 'var(--error)' }}>
             <div style={{ fontSize: 48, marginBottom: 8 }}>{'\u274C'}</div>
             <h3 style={{ marginBottom: 4 }}>Order Cancelled</h3>
             <p style={{ fontSize: 14 }}>This order has been cancelled. No shipments were made.</p>
@@ -239,7 +239,7 @@ const OrderDetailPage: React.FC = () => {
                       </div>
                       <div className="progress-label" style={{ fontSize: 12, fontWeight: isCurrent ? 600 : 400 }}>{labels[idx]}</div>
                       {isCurrent && order.status !== 'delivered' && (
-                        <div style={{ fontSize: 11, color: '#007185', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: 'var(--tertiary)', marginTop: 2 }}>
                           {order.status === 'pending' ? 'Awaiting confirmation' : order.status === 'processing' ? 'In progress' : order.status === 'shipped' ? 'On the way' : ''}
                         </div>
                       )}
@@ -253,8 +253,8 @@ const OrderDetailPage: React.FC = () => {
             {/* Delivery Estimate */}
             {order.status !== 'delivered' && (
               <div style={{
-                background: 'linear-gradient(135deg, #232f3e, #37475a)', borderRadius: 8, padding: '12px 16px',
-                color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
+                background: 'linear-gradient(135deg, var(--tertiary-dim), var(--tertiary-container))', borderRadius: 8, padding: '12px 16px',
+                color: 'var(--surface)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12,
               }}>
                 <span style={{ fontSize: 24 }}>{'\u{1F69A}'}</span>
                 <div>
@@ -292,7 +292,7 @@ const OrderDetailPage: React.FC = () => {
 
       {/* Shipping Info */}
       <div style={{
-        background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
+        background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
       }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Shipping Information</h2>
         <div className="shipping-detail-grid">
@@ -316,10 +316,10 @@ const OrderDetailPage: React.FC = () => {
             <div className="shipping-detail-label">Shipping Method</div>
             <div className="shipping-detail-value">
               <div>Standard Shipping</div>
-              <div style={{ color: order.shippingPrice === 0 ? '#067d62' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
+              <div style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
                 {order.shippingPrice === 0 ? 'FREE' : `$${order.shippingPrice.toFixed(2)}`}
               </div>
-              <div style={{ fontSize: 12, color: '#565959' }}>Estimated 3-5 business days</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Estimated 3-5 business days</div>
             </div>
           </div>
         </div>
@@ -327,29 +327,29 @@ const OrderDetailPage: React.FC = () => {
 
       {/* Items */}
       <div style={{
-        background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
+        background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 20,
       }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Items in this order</h2>
         <div>
           {order.items.map((item, idx) => (
             <div key={idx} style={{
               display: 'flex', gap: 16, alignItems: 'center', padding: '12px 0',
-              borderBottom: idx < order.items.length - 1 ? '1px solid #eee' : 'none',
+              borderBottom: idx < order.items.length - 1 ? '1px solid var(--outline-variant)' : 'none',
             }}>
               <Link to={`/products/${item.product}`}>
                 <img src={item.image} alt="" style={{
                   width: 80, height: 80, borderRadius: 8, objectFit: 'contain',
-                  background: '#f8f8f8', border: '1px solid #eee',
+                  background: 'var(--surface-dim)', border: '1px solid var(--outline-variant)',
                 }} />
               </Link>
               <div style={{ flex: 1 }}>
-                <Link to={`/products/${item.product}`} style={{ color: '#007185', fontWeight: 500, fontSize: 14 }}>
+                <Link to={`/products/${item.product}`} style={{ color: 'var(--tertiary)', fontWeight: 500, fontSize: 14 }}>
                   {item.name}
                 </Link>
-                <div style={{ fontSize: 13, color: '#565959', marginTop: 4 }}>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
                   Qty: {item.quantity} | ${item.price.toFixed(2)} each
                 </div>
-                <div style={{ fontSize: 12, color: '#067d62', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--success)', marginTop: 4 }}>
                   {'\u2713'} Item delivered
                 </div>
               </div>
@@ -363,7 +363,7 @@ const OrderDetailPage: React.FC = () => {
 
       {/* Price Summary */}
       <div style={{
-        background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Order Summary</h2>
         <div className="summary-row">
@@ -372,7 +372,7 @@ const OrderDetailPage: React.FC = () => {
         </div>
         <div className="summary-row">
           <span>Shipping</span>
-          <span style={{ color: order.shippingPrice === 0 ? '#067d62' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
+          <span style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
             {order.shippingPrice === 0 ? 'FREE' : `$${order.shippingPrice.toFixed(2)}`}
           </span>
         </div>
@@ -384,7 +384,7 @@ const OrderDetailPage: React.FC = () => {
           <span>Total</span>
           <span>${order.totalPrice.toFixed(2)}</span>
         </div>
-        <div style={{ fontSize: 12, color: '#565959', textAlign: 'center', marginTop: 12 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'center', marginTop: 12 }}>
           {order.isPaid ? 'Payment collected' : 'Payment pending'}
         </div>
       </div>
@@ -392,7 +392,7 @@ const OrderDetailPage: React.FC = () => {
       {/* Actions */}
       <div style={{ display: 'flex', gap: 12, marginTop: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
         <Link to="/orders" style={{
-          padding: '10px 24px', background: '#232f3e', color: 'white', borderRadius: 8,
+          padding: '10px 24px', background: 'var(--tertiary-dim)', color: 'var(--surface)', borderRadius: 8,
           fontWeight: 600, fontSize: 14, textDecoration: 'none',
         }}>
           {'\u2190'} Back to Orders
@@ -403,8 +403,8 @@ const OrderDetailPage: React.FC = () => {
             navigator.clipboard?.writeText(tn);
             showToast(`Tracking # copied: ${tn}`, 'success');
           }} style={{
-            padding: '10px 24px', background: 'white', border: '1px solid #ddd', borderRadius: 8,
-            fontWeight: 600, fontSize: 14, cursor: 'pointer', color: '#0f1111',
+            padding: '10px 24px', background: 'var(--surface)', border: '1px solid var(--outline)', borderRadius: 8,
+            fontWeight: 600, fontSize: 14, cursor: 'pointer', color: 'var(--text)',
           }}>
             Copy Tracking #
           </button>

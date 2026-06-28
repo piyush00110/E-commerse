@@ -84,11 +84,11 @@ const ShippingManagePage: React.FC = () => {
 
   const statusBadge = (s: string) => {
     const map: Record<string, { color: string; bg: string }> = {
-      pending: { color: '#856404', bg: '#fff3cd' },
-      processing: { color: '#004085', bg: '#cce5ff' },
-      shipped: { color: '#155724', bg: '#d4edda' },
-      delivered: { color: '#155724', bg: '#d4edda' },
-      cancelled: { color: '#721c24', bg: '#f8d7da' },
+      pending: { color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
+      processing: { color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
+      shipped: { color: 'var(--success)', bg: 'var(--success-light)' },
+      delivered: { color: 'var(--success)', bg: 'var(--success-light)' },
+      cancelled: { color: 'var(--error)', bg: 'var(--error-light)' },
     };
     const style = map[s] || map.pending;
     return <span style={{ padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: style.bg, color: style.color }}>{s}</span>;
@@ -109,17 +109,17 @@ const ShippingManagePage: React.FC = () => {
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>{'\u{1F69A}'} Shipping Management</h1>
-        <p style={{ color: '#565959', fontSize: 14 }}>Manage order fulfillment, pick, pack, and ship orders.</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Manage order fulfillment, pick, pack, and ship orders.</p>
       </div>
 
       {/* Stats */}
       <div className="shipping-stats">
         {[
-          { label: 'Pending', count: orders.filter((o) => o.status === 'pending').length, color: '#856404', bg: '#fff3cd' },
-          { label: 'Processing', count: orders.filter((o) => o.status === 'processing').length, color: '#004085', bg: '#cce5ff' },
-          { label: 'Shipped', count: orders.filter((o) => o.status === 'shipped').length, color: '#155724', bg: '#d4edda' },
-          { label: 'Delivered', count: orders.filter((o) => o.status === 'delivered').length, color: '#155724', bg: '#d4edda' },
-          { label: 'Total', count: orders.length, color: '#232f3e', bg: '#e0e0e0' },
+          { label: 'Pending', count: orders.filter((o) => o.status === 'pending').length, color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
+          { label: 'Processing', count: orders.filter((o) => o.status === 'processing').length, color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
+          { label: 'Shipped', count: orders.filter((o) => o.status === 'shipped').length, color: 'var(--success)', bg: 'var(--success-light)' },
+          { label: 'Delivered', count: orders.filter((o) => o.status === 'delivered').length, color: 'var(--success)', bg: 'var(--success-light)' },
+          { label: 'Total', count: orders.length, color: 'var(--text)', bg: 'var(--surface-container)' },
         ].map((s) => (
           <div key={s.label} className="shipping-stat-card" style={{ borderLeft: `4px solid ${s.color}` }}>
             <div className="shipping-stat-count">{s.count}</div>
@@ -146,7 +146,7 @@ const ShippingManagePage: React.FC = () => {
         <div className="empty-state" style={{ background: 'white', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: 48, marginBottom: 8 }}>{'\u{1F4ED}'}</div>
           <h3>No {activeTab} orders</h3>
-          <p style={{ color: '#565959' }}>All orders in this status are cleared.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>All orders in this status are cleared.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -200,7 +200,7 @@ const ShippingManagePage: React.FC = () => {
                       </div>
                     ))}
                     {(order.items?.length || 0) > 3 && (
-                      <div style={{ fontSize: 12, color: '#565959', padding: '4px 0' }}>+{order.items!.length - 3} more items</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', padding: '4px 0' }}>+{order.items!.length - 3} more items</div>
                     )}
                   </div>
                 </div>

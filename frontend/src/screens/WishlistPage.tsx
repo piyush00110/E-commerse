@@ -46,7 +46,7 @@ const WishlistPage: React.FC = () => {
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700 }}>My Wishlist</h1>
-        <p style={{ color: '#565959', fontSize: 14 }}>{products.length} {products.length === 1 ? 'item' : 'items'} saved</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{products.length} {products.length === 1 ? 'item' : 'items'} saved</p>
       </div>
 
       {products.length === 0 ? (
@@ -66,7 +66,7 @@ const WishlistPage: React.FC = () => {
             return (
               <div key={product._id} className="product-card" style={{ position: 'relative' }}>
                 <button onClick={() => handleRemove(product._id)}
-                  style={{ position: 'absolute', top: 8, right: 8, background: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.15)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cc0c39' }}>
+                  style={{ position: 'absolute', top: 8, right: 8, background: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.15)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--error)' }}>
                   {'\u2764'}
                 </button>
                 <Link to={`/products/${product._id}`} style={{ display: 'block' }}>

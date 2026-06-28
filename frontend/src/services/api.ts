@@ -1,10 +1,14 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:5000/api'
+    : '/api');
 
 const api = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {
@@ -84,6 +88,15 @@ export const wishlistAPI = {
   get: () => api.get('/wishlist'),
   add: (productId: string) => api.post('/wishlist/add', { productId }),
   remove: (productId: string) => api.delete(`/wishlist/${productId}`),
+};
+
+export const adminAPI = {
+  getUsers: () => api.get('/admin/users'),
+  updateUserRole: (userId: string, role: string) =>
+    api.put(`/admin/users/${userId}/role`, { role }),
+  getStats: () => api.get('/admin/stats'),
+  createAdmin: (data: { name: string; email: string; password: string }) =>
+    api.post('/admin/create-admin', data),
 };
 
 export default api;

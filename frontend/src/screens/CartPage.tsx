@@ -73,7 +73,7 @@ const CartPage: React.FC = () => {
           <h2 style={{ fontSize: 22 }}>
             Shopping Cart ({cart.totalItems} {cart.totalItems === 1 ? 'item' : 'items'})
           </h2>
-          <span style={{ fontSize: 13, color: '#565959' }}>Price</span>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Price</span>
         </div>
 
         {cart.items.map((item) => (
@@ -83,10 +83,10 @@ const CartPage: React.FC = () => {
             </Link>
             <div className="cart-item-info">
               <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}
-                style={{ color: '#007185', fontWeight: 500 }}>
+                style={{ color: 'var(--tertiary)', fontWeight: 500 }}>
                 {item.name}
               </Link>
-              <div style={{ fontSize: 13, color: '#565959', margin: '4px 0' }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '4px 0' }}>
                 In Stock
               </div>
               <div className="cart-item-qty-row">
@@ -119,7 +119,7 @@ const CartPage: React.FC = () => {
         </div>
         <div className="summary-row">
           <span>Shipping</span>
-          <span style={{ color: shipping === 0 ? '#067d62' : 'inherit', fontWeight: shipping === 0 ? 600 : 400 }}>
+          <span style={{ color: shipping === 0 ? 'var(--success)' : 'inherit', fontWeight: shipping === 0 ? 600 : 400 }}>
             {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
           </span>
         </div>
@@ -128,7 +128,7 @@ const CartPage: React.FC = () => {
           <span>${tax.toFixed(2)}</span>
         </div>
         {subtotal < 50 && subtotal > 0 && (
-          <div style={{ fontSize: 12, color: '#b12704', marginTop: -8, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--tertiary)', marginTop: -8, marginBottom: 8 }}>
             Add ${(50 - subtotal).toFixed(2)} more for FREE shipping!
           </div>
         )}
@@ -143,7 +143,7 @@ const CartPage: React.FC = () => {
         }}>
           Proceed to Checkout
         </button>
-        <Link to="/products" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: '#007185' }}>
+        <Link to="/products" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: 'var(--tertiary)' }}>
           Continue Shopping
         </Link>
       </div>

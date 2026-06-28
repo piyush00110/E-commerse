@@ -3,9 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { productAPI, categoryAPI } from '../services/api';
 import { Category } from '../types';
 
+const FALLBACK_CATEGORIES: Category[] = [
+  { _id: 'electronics', name: 'Electronics', slug: 'electronics' },
+  { _id: 'fashion', name: 'Fashion', slug: 'fashion' },
+  { _id: 'home-kitchen', name: 'Home & Kitchen', slug: 'home-kitchen' },
+  { _id: 'books', name: 'Books', slug: 'books' },
+  { _id: 'beauty', name: 'Beauty', slug: 'beauty' },
+  { _id: 'sports-outdoors', name: 'Sports & Outdoors', slug: 'sports-outdoors' },
+];
+
 const AddProductPage: React.FC = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +36,7 @@ const AddProductPage: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const res = await categoryAPI.getAll();
-        setCategories(res.data.data);
+        if (res.data?.data?.length) setCategories(res.data.data);
       } catch {
         console.error('Failed to load categories');
       } finally {
@@ -98,9 +107,9 @@ const AddProductPage: React.FC = () => {
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
       <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>Add New Product</h1>
 
-      <div style={{ background: 'white', borderRadius: 12, padding: 32, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 32, boxShadow: 'var(--shadow)' }}>
         {error && (
-          <div style={{ color: '#b12704', marginBottom: 16, fontSize: 14, padding: '8px 12px', background: '#fff0f0', borderRadius: 8 }}>
+          <div style={{ color: 'var(--error)', marginBottom: 16, fontSize: 14, padding: '8px 12px', background: 'var(--error-light)', borderRadius: 8 }}>
             {error}
           </div>
         )}
@@ -114,7 +123,7 @@ const AddProductPage: React.FC = () => {
 
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
               <label>Description *</label>
-              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={5} placeholder="Describe your product in detail..." required style={{ width: '100%', padding: '10px 14px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14, resize: 'vertical', fontFamily: 'inherit' }} />
+              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={5} placeholder="Describe your product in detail..." required style={{ width: '100%', padding: '10px 14px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, resize: 'vertical', fontFamily: 'inherit' }} />
             </div>
 
             <div className="form-group">
@@ -129,7 +138,7 @@ const AddProductPage: React.FC = () => {
 
             <div className="form-group">
               <label>Category *</label>
-              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required style={{ width: '100%', padding: '10px 14px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14 }}>
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required style={{ width: '100%', padding: '10px 14px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }}>
                 <option value="">Select category...</option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>{cat.name}</option>
@@ -164,7 +173,7 @@ const AddProductPage: React.FC = () => {
                   value={img}
                   onChange={(e) => handleImageChange(idx, e.target.value)}
                   placeholder={`Image URL ${idx + 1}`}
-                  style={{ width: '100%', padding: '10px 14px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14 }}
+                  style={{ width: '100%', padding: '10px 14px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }}
                 />
               </div>
             ))}
@@ -179,12 +188,12 @@ const AddProductPage: React.FC = () => {
                   value={feat}
                   onChange={(e) => handleFeatureChange(idx, e.target.value)}
                   placeholder={`Feature ${idx + 1}`}
-                  style={{ flex: 1, padding: '10px 14px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14 }}
+                  style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }}
                 />
                 {form.features.length > 1 && (
                   <button type="button" onClick={() => removeFeature(idx)} style={{
-                    padding: '8px 12px', border: '1px solid #b12704', borderRadius: 8,
-                    background: 'white', color: '#b12704', cursor: 'pointer',
+                    padding: '8px 12px', border: '1px solid var(--error)', borderRadius: 8,
+                    background: 'var(--bg-white)', color: 'var(--error)', cursor: 'pointer',
                   }}>
                     X
                   </button>
@@ -199,8 +208,8 @@ const AddProductPage: React.FC = () => {
               {submitting ? 'Creating...' : 'Create Product'}
             </button>
             <button type="button" onClick={() => navigate(-1)} style={{
-              padding: '12px 24px', border: '1px solid #ddd', borderRadius: 8,
-              background: 'white', fontSize: 16, fontWeight: 600, cursor: 'pointer',
+              padding: '12px 24px', border: '1px solid var(--border)', borderRadius: 8,
+              background: 'var(--bg-white)', fontSize: 16, fontWeight: 600, cursor: 'pointer',
             }}>
               Cancel
             </button>

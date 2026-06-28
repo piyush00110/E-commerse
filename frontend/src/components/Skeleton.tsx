@@ -35,7 +35,7 @@ export const CartSkeleton: React.FC = () => (
   <div style={{ maxWidth: 1440, margin: '0 auto', padding: 24, display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
     <div>
       {[1, 2, 3].map((i) => (
-        <div key={i} style={{ display: 'flex', gap: 20, padding: 20, background: 'white', borderRadius: 12, marginBottom: 12 }}>
+        <div key={i} style={{ display: 'flex', gap: 20, padding: 20, background: 'var(--bg-white)', borderRadius: 12, marginBottom: 12 }}>
           <div className="skeleton" style={{ width: 140, height: 140, borderRadius: 8, minWidth: 140 }} />
           <div style={{ flex: 1 }}>
             <div className="skeleton skeleton-text" style={{ width: '70%', height: 18 }} />

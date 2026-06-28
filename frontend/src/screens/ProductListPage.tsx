@@ -38,7 +38,7 @@ const ProductListPage: React.FC = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const params: Record<string, string | number> = { page, limit: 12, sort };
+        const params: Record<string, string | number> = { page, limit: 200, sort };
         if (category) params.category = category;
         if (search) params.search = search;
         if (priceMin) params.minPrice = priceMin;
@@ -77,8 +77,8 @@ const ProductListPage: React.FC = () => {
         <button onClick={() => { window.location.href = '/products'; }}
           style={{
             padding: '6px 16px', borderRadius: 20, border: 'none',
-            background: !category ? '#131921' : '#f0f2f2',
-            color: !category ? 'white' : '#0f1111',
+            background: !category ? 'var(--text)' : 'var(--surface-container)',
+            color: !category ? 'white' : 'var(--text)',
             fontWeight: !category ? 600 : 400, fontSize: 13, cursor: 'pointer',
             whiteSpace: 'nowrap', flexShrink: 0,
           }}>
@@ -88,8 +88,8 @@ const ProductListPage: React.FC = () => {
           <button key={cat._id} onClick={() => { window.location.href = `/products?category=${cat.slug}`; }}
             style={{
               padding: '6px 16px', borderRadius: 20, border: 'none',
-              background: category === cat.slug ? '#131921' : '#f0f2f2',
-              color: category === cat.slug ? 'white' : '#0f1111',
+              background: category === cat.slug ? 'var(--text)' : 'var(--surface-container)',
+              color: category === cat.slug ? 'white' : 'var(--text)',
               fontWeight: category === cat.slug ? 600 : 400, fontSize: 13, cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
             }}>
@@ -100,7 +100,7 @@ const ProductListPage: React.FC = () => {
 
       <div style={{ display: 'flex', gap: 24, position: 'relative' }}>
         <button onClick={() => setShowFilters(!showFilters)}
-          style={{ display: 'none', padding: '8px 16px', background: '#232f3e', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
+          style={{ display: 'none', padding: '8px 16px', background: 'var(--text)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
           className="mobile-filter-btn">
           {showFilters ? 'Hide Filters' : 'Show Filters'} &#9660;
         </button>
@@ -114,26 +114,26 @@ const ProductListPage: React.FC = () => {
             <h3 style={{ fontSize: 16, fontWeight: 700 }}>Filters</h3>
             {hasFilters && (
               <button onClick={handleClearFilters}
-                style={{ padding: '4px 10px', border: '1px solid #ddd', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer' }}>
+                style={{ padding: '4px 10px', border: '1px solid var(--border)', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer' }}>
                 Clear All
               </button>
             )}
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: '#565959', textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</h4>
+            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <a href="/products" style={{
                 padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block',
-                background: !category ? '#f0f2f2' : 'transparent', fontWeight: !category ? 600 : 400,
-                color: '#0f1111', textDecoration: 'none',
+                background: !category ? 'var(--surface-container)' : 'transparent', fontWeight: !category ? 600 : 400,
+                color: 'var(--text)', textDecoration: 'none',
               }}>All</a>
               {categories.map((cat) => (
                 <a key={cat._id} href={`/products?category=${cat.slug}`} style={{
                   padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block',
-                  background: category === cat.slug ? '#f0f2f2' : 'transparent',
+                  background: category === cat.slug ? 'var(--surface-container)' : 'transparent',
                   fontWeight: category === cat.slug ? 600 : 400,
-                  color: '#0f1111', textDecoration: 'none',
+                  color: 'var(--text)', textDecoration: 'none',
                 }}>
                   {cat.name}
                 </a>
@@ -142,20 +142,20 @@ const ProductListPage: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: '#565959', textTransform: 'uppercase', letterSpacing: 0.5 }}>Price</h4>
+            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Price</h4>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <input type="number" placeholder="Min" value={priceMin}
                 onChange={(e) => { setPriceMin(e.target.value); setPage(1); }}
-                style={{ width: '100%', padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6, fontSize: 13 }} />
-              <span style={{ color: '#999' }}>-</span>
+                style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13 }} />
+              <span style={{ color: 'var(--text-secondary)' }}>-</span>
               <input type="number" placeholder="Max" value={priceMax}
                 onChange={(e) => { setPriceMax(e.target.value); setPage(1); }}
-                style={{ width: '100%', padding: '8px 10px', border: '1px solid #ddd', borderRadius: 6, fontSize: 13 }} />
+                style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13 }} />
             </div>
           </div>
 
           <div>
-            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: '#565959', textTransform: 'uppercase', letterSpacing: 0.5 }}>Min. Rating</h4>
+            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Min. Rating</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {[4, 3, 2, 1].map((r) => (
                 <label key={r} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', fontSize: 14, cursor: 'pointer' }}>
@@ -166,7 +166,7 @@ const ProductListPage: React.FC = () => {
               ))}
               {ratingFilter && (
                 <button onClick={() => { setRatingFilter(''); setPage(1); }}
-                  style={{ padding: '4px 10px', border: 'none', background: 'none', color: '#007185', fontSize: 13, textAlign: 'left', cursor: 'pointer' }}>
+                  style={{ padding: '4px 10px', border: 'none', background: 'none', color: 'var(--tertiary)', fontSize: 13, textAlign: 'left', cursor: 'pointer' }}>
                   Clear rating
                 </button>
               )}
@@ -178,16 +178,16 @@ const ProductListPage: React.FC = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
             <div>
               <h2 style={{ fontSize: 22, fontWeight: 700 }}>{title}</h2>
-              <span style={{ fontSize: 13, color: '#565959' }}>{total} products found</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{total} products found</span>
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button onClick={() => setShowFilters(!showFilters)}
-                style={{ padding: '8px 14px', border: '1px solid #ddd', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', display: 'none' }}
+                style={{ padding: '8px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', display: 'none' }}
                 className="mobile-filter-btn2">
                 &#9776; Filters
               </button>
               <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}
-                style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 13, background: 'white', cursor: 'pointer' }}>
+                style={{ padding: '8px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, background: 'white', cursor: 'pointer' }}>
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -201,9 +201,9 @@ const ProductListPage: React.FC = () => {
             <div style={{ textAlign: 'center', padding: 60, background: 'white', borderRadius: 12 }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>{'\u{1F50D}'}</div>
               <h2 style={{ marginBottom: 8 }}>No products found</h2>
-              <p style={{ color: '#565959', marginBottom: 16 }}>Try adjusting your filters or search.</p>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>Try adjusting your filters or search.</p>
               {hasFilters && <button onClick={handleClearFilters}
-                style={{ padding: '10px 24px', background: '#ff9900', color: '#232f3e', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+                style={{ padding: '10px 24px', background: 'var(--tertiary)', color: 'var(--text)', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
                 Clear All Filters
               </button>}
             </div>
@@ -220,9 +220,9 @@ const ProductListPage: React.FC = () => {
                   {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
                     <button key={p} onClick={() => setPage(p)}
                       style={{
-                        padding: '8px 16px', border: `1px solid ${p === page ? '#ff9900' : '#ddd'}`,
-                        borderRadius: 8, background: p === page ? '#ff9900' : 'white',
-                        color: p === page ? '#232f3e' : '#0f1111',
+                        padding: '8px 16px', border: `1px solid ${p === page ? 'var(--tertiary)' : 'var(--border)'}`,
+                        borderRadius: 8, background: p === page ? 'var(--tertiary)' : 'white',
+                        color: p === page ? 'var(--text)' : 'var(--text)',
                         fontWeight: p === page ? 600 : 400, cursor: 'pointer',
                         minWidth: 40,
                       }}>

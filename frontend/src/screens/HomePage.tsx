@@ -11,7 +11,7 @@ const BANNERS = [
     title: 'Discover Amazing Deals',
     subtitle: 'Up to 70% off on top brands. Free delivery on orders over $50.',
     cta: 'Shop Now',
-    gradient: 'linear-gradient(135deg, var(--primary) 0%, #1a3650 50%, var(--tertiary) 100%)',
+    gradient: 'linear-gradient(135deg, var(--tertiary) 0%, #004d63 50%, var(--tertiary-container) 100%)',
     icon: '\u{1F4B0}',
     link: '/products',
   },
@@ -19,7 +19,7 @@ const BANNERS = [
     title: 'New Electronics Arrived',
     subtitle: 'Latest gadgets, laptops, and accessories at unbeatable prices.',
     cta: 'Explore Tech',
-    gradient: 'linear-gradient(135deg, #0d2137 0%, #1a3a4a 50%, #0d2b3a 100%)',
+    gradient: 'linear-gradient(135deg, #004d63 0%, var(--tertiary) 50%, #00384a 100%)',
     icon: '\u{1F4F1}',
     link: '/products?category=electronics',
   },
@@ -27,7 +27,7 @@ const BANNERS = [
     title: 'Season Fashion Sale',
     subtitle: 'Refresh your wardrobe with trending styles. Extra 20% off on your first order.',
     cta: 'Shop Fashion',
-    gradient: 'linear-gradient(135deg, #2d1b3a 0%, #4a2a4a 50%, #2d1b3a 100%)',
+    gradient: 'linear-gradient(135deg, var(--secondary) 0%, #6b3d00 50%, #4a2a00 100%)',
     icon: '\u{1F455}',
     link: '/products?category=fashion',
   },
@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
         const [prodRes, catRes, allRes] = await Promise.all([
           productAPI.getFeatured(),
           categoryAPI.getAll(),
-          productAPI.getAll({ limit: 30, sort: '-created_at' }),
+          productAPI.getAll({ limit: 200, sort: '-created_at' }),
         ]);
         setFeatured(prodRes.data.data);
         setCategories(catRes.data.data);
@@ -253,26 +253,26 @@ const HomePage: React.FC = () => {
 
       {topDeal && (
         <section className="section" style={{
-          background: 'linear-gradient(135deg, #1a3650 0%, #131921 100%)',
+          background: 'var(--tertiary-container)',
           borderRadius: 16,
           padding: '48px 36px !important',
           margin: '24px !important',
           maxWidth: '1392px !important',
-          color: 'white',
+          color: 'var(--on-tertiary-container)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 32, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 250 }}>
-              <div style={{ display: 'inline-block', background: '#ff9900', color: '#131921', padding: '4px 12px', borderRadius: 4, fontWeight: 700, fontSize: 12, marginBottom: 12 }}>
+              <div style={{ display: 'inline-block', background: 'var(--tertiary)', color: 'var(--on-tertiary)', padding: '4px 12px', borderRadius: 4, fontWeight: 700, fontSize: 12, marginBottom: 12 }}>
                 {'\u{1F3C6}'} DEAL OF THE DAY
               </div>
               <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>{topDeal.name}</h2>
-              <p style={{ color: '#aab7c4', marginBottom: 16, fontSize: 15 }}>{topDeal.description?.slice(0, 120)}...</p>
+              <p style={{ color: 'var(--on-tertiary-container)', opacity: 0.75, marginBottom: 16, fontSize: 15 }}>{topDeal.description?.slice(0, 120)}...</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <span style={{ fontSize: 32, fontWeight: 700, color: '#ff9900' }}>${topDeal.price.toFixed(2)}</span>
+                <span style={{ fontSize: 32, fontWeight: 700, color: 'var(--tertiary)' }}>${topDeal.price.toFixed(2)}</span>
                 {topDeal.comparePrice && (
                   <>
-                    <span style={{ fontSize: 16, textDecoration: 'line-through', color: '#8899aa' }}>${topDeal.comparePrice.toFixed(2)}</span>
-                    <span style={{ background: '#b12704', padding: '3px 8px', borderRadius: 4, fontWeight: 700, fontSize: 12 }}>
+                    <span style={{ fontSize: 16, textDecoration: 'line-through', color: 'var(--on-tertiary-container)', opacity: 0.5 }}>${topDeal.comparePrice.toFixed(2)}</span>
+                    <span style={{ background: 'var(--tertiary)', padding: '3px 8px', borderRadius: 4, fontWeight: 700, fontSize: 12, color: 'var(--on-tertiary)' }}>
                       -{Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100)}%
                     </span>
                   </>
@@ -286,7 +286,7 @@ const HomePage: React.FC = () => {
               <img
                 src={topDeal.images[0]}
                 alt={topDeal.name}
-                style={{ width: '100%', height: 280, objectFit: 'contain', borderRadius: 12, background: 'rgba(255,255,255,0.05)' }}
+                style={{ width: '100%', height: 280, objectFit: 'contain', borderRadius: 12, background: 'var(--surface-container-high)' }}
               />
             </div>
           </div>

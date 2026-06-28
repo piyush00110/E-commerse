@@ -349,7 +349,7 @@ const BuyPage: React.FC = () => {
                       <div className="payment-icon">{pm.icon}</div>
                       <div className="buy-payment-info" style={{ flex: 1 }}>
                         <strong>{pm.label}</strong>
-                        <span className="buy-payment-desc" style={{ fontSize: 13, color: '#565959' }}>{pm.desc}</span>
+                        <span className="buy-payment-desc" style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{pm.desc}</span>
                       </div>
                       {paymentMethod === pm.id && <div className="payment-check">{'\u2713'}</div>}
                     </div>
@@ -361,9 +361,9 @@ const BuyPage: React.FC = () => {
                     <div className="buy-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                       <span style={{ fontWeight: 600 }}>Enter card details</span>
                       <div className="buy-card-logos" style={{ display: 'flex', gap: 6 }}>
-                        <span style={{ padding: '3px 6px', border: '1px solid #ddd', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>VISA</span>
-                        <span style={{ padding: '3px 6px', border: '1px solid #ddd', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>MC</span>
-                        <span style={{ padding: '3px 6px', border: '1px solid #ddd', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>AMEX</span>
+                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>VISA</span>
+                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>MC</span>
+                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>AMEX</span>
                       </div>
                     </div>
                     <div className="form-group">
@@ -517,7 +517,7 @@ const BuyPage: React.FC = () => {
                 </div>
                 <div className="buy-sidebar-row">
                   <span>Shipping</span>
-                  <span style={{ color: shippingPrice === 0 ? '#067d62' : 'inherit', fontWeight: shippingPrice === 0 ? 700 : 400 }}>
+                  <span style={{ color: shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: shippingPrice === 0 ? 700 : 400 }}>
                     {shippingPrice === 0 ? 'FREE' : `$${shippingPrice.toFixed(2)}`}
                   </span>
                 </div>

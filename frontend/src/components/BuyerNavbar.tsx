@@ -75,38 +75,60 @@ const BuyerNavbar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-main">
-        <button onClick={() => setMenuOpen(!menuOpen)} className="hamburger-btn" aria-label="Menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+    <nav style={{
+      position: 'sticky', top: 0, zIndex: 1000,
+      background: 'var(--bg-white)',
+      borderBottom: '1px solid var(--border-light)',
+      boxShadow: 'var(--shadow-sm)',
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 16,
+        padding: '10px 24px', maxWidth: 1440, margin: '0 auto',
+      }}>
+        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={{
+          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: 4,
+        }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6" />
             <line x1="3" y1="12" x2="21" y2="12" />
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
 
-        <Link to="/" className="navbar-logo">
-          Shop<span>Smart</span>
+        <Link to="/" style={{
+          fontSize: 22, fontWeight: 800, color: 'var(--tertiary)',
+          whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', textDecoration: 'none',
+          letterSpacing: '-0.5px',
+        }}>
+          Shop<span style={{ color: 'var(--secondary)', fontWeight: 300 }}>Smart</span>
         </Link>
 
-        <div className="navbar-location" onClick={() => setShowCityPicker(!showCityPicker)} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', flexShrink: 0 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#ccc">
+        <div onClick={() => setShowCityPicker(!showCityPicker)} style={{
+          position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
+          cursor: 'pointer', flexShrink: 0, padding: '4px 6px', borderRadius: 6,
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--text-secondary)">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
-          <div className="location-text">
-            <span className="location-label" style={{ fontSize: 11, color: '#ccc', display: 'block', lineHeight: 1.2 }}>Deliver to</span>
-            <strong className="location-city" style={{ fontSize: 13, color: 'white', lineHeight: 1.2 }}>{deliverCity}</strong>
+          <div style={{ lineHeight: 1.2 }}>
+            <span style={{ fontSize: 10, color: 'var(--text-secondary)', display: 'block' }}>Deliver to</span>
+            <strong style={{ fontSize: 12, color: 'var(--text)' }}>{deliverCity}</strong>
           </div>
           {showCityPicker && (
-            <div className="city-dropdown" style={{
+            <div style={{
               position: 'absolute', top: '100%', left: 0, background: 'var(--bg-white)', color: 'var(--text)',
-              borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', padding: 12, zIndex: 1001, minWidth: 200,
+              borderRadius: 8, boxShadow: 'var(--shadow-lg)', padding: 12, zIndex: 1001, minWidth: 200,
+              border: '1px solid var(--border)',
             }}>
-              <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13, color: 'var(--text)' }}>Choose location</div>
+              <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13, color: 'var(--text-secondary)' }}>Choose location</div>
               {CITIES.map((city) => (
-                <div key={city} className="city-option" onClick={(e) => { e.stopPropagation(); selectCity(city); }}
-                  style={{ padding: '4px 8px', borderRadius: 4, fontSize: 13, cursor: 'pointer', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  {city === deliverCity && <span style={{ color: '#ff9900' }}>{'\u2713'}</span>}
+                <div key={city} onClick={(e) => { e.stopPropagation(); selectCity(city); }}
+                  style={{
+                    padding: '4px 8px', borderRadius: 4, fontSize: 13, cursor: 'pointer',
+                    color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6,
+                    background: city === deliverCity ? 'var(--primary-container)' : 'transparent',
+                  }}>
+                  {city === deliverCity && <span style={{ color: 'var(--tertiary)' }}>{'\u2713'}</span>}
                   {city}
                 </div>
               ))}
@@ -114,33 +136,52 @@ const BuyerNavbar: React.FC = () => {
           )}
         </div>
 
-        <form className="navbar-search" onSubmit={handleSearch}>
+        <form onSubmit={handleSearch} style={{
+          flex: 1, display: 'flex', maxWidth: 600, margin: '0 16px',
+        }}>
           <input
             type="text"
             placeholder="Search ShopSmart"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              flex: 1, padding: '9px 14px', border: '1px solid var(--outline-variant)',
+              borderRadius: '8px 0 0 8px', fontSize: 14, outline: 'none',
+              background: 'var(--surface-container-low)', color: 'var(--text)',
+            }}
           />
-          <button type="submit" aria-label="Search">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#131921">
+          <button type="submit" aria-label="Search" style={{
+            padding: '9px 16px', background: 'var(--tertiary)', border: 'none',
+            borderRadius: '0 8px 8px 0', color: 'white', cursor: 'pointer',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
               <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
             </svg>
           </button>
         </form>
 
-        <div className="navbar-links">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {user ? (
             <>
-              <Link to="/orders" className="navbar-link" style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#ccc' }}>
+              <Link to="/orders" style={{
+                display: 'flex', flexDirection: 'column', fontSize: 11,
+                color: 'var(--text-secondary)', textDecoration: 'none',
+              }}>
                 Returns
-                <strong style={{ fontSize: 14, color: 'white' }}>& Orders</strong>
+                <strong style={{ fontSize: 13, color: 'var(--text)' }}>& Orders</strong>
               </Link>
-              <div className="navbar-link navbar-account-toggle" style={{ position: 'relative', cursor: 'pointer' }}>
-                <span style={{ fontSize: 12, color: '#ccc', lineHeight: 1.2 }}>Hello, {user.name.split(' ')[0]}</span>
-                <strong style={{ fontSize: 14, color: 'white', lineHeight: 1.2 }}>Account</strong>
+              <div style={{ position: 'relative', cursor: 'pointer' }}
+                className="navbar-account-toggle">
+                <span style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.2 }}>
+                  Hello, {user.name.split(' ')[0]}
+                </span>
+                <strong style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.2 }}>Account</strong>
                 <div className="account-dropdown" style={{
-                  position: 'absolute', top: '100%', right: 0, background: 'var(--bg-white)', color: 'var(--text)',
-                  borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', padding: 8, zIndex: 1001, minWidth: 200, display: 'none',
+                  position: 'absolute', top: '100%', right: 0, background: 'var(--bg-white)',
+                  color: 'var(--text)', borderRadius: 8, boxShadow: 'var(--shadow-lg)',
+                  padding: 8, zIndex: 1001, minWidth: 200, display: 'none',
+                  border: '1px solid var(--border)',
                 }}>
                   <Link to="/account" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Account</Link>
                   <Link to="/orders" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Orders</Link>
@@ -157,43 +198,36 @@ const BuyerNavbar: React.FC = () => {
                     </>
                   )}
                   <hr style={{ margin: '4px 0', borderColor: 'var(--border)' }} />
-                  <Link to="/tracking" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>{'\u{1F50D}'} Track Package</Link>
                   <div onClick={handleLogout} style={{ padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--error)', cursor: 'pointer' }}>Sign Out</div>
                 </div>
               </div>
             </>
           ) : (
-            <Link to="/login" className="navbar-link" style={{ display: 'flex', flexDirection: 'column', fontSize: 12, color: '#ccc' }}>
+            <Link to="/login" style={{
+              display: 'flex', flexDirection: 'column', fontSize: 11,
+              color: 'var(--text-secondary)', textDecoration: 'none',
+            }}>
               Hello, Sign in
-              <strong style={{ fontSize: 14, color: 'white' }}>Account</strong>
+              <strong style={{ fontSize: 13, color: 'var(--text)' }}>Account</strong>
             </Link>
           )}
 
-          <Link to="/wishlist" className="navbar-link" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: 18, color: '#ccc', textDecoration: 'none' }}>
-            {'\u2661'}
-            <span style={{ fontSize: 11 }}>Wishlist</span>
-          </Link>
-
-          <Link to="/seller" className="sell-btn" style={{
-            padding: '4px 12px', background: '#ff9900', border: 'none', borderRadius: 6,
-            fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#131921', whiteSpace: 'nowrap', textDecoration: 'none',
-          }}>
-            {'\u{1F4BC}'} Sell
-          </Link>
-
-          <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle theme" style={{
-            background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8,
-            padding: '6px 8px', cursor: 'pointer', color: 'white', fontSize: 18, lineHeight: 1,
+          <button onClick={toggleTheme} aria-label="Toggle theme" style={{
+            background: 'none', border: '1px solid var(--border)', borderRadius: 8,
+            padding: '6px 8px', cursor: 'pointer', color: 'var(--text)', fontSize: 16,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             {theme === 'light' ? '\u{1F319}' : '\u2600\uFE0F'}
           </button>
 
-          <div ref={miniCartRef} className="navbar-cart-wrapper" style={{ position: 'relative' }}
+          <div ref={miniCartRef} style={{ position: 'relative' }}
             onMouseEnter={() => setShowMiniCart(true)}
             onMouseLeave={() => setShowMiniCart(false)}>
-            <Link to="/cart" className="navbar-cart" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 4, color: 'white', textDecoration: 'none' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+            <Link to="/cart" style={{
+              position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
+              color: 'var(--text)', textDecoration: 'none', padding: '4px 6px', borderRadius: 6,
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text)">
                 <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.17 14.75l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25z"/>
               </svg>
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
@@ -240,29 +274,31 @@ const BuyerNavbar: React.FC = () => {
       </div>
 
       {menuOpen && (
-        <div className="mobile-menu" style={{
-          position: 'fixed', top: 0, left: 0, bottom: 0, width: 280, background: 'var(--bg-white)', zIndex: 2000,
-          boxShadow: '4px 0 16px rgba(0,0,0,0.2)', overflowY: 'auto',
+        <div style={{
+          position: 'fixed', top: 0, left: 0, bottom: 0, width: 280,
+          background: 'var(--bg-white)', zIndex: 2000,
+          boxShadow: '4px 0 16px rgba(0,0,0,0.15)', overflowY: 'auto',
         }}>
-          <div style={{ background: 'var(--primary)', color: 'white', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{
+            background: 'var(--surface-container)', color: 'var(--text)',
+            padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          }}>
             <strong style={{ fontSize: 16 }}>Shop by Category</strong>
-            <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'white', fontSize: 20, cursor: 'pointer' }}>{'\u2715'}</button>
+            <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: 20, cursor: 'pointer' }}>{'\u2715'}</button>
           </div>
           <div style={{ padding: 8 }}>
             {['Electronics', 'Fashion', 'Home & Kitchen', 'Books', 'Beauty', 'Sports & Outdoors', 'Toys & Games'].map((cat) => (
               <Link key={cat} to={`/products?category=${cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`} onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', borderBottom: '1px solid var(--border-light)' }}>
+                style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
                 {cat}
               </Link>
             ))}
-            <hr style={{ margin: '8px 0', borderColor: 'var(--border-light)' }} />
+            <hr style={{ margin: '8px 0', borderColor: 'var(--border)' }} />
             <div style={{ padding: '8px 12px', fontWeight: 600, fontSize: 14, color: 'var(--text-secondary)' }}>Your Account</div>
             <Link to="/orders" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>My Orders</Link>
             <Link to="/account" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Account</Link>
             <Link to="/wishlist" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Wishlist</Link>
             <Link to="/help" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Help Center</Link>
-            <Link to="/tracking" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Track Package</Link>
-            <Link to="/buy" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Quick Buy</Link>
             {user?.role === 'admin' && (
               <>
                 <Link to="/manage" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>Manage Store</Link>

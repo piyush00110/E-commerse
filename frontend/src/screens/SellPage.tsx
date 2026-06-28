@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { categoryAPI } from '../services/api';
+import { Category } from '../types';
+
+const FALLBACK_CATEGORIES: Category[] = [
+  { _id: 'electronics', name: 'Electronics', slug: 'electronics' },
+  { _id: 'fashion', name: 'Fashion', slug: 'fashion' },
+  { _id: 'home-kitchen', name: 'Home & Kitchen', slug: 'home-kitchen' },
+  { _id: 'books', name: 'Books', slug: 'books' },
+  { _id: 'beauty', name: 'Beauty', slug: 'beauty' },
+  { _id: 'sports-outdoors', name: 'Sports & Outdoors', slug: 'sports-outdoors' },
+];
 
 const SellPage: React.FC = () => {
+  const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', storeName: '', category: '', description: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const { showToast } = useToast();
+
+  useEffect(() => {
+    categoryAPI.getAll().then((res) => {
+      if (res.data?.data?.length) setCategories(res.data.data);
+    }).catch(() => {});
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,13 +121,9 @@ const SellPage: React.FC = () => {
                   <label>Primary Category</label>
                   <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required>
                     <option value="">Select a category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="fashion">Fashion</option>
-                    <option value="home-kitchen">Home & Kitchen</option>
-                    <option value="books">Books</option>
-                    <option value="beauty">Beauty</option>
-                    <option value="sports">Sports & Outdoors</option>
-                    <option value="other">Other</option>
+                    {categories.map((cat) => (
+                      <option key={cat._id} value={cat.slug}>{cat.name}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="form-group">

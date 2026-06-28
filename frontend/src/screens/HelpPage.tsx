@@ -159,19 +159,19 @@ const HelpPage: React.FC = () => {
             <div className="help-contact-icon">{'\u{1F4DE}'}</div>
             <strong>Call Us</strong>
             <span>1-800-SHOP-SMART</span>
-            <span style={{ fontSize: 12, color: '#565959' }}>Mon-Sat, 8AM-8PM EST</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Mon-Sat, 8AM-8PM EST</span>
           </div>
           <div className="help-contact-card">
             <div className="help-contact-icon">{'\u{1F4AC}'}</div>
             <strong>Live Chat</strong>
             <span>Chat with our team</span>
-            <span style={{ fontSize: 12, color: '#565959' }}>Average response: 2 min</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Average response: 2 min</span>
           </div>
           <div className="help-contact-card">
             <div className="help-contact-icon">{'\u{1F4E7}'}</div>
             <strong>Email</strong>
             <span>support@shopsmart.com</span>
-            <span style={{ fontSize: 12, color: '#565959' }}>Response within 24 hrs</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Response within 24 hrs</span>
           </div>
         </div>
       </div>

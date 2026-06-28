@@ -41,7 +41,7 @@ const RegisterPage: React.FC = () => {
       <div className="auth-box">
         <h1>Create Account</h1>
         {error && (
-          <div style={{ color: '#b12704', marginBottom: 16, fontSize: 14, textAlign: 'center' }}>
+          <div style={{ color: 'var(--error)', marginBottom: 16, fontSize: 14, textAlign: 'center' }}>
             {error}
           </div>
         )}

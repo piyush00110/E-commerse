@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { productAPI, orderAPI } from '../services/api';
+import AdminUsersPage from './AdminUsersPage';
 
-type ManageTab = 'dashboard' | 'products' | 'orders' | 'analytics';
+type ManageTab = 'dashboard' | 'products' | 'orders' | 'analytics' | 'users';
 
 interface Product {
   _id: string;
@@ -37,6 +38,7 @@ const TABS_CONFIG: { key: ManageTab; label: string; icon: string }[] = [
   { key: 'products', label: 'Products', icon: '\u{1F4E6}' },
   { key: 'orders', label: 'Orders', icon: '\u{1F4CB}' },
   { key: 'analytics', label: 'Analytics', icon: '\u{1F4C8}' },
+  { key: 'users', label: 'Users', icon: '\u{1F465}' },
 ];
 
 const ManagePage: React.FC = () => {
@@ -172,11 +174,11 @@ const ManagePage: React.FC = () => {
 
   const statusBadge = (status: string) => {
     const map: Record<string, { color: string; bg: string }> = {
-      pending: { color: '#856404', bg: '#fff3cd' },
-      processing: { color: '#004085', bg: '#cce5ff' },
-      shipped: { color: '#155724', bg: '#d4edda' },
-      delivered: { color: '#155724', bg: '#d4edda' },
-      cancelled: { color: '#721c24', bg: '#f8d7da' },
+      pending: { color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
+      processing: { color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
+      shipped: { color: 'var(--success)', bg: 'var(--success-light)' },
+      delivered: { color: 'var(--success)', bg: 'var(--success-light)' },
+      cancelled: { color: 'var(--error)', bg: 'var(--error-light)' },
     };
     const s = map[status] || map.pending;
     return <span className="mg-badge" style={{ background: s.bg, color: s.color }}>{status}</span>;
@@ -222,43 +224,43 @@ const ManagePage: React.FC = () => {
             </div>
 
             <div className="manage-stats-grid">
-              <div className="manage-stat-card" style={{ borderLeft: '4px solid #1a472a' }}>
-                <div className="manage-stat-icon" style={{ background: '#e8f5e9' }}>{'\u{1F4E6}'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: '4px solid var(--success)' }}>
+                <div className="manage-stat-icon" style={{ background: 'var(--success-light)' }}>{'\u{1F4E6}'}</div>
                 <div>
                   <div className="manage-stat-value">{stats.totalProducts}</div>
                   <div className="manage-stat-label">Total Products</div>
                 </div>
               </div>
-              <div className="manage-stat-card" style={{ borderLeft: '4px solid #232f3e' }}>
-                <div className="manage-stat-icon" style={{ background: '#e3f2fd' }}>{'\u{1F4CB}'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: '4px solid var(--tertiary-dim)' }}>
+                <div className="manage-stat-icon" style={{ background: 'var(--tertiary-container)' }}>{'\u{1F4CB}'}</div>
                 <div>
                   <div className="manage-stat-value">{stats.totalOrders}</div>
                   <div className="manage-stat-label">Total Orders</div>
                 </div>
               </div>
-              <div className="manage-stat-card" style={{ borderLeft: '4px solid #067d62' }}>
-                <div className="manage-stat-icon" style={{ background: '#e0f2f1' }}>{'\u{1F4B5}'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: '4px solid var(--success)' }}>
+                <div className="manage-stat-icon" style={{ background: 'var(--success-light)' }}>{'\u{1F4B5}'}</div>
                 <div>
                   <div className="manage-stat-value">${stats.revenue.toFixed(2)}</div>
                   <div className="manage-stat-label">Total Revenue</div>
                 </div>
               </div>
-              <div className="manage-stat-card" style={{ borderLeft: `4px solid ${stats.lowStock > 0 ? '#b12704' : '#067d62'}` }}>
-                <div className="manage-stat-icon" style={{ background: stats.lowStock > 0 ? '#fbe9e7' : '#e8f5e9' }}>{'\u26A0'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: `4px solid ${stats.lowStock > 0 ? 'var(--error)' : 'var(--success)'}` }}>
+                <div className="manage-stat-icon" style={{ background: stats.lowStock > 0 ? 'var(--error-light)' : 'var(--success-light)' }}>{'\u26A0'}</div>
                 <div>
-                  <div className="manage-stat-value" style={{ color: stats.lowStock > 0 ? '#b12704' : '#067d62' }}>{stats.lowStock}</div>
+                  <div className="manage-stat-value" style={{ color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)' }}>{stats.lowStock}</div>
                   <div className="manage-stat-label">Low Stock Items</div>
                 </div>
               </div>
-              <div className="manage-stat-card" style={{ borderLeft: '4px solid #856404' }}>
-                <div className="manage-stat-icon" style={{ background: '#fff8e1' }}>{'\u{23F3}'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: '4px solid var(--on-secondary-container)' }}>
+                <div className="manage-stat-icon" style={{ background: 'var(--secondary-container)' }}>{'\u{23F3}'}</div>
                 <div>
                   <div className="manage-stat-value">{stats.pendingOrders}</div>
                   <div className="manage-stat-label">Pending Orders</div>
                 </div>
               </div>
-              <div className="manage-stat-card" style={{ borderLeft: '4px solid #1a237e' }}>
-                <div className="manage-stat-icon" style={{ background: '#e8eaf6' }}>{'\u{1F69A}'}</div>
+              <div className="manage-stat-card" style={{ borderLeft: '4px solid var(--tertiary-dim)' }}>
+                <div className="manage-stat-icon" style={{ background: 'var(--tertiary-container)' }}>{'\u{1F69A}'}</div>
                 <div>
                   <div className="manage-stat-value">{stats.shippedOrders}</div>
                   <div className="manage-stat-label">In Transit</div>
@@ -497,11 +499,11 @@ const ManagePage: React.FC = () => {
                 <h3>Order Status Breakdown</h3>
                 <div className="manage-bar-chart">
                   {[
-                    { label: 'Pending', value: stats.pendingOrders, color: '#856404', pct: orders.length ? (stats.pendingOrders / orders.length * 100) : 0 },
-                    { label: 'Processing', value: orders.filter(o => o.status === 'processing').length, color: '#004085', pct: orders.length ? (orders.filter(o => o.status === 'processing').length / orders.length * 100) : 0 },
-                    { label: 'Shipped', value: stats.shippedOrders, color: '#155724', pct: orders.length ? (stats.shippedOrders / orders.length * 100) : 0 },
-                    { label: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, color: '#067d62', pct: orders.length ? (orders.filter(o => o.status === 'delivered').length / orders.length * 100) : 0 },
-                    { label: 'Cancelled', value: orders.filter(o => o.status === 'cancelled').length, color: '#721c24', pct: orders.length ? (orders.filter(o => o.status === 'cancelled').length / orders.length * 100) : 0 },
+                    { label: 'Pending', value: stats.pendingOrders, color: 'var(--on-secondary-container)', pct: orders.length ? (stats.pendingOrders / orders.length * 100) : 0 },
+                    { label: 'Processing', value: orders.filter(o => o.status === 'processing').length, color: 'var(--tertiary-dim)', pct: orders.length ? (orders.filter(o => o.status === 'processing').length / orders.length * 100) : 0 },
+                    { label: 'Shipped', value: stats.shippedOrders, color: 'var(--success)', pct: orders.length ? (stats.shippedOrders / orders.length * 100) : 0 },
+                    { label: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, color: 'var(--success)', pct: orders.length ? (orders.filter(o => o.status === 'delivered').length / orders.length * 100) : 0 },
+                    { label: 'Cancelled', value: orders.filter(o => o.status === 'cancelled').length, color: 'var(--error)', pct: orders.length ? (orders.filter(o => o.status === 'cancelled').length / orders.length * 100) : 0 },
                   ].map((bar) => (
                     <div key={bar.label} className="manage-bar-row">
                       <span className="manage-bar-label">{bar.label}</span>
@@ -541,7 +543,7 @@ const ManagePage: React.FC = () => {
                   <div className="manage-metric">
                     <div className="manage-metric-icon">{'\u26A0'}</div>
                     <div>
-                      <div className="manage-metric-value" style={{ color: stats.lowStock > 0 ? '#b12704' : '#067d62' }}>{stats.lowStock}</div>
+                      <div className="manage-metric-value" style={{ color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)' }}>{stats.lowStock}</div>
                       <div className="manage-metric-label">Low Stock</div>
                     </div>
                   </div>
@@ -555,19 +557,24 @@ const ManagePage: React.FC = () => {
                     <span className="manage-revenue-label">Total Revenue</span>
                     <span className="manage-revenue-number">${stats.revenue.toFixed(2)}</span>
                   </div>
-                  <div className="manage-revenue-main" style={{ borderTop: '1px solid #eee', paddingTop: 16 }}>
+                  <div className="manage-revenue-main" style={{ borderTop: '1px solid var(--border-light)', paddingTop: 16 }}>
                     <span className="manage-revenue-label">Avg Order Value</span>
                     <span className="manage-revenue-number" style={{ fontSize: 22 }}>
                       ${orders.length ? (stats.revenue / orders.length).toFixed(2) : '0.00'}
                     </span>
                   </div>
                 </div>
-              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+      {activeTab === 'users' && (
+        <div className="manage-users animate-in">
+          <AdminUsersPage />
+        </div>
+      )}
     </div>
+  </div>
   );
 };
 

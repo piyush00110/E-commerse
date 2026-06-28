@@ -71,12 +71,12 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
           )}
         </div>
         {product.price < 25 && (
-          <span style={{ fontSize: 12, color: '#067d62', display: 'block', marginTop: 2 }}>
+          <span style={{ fontSize: 12, color: 'var(--success)', display: 'block', marginTop: 2 }}>
             {'\u{1F6CD}'} FREE delivery {primeDelivery}
           </span>
         )}
         {product.countInStock <= 5 && product.countInStock > 0 && (
-          <span style={{ fontSize: 12, color: '#cc0c39', display: 'block', marginTop: 2 }}>
+          <span style={{ fontSize: 12, color: 'var(--tertiary)', display: 'block', marginTop: 2 }}>
             Only {product.countInStock} left in stock - order soon.
           </span>
         )}

@@ -50,7 +50,7 @@ const OrdersPage: React.FC = () => {
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700 }}>My Orders</h1>
-        <p style={{ color: '#565959', fontSize: 14 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
           {orders.length === 0 ? 'You haven\'t placed any orders yet.' : `${orders.length} total ${orders.length === 1 ? 'order' : 'orders'}`}
         </p>
       </div>
@@ -73,15 +73,15 @@ const OrdersPage: React.FC = () => {
 
             return (
               <div key={order._id} onClick={() => navigate(`/orders/${order._id}`)}
-                style={{ background: 'white', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', transition: 'box-shadow 0.15s', border: '1px solid transparent' }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#ff9900')}
+                style={{ background: 'var(--surface)', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', transition: 'box-shadow 0.15s', border: '1px solid transparent' }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--tertiary)')}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'transparent')}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
                   <div>
                     <div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 600 }}>
                       Order #{order._id.slice(-8).toUpperCase()}
                     </div>
-                    <div style={{ fontSize: 13, color: '#565959' }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                       Placed on {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                   </div>
@@ -93,8 +93,8 @@ const OrdersPage: React.FC = () => {
                     <div key={idx} className="order-item-row">
                       <img src={item.image} alt="" />
                       <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 14, fontWeight: 500, color: '#007185' }}>{item.name}</span>
-                        <div style={{ fontSize: 13, color: '#565959' }}>Qty: {item.quantity}</div>
+                        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--tertiary)' }}>{item.name}</span>
+                        <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
                       </div>
                       <div style={{ fontWeight: 600 }}>${(item.price * item.quantity).toFixed(2)}</div>
                     </div>
@@ -105,27 +105,27 @@ const OrdersPage: React.FC = () => {
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{
                       padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600,
-                      background: order.isDelivered ? '#d4edda' : order.isPaid ? '#cce5ff' : '#fff3cd',
-                      color: order.isDelivered ? '#155724' : order.isPaid ? '#004085' : '#856404',
+                      background: order.isDelivered ? 'var(--success-light)' : order.isPaid ? 'var(--tertiary-container)' : 'var(--secondary-container)',
+                      color: order.isDelivered ? 'var(--success)' : order.isPaid ? 'var(--tertiary-dim)' : 'var(--on-secondary-container)',
                     }}>
                       {order.isDelivered ? 'Delivered' : order.isPaid ? 'Processing' : 'Pending'}
                     </span>
                     {order.isDelivered && order.deliveredAt && (
-                      <span style={{ fontSize: 13, color: '#565959' }}>
+                      <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                         Delivered {new Date(order.deliveredAt).toLocaleDateString()}
                       </span>
                     )}
-                    <span style={{ fontSize: 12, color: '#007185', fontWeight: 500 }}>
+                    <span style={{ fontSize: 12, color: 'var(--tertiary)', fontWeight: 500 }}>
                       View details {'\u2192'}
                     </span>
                   </div>
-                  <div style={{ fontSize: 13, color: '#565959' }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                     {order.paymentMethod?.replace('_', ' ')} | {order.shippingAddress?.city || 'N/A'}
                   </div>
                 </div>
 
                 {!order.isDelivered && (
-                  <div style={{ marginTop: 16, background: '#f8f9fa', borderRadius: 8, padding: 16 }}>
+                  <div style={{ marginTop: 16, background: 'var(--surface-dim)', borderRadius: 8, padding: 16 }}>
                     <div className="order-progress-bar">
                       {steps.map((step, idx) => {
                         const isComplete = idx <= currentIdx;

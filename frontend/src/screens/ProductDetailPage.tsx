@@ -91,7 +91,7 @@ const ProductDetailPage: React.FC = () => {
   const renderInteractiveStars = (current: number, onChange: (v: number) => void) => {
     return [1, 2, 3, 4, 5].map((s) => (
       <span key={s} onClick={() => onChange(s)}
-        style={{ cursor: 'pointer', fontSize: 24, color: s <= current ? '#febd69' : '#ddd', transition: 'color 0.15s' }}>
+        style={{ cursor: 'pointer', fontSize: 24, color: s <= current ? 'var(--rating-star)' : '#ddd', transition: 'color 0.15s' }}>
         {'\u2605'}
       </span>
     ));
@@ -255,7 +255,7 @@ const ProductDetailPage: React.FC = () => {
         </div>
 
         <div className="product-info">
-          {product.isFeatured && <div className="amazon-choice-badge">Amazon's Choice</div>}
+          {product.isFeatured && <div className="amazon-choice-badge">ShopSmart's Choice</div>}
           <h1>{product.name}</h1>
           <div className="product-info-rating">
             <span className="stars">{renderStars(product.rating)}</span>

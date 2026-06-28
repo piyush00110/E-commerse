@@ -662,19 +662,20 @@ input, select, textarea {
 .btn-primary {
   flex: 1;
   padding: 12px 24px;
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
-  color: var(--primary);
+  background: var(--tertiary);
+  color: white;
   border: none;
   border-radius: var(--radius);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: 0 2px 8px rgba(255,153,0,0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .btn-primary:hover {
+  background: var(--tertiary-dim);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255,153,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -683,7 +684,7 @@ input, select, textarea {
 .btn-secondary {
   flex: 1;
   padding: 12px 24px;
-  background: var(--bg);
+  background: var(--surface-container-low);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -693,8 +694,8 @@ input, select, textarea {
   transition: var(--transition);
 }
 .btn-secondary:hover {
-  background: #d5d9d9;
-  border-color: #bbb;
+  background: var(--surface-container-high);
+  border-color: var(--text-light);
 }
 
 /* Reviews */
@@ -2145,7 +2146,7 @@ input, select, textarea {
 /* Amazon's Choice Badge */
 .amazon-choice-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #232f3e, #37475a);
+  background: var(--tertiary);
   color: white;
   font-size: 11px;
   font-weight: 700;
@@ -2217,18 +2218,18 @@ input, select, textarea {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff6e5;
-  border: 1px dashed #ff9900;
+  background: var(--tertiary-container);
+  border: 1px dashed var(--tertiary);
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 12px;
   font-size: 13px;
   font-weight: 500;
-  color: #b12704;
+  color: var(--on-tertiary-container);
 }
 
 .coupon-icon {
-  background: #ff9900;
+  background: var(--tertiary);
   color: white;
   border-radius: 50%;
   width: 24px;
@@ -2255,7 +2256,7 @@ input, select, textarea {
 .price-box .current-price {
   font-size: 28px;
   font-weight: 700;
-  color: #b12704;
+  color: var(--tertiary);
 }
 
 /* Delivery Estimate */
@@ -2367,28 +2368,28 @@ input, select, textarea {
 
 .qty-add-section .btn-primary {
   flex: 1;
-  background: #ffd814;
-  border-color: #fcd200;
-  color: #0f1111;
+  background: var(--tertiary);
+  border-color: var(--tertiary);
+  color: white;
   font-size: 13px;
   padding: 8px 16px;
 }
 
 .qty-add-section .btn-primary:hover {
-  background: #f7ca00;
+  background: var(--tertiary-dim);
 }
 
 .qty-add-section .btn-secondary {
   flex: 1;
-  background: #ffa41c;
-  border-color: #ff8f00;
-  color: #0f1111;
+  background: var(--surface-container-low);
+  border-color: var(--border);
+  color: var(--text);
   font-size: 13px;
   padding: 8px 16px;
 }
 
 .qty-add-section .btn-secondary:hover {
-  background: #fa8900;
+  background: var(--surface-container-high);
 }
 
 /* Wishlist Toggle */
@@ -2410,15 +2411,15 @@ input, select, textarea {
 }
 
 .wishlist-toggle:hover {
-  background: #fff8f0;
-  border-color: #ff9900;
-  color: #c45500;
+  background: var(--secondary-container);
+  border-color: var(--tertiary);
+  color: var(--tertiary);
 }
 
 .wishlist-toggle.active {
-  color: #c45500;
-  border-color: #c45500;
-  background: #fff5f5;
+  color: var(--tertiary);
+  border-color: var(--tertiary);
+  background: var(--secondary-container);
 }
 
 /* Buy Box (right sidebar on product detail) */
@@ -2441,17 +2442,17 @@ input, select, textarea {
 .buy-now-amazon {
   width: 100%;
   padding: 10px;
-  background: #ffa41c;
-  border: 1px solid #ff8f00;
+  background: var(--tertiary);
+  border: 1px solid var(--tertiary);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #0f1111;
+  color: white;
   cursor: pointer;
   transition: background 0.15s;
 }
 
-.buy-now-amazon:hover { background: #fa8900; }
+.buy-now-amazon:hover { background: var(--tertiary-dim); }
 .buy-now-amazon:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .secure-transaction {
@@ -2514,6 +2515,7 @@ input, select, textarea {
 .review-big-score {
   font-size: 48px;
   font-weight: 700;
+  color: var(--text);
   line-height: 1;
 }
 
@@ -2551,7 +2553,7 @@ input, select, textarea {
 
 .histogram-bar-fill {
   height: 100%;
-  background: #febd69;
+  background: var(--rating-star);
   border-radius: 4px;
   transition: width 0.3s;
 }
@@ -2575,7 +2577,7 @@ input, select, textarea {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #232f3e;
+  background: var(--tertiary);
   color: white;
   display: flex;
   align-items: center;
@@ -3662,18 +3664,18 @@ input, select, textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, #1a0a0a, #2d1111);
-  border: 1px solid #cc0c39;
+  background: var(--tertiary-container);
+  border: 1px solid var(--tertiary);
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 12px;
 }
 .lightning-icon {
   font-size: 28px;
-  color: #ff9900;
+  color: var(--tertiary);
 }
 .lightning-deal-badge strong {
-  color: #ff9900;
+  color: var(--tertiary);
   font-size: 13px;
   display: block;
   margin-bottom: 2px;
