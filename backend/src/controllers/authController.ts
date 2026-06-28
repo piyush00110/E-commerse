@@ -1,7 +1,5 @@
 import { Response, NextFunction } from 'express';
-import bcrypt from 'bcryptjs';
-import { supabase } from '../config/supabase';
-import { generateToken } from '../utils/generateToken';
+import { supabase, supabaseAdmin } from '../config/supabase';
 import { ApiError } from '../utils/apiError';
 import { mapUser } from '../utils/mapFields';
 import { AuthRequest } from '../types';
@@ -10,26 +8,45 @@ export const register = async (req: AuthRequest, res: Response, next: NextFuncti
   try {
     const { name, email, password } = req.body;
 
-    const { data: existing } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
-    if (existing) {
-      throw new ApiError(400, 'User already exists');
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name, role: 'user' },
+    });
+
+    if (authError || !authData.user) {
+      if (authError?.message?.includes('already registered')) {
+        throw new ApiError(400, 'User already exists');
+      }
+      throw new ApiError(500, authError?.message || 'Failed to create user');
     }
 
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const userId = authData.user.id;
 
-    const { data: user, error } = await supabase
+    const { data: user, error: dbError } = await supabase
       .from('users')
-      .insert({ name, email, password: hashedPassword })
+      .insert({ id: userId, name, email, role: 'user' })
       .select('id, name, email, role')
       .single();
 
-    if (error || !user) throw new ApiError(500, 'Failed to create user');
+    if (dbError || !user) {
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+      throw new ApiError(500, 'Failed to create user profile');
+    }
 
-    const token = generateToken(user.id, user.role);
+    const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError || !sessionData.session) {
+      throw new ApiError(500, 'Failed to create session');
+    }
+
     res.status(201).json({
       success: true,
-      data: mapUser({ ...user, token }),
+      data: mapUser({ ...user, token: sessionData.session.access_token }),
     });
   } catch (error) {
     next(error);
@@ -40,20 +57,30 @@ export const login = async (req: AuthRequest, res: Response, next: NextFunction)
   try {
     const { email, password } = req.body;
 
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
+    const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (error || !user || !(await bcrypt.compare(password, user.password))) {
+    if (signInError || !sessionData.session) {
       throw new ApiError(401, 'Invalid email or password');
     }
 
-    const token = generateToken(user.id, user.role);
+    const userId = sessionData.user.id;
+
+    const { data: user, error: dbError } = await supabase
+      .from('users')
+      .select('id, name, email, role, avatar, address')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (dbError || !user) {
+      throw new ApiError(404, 'User not found');
+    }
+
     res.json({
       success: true,
-      data: mapUser({ ...user, token }),
+      data: mapUser({ ...user, token: sessionData.session.access_token }),
     });
   } catch (error) {
     next(error);
@@ -83,11 +110,23 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
     if (name) updates.name = name;
     if (email) updates.email = email;
     if (address) updates.address = address;
-    if (password) {
-      const salt = await bcrypt.genSalt(12);
-      updates.password = await bcrypt.hash(password, salt);
-    }
     updates.updated_at = new Date().toISOString();
+
+    if (email) {
+      const { error: emailError } = await supabaseAdmin.auth.admin.updateUserById(
+        req.user!.id,
+        { email }
+      );
+      if (emailError) throw new ApiError(500, emailError.message);
+    }
+
+    if (password) {
+      const { error: pwError } = await supabaseAdmin.auth.admin.updateUserById(
+        req.user!.id,
+        { password }
+      );
+      if (pwError) throw new ApiError(500, pwError.message);
+    }
 
     const { data: user, error } = await supabase
       .from('users')

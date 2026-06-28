@@ -1,8 +1,7 @@
 import app from './app';
 import { connectDB, disconnectDB } from './config/db';
 import { env } from './config/env';
-import { supabase } from './config/supabase';
-import bcrypt from 'bcryptjs';
+import { supabase, supabaseAdmin } from './config/supabase';
 
 const seedData = async (): Promise<void> => {
   const { count } = await supabase.from('users').select('*', { count: 'exact', head: true });
@@ -13,14 +12,26 @@ const seedData = async (): Promise<void> => {
 
   console.log('Seeding database with demo data...');
 
-  const salt = await bcrypt.genSalt(12);
-  const adminPw = await bcrypt.hash('admin123', salt);
-  const userPw = await bcrypt.hash('user123', salt);
+  const adminUser = await supabaseAdmin.auth.admin.createUser({
+    email: 'admin@shop.com',
+    password: 'admin123',
+    email_confirm: true,
+    user_metadata: { name: 'Admin', role: 'admin' },
+  });
 
-  await supabase.from('users').insert([
-    { name: 'Admin', email: 'admin@shop.com', password: adminPw, role: 'admin' },
-    { name: 'Test User', email: 'user@shop.com', password: userPw, role: 'user' },
-  ]);
+  const testUser = await supabaseAdmin.auth.admin.createUser({
+    email: 'user@shop.com',
+    password: 'user123',
+    email_confirm: true,
+    user_metadata: { name: 'Test User', role: 'user' },
+  });
+
+  if (adminUser.data.user && testUser.data.user) {
+    await supabase.from('users').insert([
+      { id: adminUser.data.user.id, name: 'Admin', email: 'admin@shop.com', role: 'admin' },
+      { id: testUser.data.user.id, name: 'Test User', email: 'user@shop.com', role: 'user' },
+    ]);
+  }
 
   const { data: categories } = await supabase.from('categories').insert([
     { name: 'Electronics', slug: 'electronics', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400' },

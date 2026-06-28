@@ -6,10 +6,9 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- 1. USERS
 CREATE TABLE users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   avatar TEXT,
   address JSONB,
