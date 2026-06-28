@@ -335,10 +335,15 @@ export const orderAPI = {
   },
 
   updateStatus: async (id: string, data: { status?: string; isDelivered?: boolean }) => {
-    const updates: Record<string, unknown> = { ...data, updated_at: new Date().toISOString() };
-    if (data.isDelivered) updates.delivered_at = new Date().toISOString();
-    const { error } = await db.from('orders').update(updates).eq('id', id);
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (data.status) updates.status = data.status;
+    if (data.isDelivered) {
+      updates.is_delivered = true;
+      updates.delivered_at = new Date().toISOString();
+    }
+    const { data: result, error } = await db.from('orders').update(updates).eq('id', id).select();
     if (error) throw { response: { data: { message: error.message } } };
+    if (!result || result.length === 0) throw { response: { data: { message: 'Order not found or permission denied' } } };
     return { data: { success: true } };
   },
 

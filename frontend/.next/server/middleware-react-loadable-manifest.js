@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components\\\\BuyerNavbar.tsx -> ../lib/supabase\":{\"id\":\"components\\\\BuyerNavbar.tsx -> ../lib/supabase\",\"files\":[]}}"
+self.__REACT_LOADABLE_MANIFEST='{"components\\\\BuyerNavbar.tsx -> ../lib/supabase":{"id":5526,"files":[]}}';
