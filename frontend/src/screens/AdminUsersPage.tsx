@@ -3,11 +3,11 @@ import { adminAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
 interface AdminUser {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   role: string;
-  created_at: string;
+  created_at?: string;
 }
 
 const AdminUsersPage: React.FC = () => {
@@ -35,7 +35,7 @@ const AdminUsersPage: React.FC = () => {
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
       await adminAPI.updateUserRole(userId, newRole);
-      setUsers(users.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
+      setUsers(users.map((u) => (u._id === userId ? { ...u, role: newRole } : u)));
       showToast(`User role updated to ${newRole}`, 'success');
     } catch (err: any) {
       showToast(err?.response?.data?.message || 'Failed to update role', 'error');
@@ -123,7 +123,7 @@ const AdminUsersPage: React.FC = () => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+              <tr key={user._id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={{ padding: '14px 16px', fontWeight: 500, color: 'var(--text)' }}>{user.name}</td>
                 <td style={{ padding: '14px 16px', color: 'var(--text-secondary)' }}>{user.email}</td>
                 <td style={{ padding: '14px 16px' }}>
@@ -136,11 +136,11 @@ const AdminUsersPage: React.FC = () => {
                   </span>
                 </td>
                 <td style={{ padding: '14px 16px', color: 'var(--text-secondary)', fontSize: 13 }}>
-                  {new Date(user.created_at).toLocaleDateString()}
+                  {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
                 </td>
                 <td style={{ padding: '14px 16px' }}>
                   {user.role === 'admin' ? (
-                    <button onClick={() => handleRoleChange(user.id, 'user')}
+                    <button onClick={() => handleRoleChange(user._id, 'user')}
                       style={{
                         padding: '6px 14px', background: 'var(--error-light)', color: 'var(--error)',
                         border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
@@ -148,7 +148,7 @@ const AdminUsersPage: React.FC = () => {
                       Demote to User
                     </button>
                   ) : (
-                    <button onClick={() => handleRoleChange(user.id, 'admin')}
+                    <button onClick={() => handleRoleChange(user._id, 'admin')}
                       style={{
                         padding: '6px 14px', background: 'var(--tertiary-container)', color: 'var(--tertiary-dim)',
                         border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',

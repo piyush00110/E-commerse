@@ -36,7 +36,7 @@ const AddProductPage: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const res = await categoryAPI.getAll();
-        if (res.data?.data?.length) setCategories(res.data.data);
+        if (res.data?.data?.length) setCategories(res.data.data as unknown as Category[]);
       } catch {
         console.error('Failed to load categories');
       } finally {

@@ -43,9 +43,9 @@ const AccountPage: React.FC = () => {
         authAPI.getProfile(),
         orderAPI.getMine(),
       ]);
-      const u = profileRes.data.data;
+      const u = profileRes.data.data as Record<string, unknown>;
       setUser(u);
-      setForm({ name: u.name, email: u.email });
+      setForm({ name: u.name as string, email: u.email as string });
       setOrders(orderRes.data.data);
     } catch { /* ignore */ }
     finally { setLoading(false); }

@@ -1,4 +1,7 @@
 {
   "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(buyer)/page": "app/(buyer)/page.js"
+  "/(buyer)/products/page": "app/(buyer)/products/page.js",
+  "/(seller)/seller/products/add/page": "app/(seller)/seller/products/add/page.js",
+  "/(buyer)/page": "app/(buyer)/page.js",
+  "/(admin)/manage/page": "app/(admin)/manage/page.js"
 }

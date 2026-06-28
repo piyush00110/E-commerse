@@ -23,7 +23,7 @@ const SellPage: React.FC = () => {
 
   useEffect(() => {
     categoryAPI.getAll().then((res) => {
-      if (res.data?.data?.length) setCategories(res.data.data);
+      if (res.data?.data?.length) setCategories(res.data.data as Category[]);
     }).catch(() => {});
   }, []);
 

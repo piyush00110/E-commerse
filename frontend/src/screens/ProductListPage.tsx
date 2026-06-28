@@ -31,7 +31,7 @@ const ProductListPage: React.FC = () => {
   const search = searchParams.get('search') || '';
 
   useEffect(() => {
-    categoryAPI.getAll().then((res) => setCategories(res.data.data)).catch(() => {});
+    categoryAPI.getAll().then((res) => setCategories(res.data.data as Category[])).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -99,8 +99,11 @@ const ProductListPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', gap: 24, position: 'relative' }}>
+        {showFilters && (
+          <div className="mobile-filter-overlay" onClick={() => setShowFilters(false)} />
+        )}
         <button onClick={() => setShowFilters(!showFilters)}
-          style={{ display: 'none', padding: '8px 16px', background: 'var(--text)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
+          style={{ padding: '8px 16px', background: 'var(--text)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
           className="mobile-filter-btn">
           {showFilters ? 'Hide Filters' : 'Show Filters'} &#9660;
         </button>
@@ -108,8 +111,7 @@ const ProductListPage: React.FC = () => {
         <div style={{
           width: 260, minWidth: 260, background: 'white', borderRadius: 12, padding: 20,
           boxShadow: '0 2px 8px rgba(0,0,0,0.08)', height: 'fit-content', position: 'sticky', top: 80,
-          display: showFilters ? 'block' : 'block',
-        }} className="filter-sidebar">
+        }} className={`filter-sidebar${showFilters ? ' open' : ''}`}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h3 style={{ fontSize: 16, fontWeight: 700 }}>Filters</h3>
             {hasFilters && (
@@ -182,7 +184,7 @@ const ProductListPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button onClick={() => setShowFilters(!showFilters)}
-                style={{ padding: '8px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer', display: 'none' }}
+                style={{ padding: '8px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer' }}
                 className="mobile-filter-btn2">
                 &#9776; Filters
               </button>

@@ -30,7 +30,7 @@ const SellerAddProduct: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const res = await categoryAPI.getAll();
-        if (res.data?.data?.length) setCategories(res.data.data);
+        if (res.data?.data?.length) setCategories(res.data.data as Category[]);
       } catch { /* ignore */ }
       finally { setLoading(false); }
     };

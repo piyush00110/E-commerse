@@ -62,7 +62,9 @@ const BuyerNavbar: React.FC = () => {
     if (searchQuery.trim()) navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const { supabase } = await import('../lib/supabase');
+    await supabase.auth.signOut();
     localStorage.removeItem('user');
     setUser(null);
     navigate('/');
@@ -81,7 +83,7 @@ const BuyerNavbar: React.FC = () => {
       borderBottom: '1px solid var(--border-light)',
       boxShadow: 'var(--shadow-sm)',
     }}>
-      <div style={{
+      <div className="navbar-main" style={{
         display: 'flex', alignItems: 'center', gap: 16,
         padding: '10px 24px', maxWidth: 1440, margin: '0 auto',
       }}>
@@ -95,7 +97,7 @@ const BuyerNavbar: React.FC = () => {
           </svg>
         </button>
 
-        <Link to="/" style={{
+        <Link to="/" className="navbar-logo" style={{
           fontSize: 22, fontWeight: 800, color: 'var(--tertiary)',
           whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', textDecoration: 'none',
           letterSpacing: '-0.5px',
@@ -103,7 +105,7 @@ const BuyerNavbar: React.FC = () => {
           Shop<span style={{ color: 'var(--secondary)', fontWeight: 300 }}>Smart</span>
         </Link>
 
-        <div onClick={() => setShowCityPicker(!showCityPicker)} style={{
+        <div className="navbar-location" onClick={() => setShowCityPicker(!showCityPicker)} style={{
           position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
           cursor: 'pointer', flexShrink: 0, padding: '4px 6px', borderRadius: 6,
         }}>
@@ -136,7 +138,7 @@ const BuyerNavbar: React.FC = () => {
           )}
         </div>
 
-        <form onSubmit={handleSearch} style={{
+        <form onSubmit={handleSearch} className="navbar-search" style={{
           flex: 1, display: 'flex', maxWidth: 600, margin: '0 16px',
         }}>
           <input
@@ -161,7 +163,7 @@ const BuyerNavbar: React.FC = () => {
           </button>
         </form>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="navbar-links" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {user ? (
             <>
               <Link to="/orders" style={{
@@ -172,7 +174,7 @@ const BuyerNavbar: React.FC = () => {
                 <strong style={{ fontSize: 13, color: 'var(--text)' }}>& Orders</strong>
               </Link>
               <div style={{ position: 'relative', cursor: 'pointer' }}
-                className="navbar-account-toggle">
+                className="navbar-account-toggle navbar-link">
                 <span style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.2 }}>
                   Hello, {user.name.split(' ')[0]}
                 </span>
@@ -223,7 +225,7 @@ const BuyerNavbar: React.FC = () => {
           <div ref={miniCartRef} style={{ position: 'relative' }}
             onMouseEnter={() => setShowMiniCart(true)}
             onMouseLeave={() => setShowMiniCart(false)}>
-            <Link to="/cart" style={{
+            <Link to="/cart" className="navbar-cart" style={{
               position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
               color: 'var(--text)', textDecoration: 'none', padding: '4px 6px', borderRadius: 6,
             }}>
@@ -273,6 +275,10 @@ const BuyerNavbar: React.FC = () => {
         </div>
       </div>
 
+      {menuOpen && (
+        <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1999 }} />
+      )}
       {menuOpen && (
         <div style={{
           position: 'fixed', top: 0, left: 0, bottom: 0, width: 280,

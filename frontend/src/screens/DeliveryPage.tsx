@@ -47,7 +47,7 @@ const DeliveryPage: React.FC = () => {
     try {
       const res = await orderAPI.getAll();
       const all = res.data.data || [];
-      setShipped(all.filter((o: DeliveryOrder) => o.status === 'shipped' || o.status === 'processing'));
+      setShipped((all as DeliveryOrder[]).filter((o) => o.status === 'shipped' || o.status === 'processing'));
     } catch { showToast('Failed to load deliveries', 'error'); }
     finally { setLoading(false); }
   };
