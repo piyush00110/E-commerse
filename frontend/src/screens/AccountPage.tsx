@@ -206,7 +206,7 @@ const AccountPage: React.FC = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h2 style={{ fontSize: 18 }}>My Addresses</h2>
           <button onClick={() => { setShowAddrForm(!showAddrForm); setEditAddrId(null); setAddrForm({ street: '', city: '', state: '', zip: '', phone: '' }); }}
-            style={{ padding: '6px 14px', background: 'var(--tertiary-dim)', color: 'white', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+            style={{ padding: '6px 14px', background: 'var(--tertiary-dim)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
             + Add Address
           </button>
         </div>

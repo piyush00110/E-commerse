@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { productAPI, categoryAPI } from '../services/api';
@@ -27,9 +27,20 @@ const ProductListPage: React.FC = () => {
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [ratingFilter, setRatingFilter] = useState('');
+  const [debouncedPriceMin, setDebouncedPriceMin] = useState('');
+  const [debouncedPriceMax, setDebouncedPriceMax] = useState('');
+  const priceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const category = searchParams.get('category') || '';
   const search = searchParams.get('search') || '';
+
+  const debouncedSetPrice = useCallback((min: string, max: string) => {
+    if (priceTimer.current) clearTimeout(priceTimer.current);
+    priceTimer.current = setTimeout(() => {
+      setDebouncedPriceMin(min);
+      setDebouncedPriceMax(max);
+    }, 500);
+  }, []);
 
   useEffect(() => {
     categoryAPI.getAll().then((res) => setCategories(res.data.data as Category[])).catch(() => {});
@@ -39,11 +50,11 @@ const ProductListPage: React.FC = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const params: Record<string, string | number> = { page, limit: 200, sort };
+        const params: Record<string, string | number> = { page, limit: 20, sort };
         if (category) params.category = category;
         if (search) params.search = search;
-        if (priceMin) params.minPrice = priceMin;
-        if (priceMax) params.maxPrice = priceMax;
+        if (debouncedPriceMin) params.minPrice = debouncedPriceMin;
+        if (debouncedPriceMax) params.maxPrice = debouncedPriceMax;
         if (ratingFilter) params.rating = ratingFilter;
         const res = await productAPI.getAll(params);
         setProducts(res.data.data);
@@ -53,10 +64,10 @@ const ProductListPage: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchProducts();
-  }, [page, sort, category, search, priceMin, priceMax, ratingFilter]);
+  }, [page, sort, category, search, debouncedPriceMin, debouncedPriceMax, ratingFilter]);
 
   const handleClearFilters = () => {
-    setPriceMin(''); setPriceMax(''); setRatingFilter(''); setPage(1);
+    setPriceMin(''); setPriceMax(''); setDebouncedPriceMin(''); setDebouncedPriceMax(''); setRatingFilter(''); setPage(1);
   };
 
   const hasFilters = priceMin || priceMax || ratingFilter;
@@ -104,7 +115,7 @@ const ProductListPage: React.FC = () => {
           <div className="mobile-filter-overlay" onClick={() => setShowFilters(false)} />
         )}
         <button onClick={() => setShowFilters(!showFilters)}
-          style={{ padding: '8px 16px', background: 'var(--text)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
+          style={{ padding: '8px 16px', background: 'var(--text)', color: 'var(--text-white)', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}
           className="mobile-filter-btn">
           {showFilters ? 'Hide Filters' : 'Show Filters'} &#9660;
         </button>
@@ -150,11 +161,11 @@ const ProductListPage: React.FC = () => {
             <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Price</h4>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <input type="number" placeholder="Min" value={priceMin}
-                onChange={(e) => { setPriceMin(e.target.value); setPage(1); }}
+                onChange={(e) => { setPriceMin(e.target.value); setPage(1); debouncedSetPrice(e.target.value, priceMax); }}
                 style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13 }} />
               <span style={{ color: 'var(--text-secondary)' }}>-</span>
               <input type="number" placeholder="Max" value={priceMax}
-                onChange={(e) => { setPriceMax(e.target.value); setPage(1); }}
+                onChange={(e) => { setPriceMax(e.target.value); setPage(1); debouncedSetPrice(priceMin, e.target.value); }}
                 style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13 }} />
             </div>
           </div>

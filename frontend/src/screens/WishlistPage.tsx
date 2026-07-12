@@ -66,7 +66,7 @@ const WishlistPage: React.FC = () => {
             return (
               <div key={product._id} className="product-card" style={{ position: 'relative' }}>
                 <button onClick={() => handleRemove(product._id)}
-                  style={{ position: 'absolute', top: 8, right: 8, background: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: 16, cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.15)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--error)' }}>
+                  style={{ position: 'absolute', top: 8, right: 8, background: 'var(--bg-card)', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: 16, cursor: 'pointer', boxShadow: 'var(--shadow-sm)', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--error)' }}>
                   {'\u2764'}
                 </button>
                 <Link to={`/products/${product._id}`} style={{ display: 'block' }}>

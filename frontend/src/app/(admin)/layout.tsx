@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <button onClick={() => navigate('/')}
           style={{
             padding: '6px 14px', background: 'var(--tertiary)', border: 'none',
-            borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'white',
+            borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-white)',
           }}>
           {'\u2190'} Main Store
         </button>

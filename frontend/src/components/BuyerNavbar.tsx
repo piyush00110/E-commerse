@@ -49,7 +49,7 @@ const BuyerNavbar: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
-    const interval = setInterval(fetchCart, 30000);
+    const interval = setInterval(fetchCart, 120000);
     return () => clearInterval(interval);
   }, []);
 
@@ -163,7 +163,7 @@ const BuyerNavbar: React.FC = () => {
           />
           <button type="submit" aria-label="Search" style={{
             padding: '9px 16px', background: 'var(--tertiary)', border: 'none',
-            borderRadius: '0 8px 8px 0', color: 'white', cursor: 'pointer',
+            borderRadius: '0 8px 8px 0', color: 'var(--text-white)', cursor: 'pointer',
             display: 'flex', alignItems: 'center',
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="white">

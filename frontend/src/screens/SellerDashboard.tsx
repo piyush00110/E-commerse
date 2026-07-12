@@ -48,7 +48,7 @@ const SellerDashboard: React.FC = () => {
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Manage your store and track performance</p>
         </div>
         <Link to="/seller/products/add">
-          <button style={{ padding: '12px 24px', background: 'var(--tertiary)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+          <button style={{ padding: '12px 24px', background: 'var(--tertiary)', color: 'var(--text-white)', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
             + Add New Product
           </button>
         </Link>

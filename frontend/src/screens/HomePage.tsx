@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import CountdownTimer from '../components/CountdownTimer';
@@ -41,6 +41,7 @@ const HomePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [recent, setRecent] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [dealEndDates, setDealEndDates] = useState<Date[]>([]);
   const [loading, setLoading] = useState(true);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -70,7 +71,7 @@ const HomePage: React.FC = () => {
         const [prodRes, catRes, allRes] = await Promise.all([
           productAPI.getFeatured(),
           categoryAPI.getAll(),
-          productAPI.getAll({ limit: 200, sort: '-created_at' }),
+          productAPI.getAll({ limit: 50, sort: '-created_at' }),
         ]);
         setFeatured(prodRes.data.data);
         setCategories(catRes.data.data);
@@ -84,6 +85,7 @@ const HomePage: React.FC = () => {
           return bDisc - aDisc;
         }).slice(0, 8);
         setDeals(filtered);
+        setDealEndDates(filtered.map(() => new Date(Date.now() + (3 + Math.random() * 5) * 3600000)));
       } catch (err) {
         console.error('Failed to load data', err);
       } finally {
@@ -187,13 +189,13 @@ const HomePage: React.FC = () => {
           </div>
           <div className="deals-carousel">
             <div className="deals-scroll">
-              {deals.map((product) => {
+              {deals.map((product, idx) => {
                 const discount = Math.round(((product.comparePrice! - product.price) / product.comparePrice!) * 100);
                 return (
                   <div key={product._id} className="deal-card" onClick={() => navigate(`/products/${product._id}`)}>
                     <div className="deal-badge">-{discount}%</div>
                     <div className="deal-countdown" style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
-                      <CountdownTimer endDate={new Date(Date.now() + (3 + Math.random() * 5) * 3600000)} size="small" />
+                      <CountdownTimer endDate={dealEndDates[idx] || new Date()} size="small" />
                     </div>
                     <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
                     <div className="deal-info">

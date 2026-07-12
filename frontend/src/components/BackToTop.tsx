@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const BackToTop: React.FC = () => {
   const [visible, setVisible] = useState(false);
+  const ticking = useRef(false);
 
   useEffect(() => {
-    const toggle = () => setVisible(window.scrollY > 400);
-    window.addEventListener('scroll', toggle);
+    const toggle = () => {
+      if (!ticking.current) {
+        requestAnimationFrame(() => {
+          setVisible(window.scrollY > 400);
+          ticking.current = false;
+        });
+        ticking.current = true;
+      }
+    };
+    window.addEventListener('scroll', toggle, { passive: true });
     return () => window.removeEventListener('scroll', toggle);
   }, []);
 

@@ -3202,11 +3202,6 @@ input, select, textarea {
   width: 200%;
   height: 200%;
   background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-  animation: badgeShine 3s ease-in-out infinite;
-}
-@keyframes badgeShine {
-  0% { transform: translateX(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) rotate(45deg); }
 }
 
 .card-badge-choice {
@@ -8151,7 +8146,7 @@ img[loading="lazy"]:not([src=""]) {
 /* Premium button styles */
 .btn-primary {
   background: linear-gradient(135deg, var(--tertiary-dim) 0%, var(--accent-dark) 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   padding: 12px 24px;
   border-radius: var(--radius);
@@ -8203,7 +8198,7 @@ img[loading="lazy"]:not([src=""]) {
 
 .submit-btn {
   background: linear-gradient(135deg, var(--tertiary-dim) 0%, var(--accent-dark) 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   padding: 14px 32px;
   border-radius: var(--radius);
@@ -8419,9 +8414,21 @@ img[loading="lazy"]:not([src=""]) {
   background: var(--text-light);
 }
 
-/* Premium transitions for theme switching */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+/* Theme transition — scoped to elements that need it, NOT * selector */
+body,
+.navbar,
+.navbar-main,
+.btn-primary,
+.btn-secondary,
+.card,
+.hero,
+.hero-cta,
+.card-badge,
+.mini-cart-dropdown,
+.account-dropdown,
+.city-dropdown,
+.product-grid {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 /* Fix overlapping: Ensure proper z-index hierarchy */
@@ -8438,9 +8445,6 @@ img[loading="lazy"]:not([src=""]) {
 /* Fix hero shape overflow */
 .hero {
   overflow: hidden;
-}
-.hero-shape {
-  animation: heroFloat 6s ease-in-out infinite;
 }
 
 /* Premium badge styles */
@@ -8602,7 +8606,7 @@ img[loading="lazy"]:not([src=""]) {
 }
 .quantity-selector button:hover:not(:disabled) {
   background: var(--tertiary-dim);
-  color: white;
+  color: var(--text-white);
 }
 .quantity-selector button:disabled {
   opacity: 0.4;
@@ -8780,7 +8784,7 @@ img[loading="lazy"]:not([src=""]) {
 }
 .seller-orders-tab.active {
   background: var(--tertiary-dim);
-  color: white;
+  color: var(--text-white);
   border-color: var(--tertiary-dim);
 }
 

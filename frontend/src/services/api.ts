@@ -7,7 +7,8 @@ const db = supabase as any;
 function getStoredUser() {
   if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem('user');
-  return raw ? JSON.parse(raw) : null;
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
 }
 
 function setStoredUser(user: Record<string, unknown> | null) {

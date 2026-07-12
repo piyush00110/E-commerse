@@ -148,7 +148,7 @@ const ShippingManagePage: React.FC = () => {
 
       {/* Orders */}
       {filtered.length === 0 ? (
-        <div className="empty-state" style={{ background: 'white', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+        <div className="empty-state" style={{ background: 'var(--bg-card)', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: 48, marginBottom: 8 }}>{'\u{1F4ED}'}</div>
           <h3>No {activeTab} orders</h3>
           <p style={{ color: 'var(--text-secondary)' }}>All orders in this status are cleared.</p>

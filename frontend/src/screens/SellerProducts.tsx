@@ -11,7 +11,7 @@ const SellerProducts: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await productAPI.getAll({ limit: 1000 });
+        const res = await productAPI.getAll({ limit: 50 });
         setProducts(res.data.data);
       } catch (err) {
         console.error('Failed to load products', err);
@@ -75,7 +75,7 @@ const SellerProducts: React.FC = () => {
           <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{products.length} products in your store</p>
         </div>
         <Link to="/seller/products/add">
-          <button style={{ padding: '12px 24px', background: 'var(--success)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+          <button style={{ padding: '12px 24px', background: 'var(--success)', color: 'var(--text-white)', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
             + Add Product
           </button>
         </Link>
@@ -87,7 +87,7 @@ const SellerProducts: React.FC = () => {
           <h2 style={{ marginBottom: 8 }}>No products yet</h2>
           <p style={{ marginBottom: 24 }}>Start adding products to your store.</p>
           <Link to="/seller/products/add">
-            <button style={{ padding: '12px 32px', background: 'var(--success)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+            <button style={{ padding: '12px 32px', background: 'var(--success)', color: 'var(--text-white)', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
               Add Your First Product
             </button>
           </Link>
@@ -136,11 +136,11 @@ const SellerProducts: React.FC = () => {
                       </td>
                       <td style={{ padding: '12px 16px', display: 'flex', gap: 8 }}>
                         <button onClick={() => saveEdit(p._id)}
-                          style={{ padding: '6px 14px', background: 'var(--success)', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
+                          style={{ padding: '6px 14px', background: 'var(--success)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
                           Save
                         </button>
                         <button onClick={cancelEdit}
-                          style={{ padding: '6px 14px', background: 'var(--text-light)', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
+                          style={{ padding: '6px 14px', background: 'var(--text-light)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
                           Cancel
                         </button>
                       </td>
@@ -174,11 +174,11 @@ const SellerProducts: React.FC = () => {
                       </td>
                       <td style={{ padding: '12px 16px', display: 'flex', gap: 8 }}>
                         <button onClick={() => startEdit(p)}
-                          style={{ padding: '6px 14px', background: 'var(--tertiary-dim)', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
+                          style={{ padding: '6px 14px', background: 'var(--tertiary-dim)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
                           Edit
                         </button>
                         <button onClick={() => handleDelete(p._id)}
-                          style={{ padding: '6px 14px', background: 'var(--error)', color: 'white', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
+                          style={{ padding: '6px 14px', background: 'var(--error)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
                           Delete
                         </button>
                       </td>

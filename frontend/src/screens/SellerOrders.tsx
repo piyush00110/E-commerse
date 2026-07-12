@@ -377,7 +377,7 @@ const SellerOrders: React.FC = () => {
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={() => openPdfForm()}
             style={{
-              padding: '10px 20px', background: 'var(--tertiary-dim)', color: 'white',
+              padding: '10px 20px', background: 'var(--tertiary-dim)', color: 'var(--text-white)',
               border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
@@ -484,14 +484,14 @@ const SellerOrders: React.FC = () => {
               <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
                 <button onClick={generatePdf}
                   style={{
-                    flex: 1, padding: '12px 20px', background: 'var(--tertiary-dim)', color: 'white',
+                    flex: 1, padding: '12px 20px', background: 'var(--tertiary-dim)', color: 'var(--text-white)',
                     border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer',
                   }}>
                   Print / Preview
                 </button>
                 <button onClick={downloadPdf}
                   style={{
-                    flex: 1, padding: '12px 20px', background: 'var(--success)', color: 'white',
+                    flex: 1, padding: '12px 20px', background: 'var(--success)', color: 'var(--text-white)',
                     border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer',
                   }}>
                   Download File

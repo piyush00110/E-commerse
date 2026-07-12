@@ -9,7 +9,9 @@ interface Props {
   badge?: 'bestseller' | 'amazons_choice' | null;
 }
 
-const ProductCard: React.FC<Props> = ({ product, badge }) => {
+const PRIME_DELIVERY_DATE = new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -38,8 +40,6 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
       showToast('Failed to add to cart', 'error');
     }
   };
-
-  const primeDelivery = new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   return (
     <div className="product-card" onClick={() => navigate(`/products/${product._id}`)}>
@@ -72,7 +72,7 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
         </div>
         {product.price < 25 && (
           <span style={{ fontSize: 12, color: 'var(--success)', display: 'block', marginTop: 2 }}>
-            {'\u{1F6CD}'} FREE delivery {primeDelivery}
+            {'\u{1F6CD}'} FREE delivery {PRIME_DELIVERY_DATE}
           </span>
         )}
         {product.countInStock <= 5 && product.countInStock > 0 && (
@@ -86,6 +86,6 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ProductCard;

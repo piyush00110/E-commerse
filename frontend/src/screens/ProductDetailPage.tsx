@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { productAPI, cartAPI, wishlistAPI } from '../services/api';
 import { Product, Review } from '../types';
@@ -32,7 +32,7 @@ const ProductDetailPage: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [reviewImages, setReviewImages] = useState<string[]>([]);
   const [reviewImageUrl, setReviewImageUrl] = useState('');
-  const lightningDealEnd = new Date(Date.now() + 4 * 3600000 + 30 * 60000);
+  const lightningDealEnd = useMemo(() => new Date(Date.now() + 4 * 3600000 + 30 * 60000), []);
 
   useEffect(() => {
     if (!id) { navigate('/products'); return; }
@@ -189,6 +189,13 @@ const ProductDetailPage: React.FC = () => {
       default: return reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
   };
+
+  const sortedReviews = useMemo(() => getSortedReviews(), [product, sortReviews]);
+
+  const reviewImagesMap = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('reviewImages') || '{}') as Record<string, string[]>; }
+    catch { return {} as Record<string, string[]>; }
+  }, [product]);
 
   const getStarDistribution = () => {
     if (!product?.reviews || product.reviews.length === 0) return [];
@@ -459,11 +466,8 @@ const ProductDetailPage: React.FC = () => {
             </div>
 
             <div className="reviews-list">
-              {getSortedReviews().map((review) => {
-                let stored: Record<string, string[]> = {};
-                try { stored = JSON.parse(localStorage.getItem('reviewImages') || '{}'); } catch { stored = {}; }
-                const key = `product_${id}`;
-                const imgs = stored[key] || [];
+              {sortedReviews.map((review) => {
+                const imgs = reviewImagesMap[`product_${id}`] || [];
                 return (
                   <div key={review._id} className="review-card">
                     <div className="review-header">

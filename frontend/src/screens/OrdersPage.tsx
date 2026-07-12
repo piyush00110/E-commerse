@@ -49,7 +49,7 @@ const OrdersPage: React.FC = () => {
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700 }}>My Orders</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: 'var(--text)' }}>My Orders</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
           {orders.length === 0 ? 'You haven\'t placed any orders yet.' : `${orders.length} total ${orders.length === 1 ? 'order' : 'orders'}`}
         </p>

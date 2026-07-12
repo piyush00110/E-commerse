@@ -66,7 +66,7 @@ const AdminUsersPage: React.FC = () => {
         </div>
         <button onClick={() => setShowCreateForm(!showCreateForm)}
           style={{
-            padding: '10px 20px', background: 'var(--tertiary)', color: 'white',
+            padding: '10px 20px', background: 'var(--tertiary)', color: 'var(--text-white)',
             border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer',
           }}>
           + Create Admin
@@ -100,7 +100,7 @@ const AdminUsersPage: React.FC = () => {
                 placeholder="Min 6 chars" required minLength={6} />
             </div>
             <button type="submit"
-              style={{ padding: '10px 24px', background: 'var(--success)', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              style={{ padding: '10px 24px', background: 'var(--success)', color: 'var(--text-white)', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               Create
             </button>
           </div>

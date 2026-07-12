@@ -111,7 +111,7 @@ const TrackingPage: React.FC = () => {
                   <div className="tracking-icon-wrapper">
                     <div className="tracking-icon" style={{
                       background: isPast ? 'var(--success)' : isLatest ? 'var(--tertiary)' : 'var(--surface-container)',
-                      color: isPast || isLatest ? 'white' : 'var(--text-secondary)',
+                      color: isPast || isLatest ? 'var(--text-white)' : 'var(--text-secondary)',
                     }}>
                       {event.icon}
                     </div>

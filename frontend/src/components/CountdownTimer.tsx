@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Props {
   endDate: Date;
@@ -8,22 +8,30 @@ interface Props {
 const CountdownTimer: React.FC<Props> = ({ endDate, size = 'small' }) => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [expired, setExpired] = useState(false);
+  const endRef = useRef(endDate.getTime());
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!initialized.current) {
+      endRef.current = endDate.getTime();
+      initialized.current = true;
+    }
+  }, [endDate]);
 
   useEffect(() => {
     const calc = () => {
-      const now = new Date().getTime();
-      const end = new Date(endDate).getTime();
-      const diff = end - now;
+      const now = Date.now();
+      const diff = endRef.current - now;
       if (diff <= 0) { setExpired(true); return; }
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
       setTimeLeft({ hours, minutes, seconds });
     };
     calc();
     const timer = setInterval(calc, 1000);
     return () => clearInterval(timer);
-  }, [endDate]);
+  }, []);
 
   if (expired) return <span className="countdown-expired">Deal ended</span>;
 
