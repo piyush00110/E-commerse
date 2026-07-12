@@ -29,9 +29,11 @@ const SellPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const existing = JSON.parse(localStorage.getItem('sellerApplications') || '[]');
-    existing.push({ ...form, id: Date.now(), date: new Date().toISOString() });
-    localStorage.setItem('sellerApplications', JSON.stringify(existing));
+    try {
+      const existing = JSON.parse(localStorage.getItem('sellerApplications') || '[]');
+      existing.push({ ...form, id: Date.now(), date: new Date().toISOString() });
+      localStorage.setItem('sellerApplications', JSON.stringify(existing));
+    } catch { /* ignore corrupted data */ }
     setSubmitted(true);
     showToast('Application submitted successfully!', 'success');
   };

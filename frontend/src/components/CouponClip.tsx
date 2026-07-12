@@ -36,6 +36,7 @@ const CouponClip: React.FC<Props> = ({ productPrice, productName }) => {
   const isClipped = (code: string) => clipped.some((c) => c.code === code);
 
   const handleClip = (coupon: Coupon) => {
+    if (isClipped(coupon.code)) return;
     const updated = [...clipped, coupon];
     setClipped(updated);
     saveAppliedCoupons(updated);

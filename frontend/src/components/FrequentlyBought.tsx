@@ -63,7 +63,7 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
                     {selected.includes(item._id) ? '\u2713' : ''}
                   </div>
                 </div>
-                <img src={item.images[0]} alt={item.name} onClick={(e) => { e.stopPropagation(); navigate(`/products/${item._id}`); }} />
+                <img src={item.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'} alt={item.name} onClick={(e) => { e.stopPropagation(); navigate(`/products/${item._id}`); }} />
                 <div className="fbt-item-info">
                   <div className="fbt-item-name">{item.name}</div>
                   <div className="fbt-item-price">${item.price.toFixed(2)}</div>

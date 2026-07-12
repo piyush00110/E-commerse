@@ -9,11 +9,7 @@ const Footer: React.FC = () => {
       padding: '48px 24px 24px',
       marginTop: 48,
     }}>
-      <div style={{
-        maxWidth: 1440, margin: '0 auto',
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 40,
-      }}>
+      <div className="footer-content">
         <div>
           <h4 style={{
             fontSize: 15, fontWeight: 700, marginBottom: 16,

@@ -71,7 +71,7 @@ const WishlistPage: React.FC = () => {
                 </button>
                 <Link to={`/products/${product._id}`} style={{ display: 'block' }}>
                   <div className="product-card-image">
-                    <img src={product.images?.[0]} alt={product.name} />
+                    <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
                   </div>
                 </Link>
                 <div className="product-card-body">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { productAPI, categoryAPI } from '../services/api';
 import { Product, Category } from '../types';
@@ -15,6 +15,7 @@ const SORT_OPTIONS = [
 
 const ProductListPage: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +75,7 @@ const ProductListPage: React.FC = () => {
         display: 'flex', gap: 8, marginBottom: 20, overflowX: 'auto',
         paddingBottom: 4, scrollbarWidth: 'none', whiteSpace: 'nowrap',
       }}>
-        <button onClick={() => { window.location.href = '/products'; }}
+        <button onClick={() => { navigate('/products'); }}
           style={{
             padding: '6px 16px', borderRadius: 20, border: 'none',
             background: !category ? 'var(--text)' : 'var(--surface-container)',
@@ -85,7 +86,7 @@ const ProductListPage: React.FC = () => {
           All
         </button>
         {categories.map((cat) => (
-          <button key={cat._id} onClick={() => { window.location.href = `/products?category=${cat.slug}`; }}
+          <button key={cat._id} onClick={() => { navigate(`/products?category=${cat.slug}`); }}
             style={{
               padding: '6px 16px', borderRadius: 20, border: 'none',
               background: category === cat.slug ? 'var(--text)' : 'var(--surface-container)',
@@ -109,14 +110,14 @@ const ProductListPage: React.FC = () => {
         </button>
 
         <div style={{
-          width: 260, minWidth: 260, background: 'white', borderRadius: 12, padding: 20,
+          width: 260, minWidth: 260, background: 'var(--bg-card)', borderRadius: 12, padding: 20,
           boxShadow: '0 2px 8px rgba(0,0,0,0.08)', height: 'fit-content', position: 'sticky', top: 80,
         }} className={`filter-sidebar${showFilters ? ' open' : ''}`}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h3 style={{ fontSize: 16, fontWeight: 700 }}>Filters</h3>
             {hasFilters && (
               <button onClick={handleClearFilters}
-                style={{ padding: '4px 10px', border: '1px solid var(--border)', borderRadius: 6, background: 'white', fontSize: 12, cursor: 'pointer' }}>
+                style={{ padding: '4px 10px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg-card)', fontSize: 12, cursor: 'pointer' }}>
                 Clear All
               </button>
             )}
@@ -125,20 +126,22 @@ const ProductListPage: React.FC = () => {
           <div style={{ marginBottom: 20 }}>
             <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5 }}>Category</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <a href="/products" style={{
-                padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block',
-                background: !category ? 'var(--surface-container)' : 'transparent', fontWeight: !category ? 600 : 400,
-                color: 'var(--text)', textDecoration: 'none',
-              }}>All</a>
+              <button onClick={() => navigate('/products')}
+                style={{
+                  padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block', width: '100%', textAlign: 'left',
+                  background: !category ? 'var(--surface-container)' : 'transparent', fontWeight: !category ? 600 : 400,
+                  color: 'var(--text)', border: 'none', cursor: 'pointer',
+                }}>All</button>
               {categories.map((cat) => (
-                <a key={cat._id} href={`/products?category=${cat.slug}`} style={{
-                  padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block',
-                  background: category === cat.slug ? 'var(--surface-container)' : 'transparent',
-                  fontWeight: category === cat.slug ? 600 : 400,
-                  color: 'var(--text)', textDecoration: 'none',
-                }}>
+                <button key={cat._id} onClick={() => navigate(`/products?category=${cat.slug}`)}
+                  style={{
+                    padding: '6px 10px', borderRadius: 6, fontSize: 14, display: 'block', width: '100%', textAlign: 'left',
+                    background: category === cat.slug ? 'var(--surface-container)' : 'transparent',
+                    fontWeight: category === cat.slug ? 600 : 400,
+                    color: 'var(--text)', border: 'none', cursor: 'pointer',
+                  }}>
                   {cat.name}
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -184,12 +187,12 @@ const ProductListPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <button onClick={() => setShowFilters(!showFilters)}
-                style={{ padding: '8px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 13, cursor: 'pointer' }}
+                style={{ padding: '8px 14px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg-card)', fontSize: 13, cursor: 'pointer' }}
                 className="mobile-filter-btn2">
                 &#9776; Filters
               </button>
               <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}
-                style={{ padding: '8px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, background: 'white', cursor: 'pointer' }}>
+                style={{ padding: '8px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, background: 'var(--bg-card)', cursor: 'pointer' }}>
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -200,7 +203,7 @@ const ProductListPage: React.FC = () => {
           {loading ? (
             <div className="spinner" />
           ) : products.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 60, background: 'white', borderRadius: 12 }}>
+            <div style={{ textAlign: 'center', padding: 60, background: 'var(--bg-card)', borderRadius: 12 }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>{'\u{1F50D}'}</div>
               <h2 style={{ marginBottom: 8 }}>No products found</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>Try adjusting your filters or search.</p>

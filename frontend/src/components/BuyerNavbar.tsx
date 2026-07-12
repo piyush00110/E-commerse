@@ -19,15 +19,19 @@ const BuyerNavbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [showCityPicker, setShowCityPicker] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMiniCart, setShowMiniCart] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
   const miniCartRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch { /* ignore corrupted data */ }
     const savedCity = localStorage.getItem('deliverCity');
     if (savedCity) setDeliverCity(savedCity);
   }, []);
@@ -45,12 +49,17 @@ const BuyerNavbar: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
+    const interval = setInterval(fetchCart, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (miniCartRef.current && !miniCartRef.current.contains(e.target as Node)) {
         setShowMiniCart(false);
+      }
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+        setShowAccountMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -87,7 +96,7 @@ const BuyerNavbar: React.FC = () => {
         display: 'flex', alignItems: 'center', gap: 16,
         padding: '10px 24px', maxWidth: 1440, margin: '0 auto',
       }}>
-        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={{
+        <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={{
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: 4,
         }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -105,7 +114,7 @@ const BuyerNavbar: React.FC = () => {
           Shop<span style={{ color: 'var(--secondary)', fontWeight: 300 }}>Smart</span>
         </Link>
 
-        <div className="navbar-location" onClick={() => setShowCityPicker(!showCityPicker)} style={{
+        <div className="navbar-location navbar-deliver-city" onClick={() => setShowCityPicker(!showCityPicker)} style={{
           position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
           cursor: 'pointer', flexShrink: 0, padding: '4px 6px', borderRadius: 6,
         }}>
@@ -166,15 +175,17 @@ const BuyerNavbar: React.FC = () => {
         <div className="navbar-links" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {user ? (
             <>
-              <Link to="/orders" style={{
+              <Link to="/orders" className="navbar-link" style={{
                 display: 'flex', flexDirection: 'column', fontSize: 11,
                 color: 'var(--text-secondary)', textDecoration: 'none',
               }}>
                 Returns
                 <strong style={{ fontSize: 13, color: 'var(--text)' }}>& Orders</strong>
               </Link>
-              <div style={{ position: 'relative', cursor: 'pointer' }}
-                className="navbar-account-toggle navbar-link">
+              <div ref={accountRef} style={{ position: 'relative', cursor: 'pointer' }}
+                className="navbar-account-toggle navbar-link"
+                onMouseEnter={() => setShowAccountMenu(true)}
+                onMouseLeave={() => setShowAccountMenu(false)}>
                 <span style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.2 }}>
                   Hello, {user.name.split(' ')[0]}
                 </span>
@@ -182,7 +193,7 @@ const BuyerNavbar: React.FC = () => {
                 <div className="account-dropdown" style={{
                   position: 'absolute', top: '100%', right: 0, background: 'var(--bg-white)',
                   color: 'var(--text)', borderRadius: 8, boxShadow: 'var(--shadow-lg)',
-                  padding: 8, zIndex: 1001, minWidth: 200, display: 'none',
+                  padding: 8, zIndex: 1001, minWidth: 200, display: showAccountMenu ? 'block' : 'none',
                   border: '1px solid var(--border)',
                 }}>
                   <Link to="/account" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Account</Link>
@@ -205,7 +216,7 @@ const BuyerNavbar: React.FC = () => {
               </div>
             </>
           ) : (
-            <Link to="/login" style={{
+            <Link to="/login" className="navbar-link" style={{
               display: 'flex', flexDirection: 'column', fontSize: 11,
               color: 'var(--text-secondary)', textDecoration: 'none',
             }}>

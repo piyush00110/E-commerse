@@ -49,8 +49,12 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const savedCity = localStorage.getItem('deliverCity');
     if (savedCity) setDeliverCity(savedCity);
-    const stored = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
-    setRecent(stored.slice(0, 8));
+    try {
+      const stored = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      setRecent(stored.slice(0, 8));
+    } catch {
+      setRecent([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -71,8 +75,8 @@ const HomePage: React.FC = () => {
         setFeatured(prodRes.data.data);
         setCategories(catRes.data.data);
         setAllProducts(allRes.data.data || []);
-        const allProducts = allRes.data.data || [];
-        const filtered = allProducts.filter(
+        const fetchedProducts = allRes.data.data || [];
+        const filtered = fetchedProducts.filter(
           (p: Product) => p.comparePrice && p.comparePrice > p.price
         ).sort((a: Product, b: Product) => {
           const aDisc = ((a.comparePrice! - a.price) / a.comparePrice!) * 100;
@@ -155,7 +159,7 @@ const HomePage: React.FC = () => {
                 const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
-                    <img src={p.images[0]} alt={p.name} />
+                    <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div className="mini-product-price">
@@ -191,7 +195,7 @@ const HomePage: React.FC = () => {
                     <div className="deal-countdown" style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
                       <CountdownTimer endDate={new Date(Date.now() + (3 + Math.random() * 5) * 3600000)} size="small" />
                     </div>
-                    <img src={product.images[0]} alt={product.name} />
+                    <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
                     <div className="deal-info">
                       <div className="deal-name">{product.name}</div>
                       <div className="deal-pricing">
@@ -252,27 +256,18 @@ const HomePage: React.FC = () => {
       )}
 
       {topDeal && (
-        <section className="section" style={{
-          background: 'var(--tertiary-container)',
-          borderRadius: 16,
-          padding: '48px 36px !important',
-          margin: '24px !important',
-          maxWidth: '1392px !important',
-          color: 'var(--on-tertiary-container)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 250 }}>
-              <div style={{ display: 'inline-block', background: 'var(--tertiary)', color: 'var(--on-tertiary)', padding: '4px 12px', borderRadius: 4, fontWeight: 700, fontSize: 12, marginBottom: 12 }}>
-                {'\u{1F3C6}'} DEAL OF THE DAY
-              </div>
-              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>{topDeal.name}</h2>
-              <p style={{ color: 'var(--on-tertiary-container)', opacity: 0.75, marginBottom: 16, fontSize: 15 }}>{topDeal.description?.slice(0, 120)}...</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <span style={{ fontSize: 32, fontWeight: 700, color: 'var(--tertiary)' }}>${topDeal.price.toFixed(2)}</span>
+        <section className="section deal-of-day">
+          <div className="deal-of-day-inner">
+            <div className="deal-of-day-content">
+              <div className="deal-of-day-badge">{'\u{1F3C6}'} DEAL OF THE DAY</div>
+              <h2 className="deal-of-day-title">{topDeal.name}</h2>
+              <p className="deal-of-day-desc">{topDeal.description?.slice(0, 120)}...</p>
+              <div className="deal-of-day-pricing">
+                <span className="deal-of-day-price">${topDeal.price.toFixed(2)}</span>
                 {topDeal.comparePrice && (
                   <>
-                    <span style={{ fontSize: 16, textDecoration: 'line-through', color: 'var(--on-tertiary-container)', opacity: 0.5 }}>${topDeal.comparePrice.toFixed(2)}</span>
-                    <span style={{ background: 'var(--tertiary)', padding: '3px 8px', borderRadius: 4, fontWeight: 700, fontSize: 12, color: 'var(--on-tertiary)' }}>
+                    <span className="deal-of-day-compare">${topDeal.comparePrice.toFixed(2)}</span>
+                    <span className="deal-of-day-discount">
                       -{Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100)}%
                     </span>
                   </>
@@ -282,11 +277,10 @@ const HomePage: React.FC = () => {
                 Grab the Deal {'\u2192'}
               </button>
             </div>
-            <div style={{ flex: 0, width: 280 }}>
+            <div className="deal-of-day-image">
               <img
-                src={topDeal.images[0]}
+                src={(topDeal.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')}
                 alt={topDeal.name}
-                style={{ width: '100%', height: 280, objectFit: 'contain', borderRadius: 12, background: 'var(--surface-container-high)' }}
               />
             </div>
           </div>

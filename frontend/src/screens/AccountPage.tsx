@@ -26,6 +26,10 @@ const AccountPage: React.FC = () => {
   const [form, setForm] = useState({ name: '', email: '' });
   const [saved, setSaved] = useState(false);
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
+  const [walletBalance, setWalletBalance] = useState(() => {
+    try { return Number(localStorage.getItem('walletBalance')) || 0; } catch { return 0; }
+  });
+  const [walletInput, setWalletInput] = useState('');
   const [showAddrForm, setShowAddrForm] = useState(false);
   const [editAddrId, setEditAddrId] = useState<string | null>(null);
   const [addrForm, setAddrForm] = useState({ street: '', city: '', state: '', zip: '', phone: '' });
@@ -110,11 +114,11 @@ const AccountPage: React.FC = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         {/* Profile */}
-        <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: 18 }}>Profile</h2>
             <button onClick={() => setEditing(!editing)}
-              style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, background: 'white', fontSize: 13, cursor: 'pointer' }}>
+              style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg-card)', fontSize: 13, cursor: 'pointer' }}>
               {editing ? 'Cancel' : 'Edit'}
             </button>
           </div>
@@ -144,7 +148,7 @@ const AccountPage: React.FC = () => {
         </div>
 
         {/* Quick Links */}
-        <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Quick Links</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <Link to="/orders" style={{
@@ -170,34 +174,35 @@ const AccountPage: React.FC = () => {
       </div>
 
       {/* Gift Card Wallet */}
-      <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
         <h2 style={{ fontSize: 18, marginBottom: 16 }}>{'\u{1F3B1}'} Gift Card Balance</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--error)' }}>
-              ${(() => { try { return Number(localStorage.getItem('walletBalance')) || 0; } catch { return 0; } })().toFixed(2)}
+              ${walletBalance.toFixed(2)}
             </div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Available balance</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <input type="number" id="walletAmount" placeholder="Amount" min="1" max="1000"
+            <input type="number" placeholder="Amount" min="1" max="1000"
+              value={walletInput}
+              onChange={(e) => setWalletInput(e.target.value)}
               style={{ width: 100, padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 14 }} />
             <button onClick={() => {
-              const input = document.getElementById('walletAmount') as HTMLInputElement;
-              const amt = parseFloat(input.value);
+              const amt = parseFloat(walletInput);
               if (isNaN(amt) || amt <= 0) { showToast('Enter a valid amount', 'warning'); return; }
-              const current = Number(localStorage.getItem('walletBalance')) || 0;
-              localStorage.setItem('walletBalance', String(current + amt));
-              input.value = '';
+              const newBalance = walletBalance + amt;
+              localStorage.setItem('walletBalance', String(newBalance));
+              setWalletBalance(newBalance);
+              setWalletInput('');
               showToast(`$${amt.toFixed(2)} added to gift card balance!`, 'success');
-              window.location.reload();
             }} className="btn-primary" style={{ padding: '10px 20px', flex: 0, maxWidth: 120 }}>Add Funds</button>
           </div>
         </div>
       </div>
 
       {/* Addresses */}
-      <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h2 style={{ fontSize: 18 }}>My Addresses</h2>
           <button onClick={() => { setShowAddrForm(!showAddrForm); setEditAddrId(null); setAddrForm({ street: '', city: '', state: '', zip: '', phone: '' }); }}
@@ -238,7 +243,7 @@ const AccountPage: React.FC = () => {
                 {editAddrId ? 'Update' : 'Save Address'}
               </button>
               <button onClick={() => { setShowAddrForm(false); setEditAddrId(null); }}
-                style={{ padding: '10px 20px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 14, cursor: 'pointer' }}>
+                style={{ padding: '10px 20px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg-card)', fontSize: 14, cursor: 'pointer' }}>
                 Cancel
               </button>
             </div>
@@ -276,7 +281,7 @@ const AccountPage: React.FC = () => {
       </div>
 
       {/* Recent Orders */}
-      <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h2 style={{ fontSize: 18 }}>Recent Orders</h2>
           {orders.length > 0 && <Link to="/orders" style={{ color: 'var(--tertiary)', fontSize: 13 }}>View all {'\u2192'}</Link>}
@@ -288,11 +293,11 @@ const AccountPage: React.FC = () => {
             {orders.slice(0, 3).map((order) => (
               <div key={order._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
                 <div>
-                  <div style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 600 }}>#{order._id.slice(-8).toUpperCase()}</div>
+                   <div style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 600 }}>#{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</div>
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString()} - {order.items?.length} items</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</div>
+                  <div style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2) ?? '0.00'}</div>
                   <span style={{
                     fontSize: 12, padding: '2px 8px', borderRadius: 4,
                     background: order.isDelivered ? 'var(--success-light)' : order.isPaid ? 'var(--secondary-container)' : 'var(--error-light)',

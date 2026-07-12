@@ -11,8 +11,12 @@ const ProtectedRoute: React.FC<Props> = ({ children, adminOnly }) => {
   if (!stored) return <Navigate to="/login" replace />;
 
   if (adminOnly) {
-    const user = JSON.parse(stored);
-    if (user.role !== 'admin') return <Navigate to="/" replace />;
+    try {
+      const user = JSON.parse(stored);
+      if (user.role !== 'admin') return <Navigate to="/" replace />;
+    } catch {
+      return <Navigate to="/login" replace />;
+    }
   }
 
   return <>{children}</>;

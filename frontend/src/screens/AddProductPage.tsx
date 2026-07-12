@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { productAPI, categoryAPI } from '../services/api';
+import { useToast } from '../context/ToastContext';
 import { Category } from '../types';
 
 const FALLBACK_CATEGORIES: Category[] = [
@@ -14,6 +15,7 @@ const FALLBACK_CATEGORIES: Category[] = [
 
 const AddProductPage: React.FC = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -91,7 +93,7 @@ const AddProductPage: React.FC = () => {
 
     try {
       const res = await productAPI.create(productData);
-      alert('Product created successfully!');
+      showToast('Product created successfully!', 'success');
       navigate(`/products/${res.data.data._id}`);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create product';

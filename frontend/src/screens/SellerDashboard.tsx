@@ -62,7 +62,7 @@ const SellerDashboard: React.FC = () => {
           { label: 'Low Stock Items', value: stats.lowStock, color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)', icon: '\u{26A0}' },
         ].map((item) => (
           <div key={item.label} style={{
-            background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>{item.icon}</div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>{item.label}</div>
@@ -72,7 +72,7 @@ const SellerDashboard: React.FC = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
-        <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Recent Orders</h2>
           {recentOrders.length === 0 ? (
             <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 32 }}>No orders yet.</p>
@@ -112,7 +112,7 @@ const SellerDashboard: React.FC = () => {
           )}
         </div>
 
-        <div style={{ background: 'white', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <h2 style={{ fontSize: 18, marginBottom: 16 }}>Quick Actions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Link to="/seller/products/add" style={{

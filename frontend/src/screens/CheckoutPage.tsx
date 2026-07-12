@@ -86,7 +86,7 @@ const CheckoutPage: React.FC = () => {
       try {
         const res = await cartAPI.get();
         if (cancelled) return;
-        if (!res.data.data.items.length) { navigate('/cart'); return; }
+        if (!res.data.data?.items?.length) { navigate('/cart'); return; }
         setCart(res.data.data);
       } catch {
         if (!cancelled) navigate('/cart');
@@ -100,7 +100,7 @@ const CheckoutPage: React.FC = () => {
     if (addrs.length > 0) { setSelectedAddrId(addrs[0].id); }
     else { setUseNewAddr(true); setShowNewAddr(true); }
     return () => { cancelled = true; };
-  }, []);
+  }, [navigate]);
 
   const getActiveAddress = (): Address | null => {
     if (useNewAddr) return newAddr;

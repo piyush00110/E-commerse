@@ -30,6 +30,7 @@ interface FullOrder {
 
 const CARRIERS = ['USPS', 'UPS', 'FedEx', 'DHL'];
 const CITIES = ['Memphis, TN', 'Louisville, KY', 'Dallas, TX', 'Atlanta, GA', 'Phoenix, AZ', 'Seattle, WA', 'Newark, NJ', 'Los Angeles, CA', 'Chicago, IL', 'Miami, FL'];
+const SHIPPING_CITIES = ['San Francisco, CA', 'Austin, TX', 'Portland, OR', 'Denver, CO'];
 
 const generateTracking = (status: string, createdDate: string): TrackingEvent[] => {
   const created = new Date(createdDate);
@@ -86,7 +87,7 @@ const generateTracking = (status: string, createdDate: string): TrackingEvent[] 
   if (status === 'delivered') {
     events.push({
       date: new Date(created.getTime() + 4 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      location: shippingCities[Math.floor(Math.random() * shippingCities.length)] || 'Customer Address',
+      location: SHIPPING_CITIES[Math.floor(Math.random() * SHIPPING_CITIES.length)] || 'Customer Address',
       description: `Package delivered. Left at front door. Signed by: Customer.`,
       icon: '\u2705',
     });
@@ -94,8 +95,6 @@ const generateTracking = (status: string, createdDate: string): TrackingEvent[] 
 
   return events;
 };
-
-const shippingCities = ['San Francisco, CA', 'Austin, TX', 'Portland, OR', 'Denver, CO'];
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   pending: { label: 'Pending', color: 'var(--on-secondary-container)', bg: 'var(--secondary-container)' },
@@ -117,9 +116,10 @@ const OrderDetailPage: React.FC = () => {
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (!stored) { navigate('/login'); return; }
+    if (!id) { navigate('/orders'); return; }
     const fetchOrder = async () => {
       try {
-        const res = await orderAPI.getById(id!);
+        const res = await orderAPI.getById(id);
         const o = res.data.data;
         setOrder(o);
         setTracking(generateTracking(o.status, o.createdAt));
@@ -133,7 +133,7 @@ const OrderDetailPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id, navigate]);
+  }, [id, navigate, showToast]);
 
   if (loading) return <div className="spinner" />;
   if (!order) return null;
@@ -204,7 +204,7 @@ const OrderDetailPage: React.FC = () => {
           <h2 style={{ fontSize: 18, fontWeight: 700 }}>Shipment Tracking</h2>
           {order.status !== 'pending' && order.status !== 'cancelled' && (
             <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-              Carrier: <strong>{CARRIERS[Math.floor(Math.random() * CARRIERS.length)]}</strong>
+              Carrier: <strong>{CARRIERS[order._id.charCodeAt(0) % CARRIERS.length]}</strong>
               &nbsp;| Tracking #: <strong style={{ fontFamily: 'monospace', color: 'var(--tertiary)' }}>{trackingNumber}</strong>
             </div>
           )}
@@ -349,8 +349,8 @@ const OrderDetailPage: React.FC = () => {
                 <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
                   Qty: {item.quantity} | ${item.price.toFixed(2)} each
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--success)', marginTop: 4 }}>
-                  {'\u2713'} Item delivered
+                <div style={{ fontSize: 12, color: order.isDelivered ? 'var(--success)' : 'var(--text-secondary)', marginTop: 4 }}>
+                  {order.isDelivered ? '\u2713 Item delivered' : order.status === 'shipped' ? '\u{1F4E6} In transit' : order.status === 'processing' ? '\u2699 Processing' : '\u23F3 Pending'}
                 </div>
               </div>
               <div style={{ fontSize: 18, fontWeight: 700, whiteSpace: 'nowrap' }}>

@@ -24,7 +24,7 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
-  }, [navigate]);
+  }, []);
 
   const handleQuantityChange = async (itemId: string, newQty: number) => {
     if (newQty < 1) return;
@@ -78,11 +78,11 @@ const CartPage: React.FC = () => {
 
         {cart.items.map((item) => (
           <div key={item._id} className="cart-item">
-            <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}>
+            <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product?._id ?? ''}`}>
               <img src={item.image} alt={item.name} />
             </Link>
             <div className="cart-item-info">
-              <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}
+              <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product?._id ?? ''}`}
                 style={{ color: 'var(--tertiary)', fontWeight: 500 }}>
                 {item.name}
               </Link>
@@ -91,15 +91,15 @@ const CartPage: React.FC = () => {
               </div>
               <div className="cart-item-qty-row">
                 <div className="cart-item-qty">
-                  <button onClick={() => handleQuantityChange(item._id!, item.quantity - 1)} disabled={item.quantity <= 1}>
+                  <button onClick={() => handleQuantityChange(item._id ?? '', item.quantity - 1)} disabled={item.quantity <= 1}>
                     {'\u2212'}
                   </button>
                   <span>{item.quantity}</span>
-                  <button onClick={() => handleQuantityChange(item._id!, item.quantity + 1)}>
+                  <button onClick={() => handleQuantityChange(item._id ?? '', item.quantity + 1)}>
                     +
                   </button>
                 </div>
-                <button className="cart-item-delete" onClick={() => handleRemove(item._id!)}>
+                <button className="cart-item-delete" onClick={() => handleRemove(item._id ?? '')}>
                   {'\u2717'} Delete
                 </button>
               </div>

@@ -39,7 +39,7 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
     }
   };
 
-  const primeDelivery = new Date(Date.now() + (Math.floor(Math.random() * 5) + 2) * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  const primeDelivery = new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   return (
     <div className="product-card" onClick={() => navigate(`/products/${product._id}`)}>
@@ -47,10 +47,10 @@ const ProductCard: React.FC<Props> = ({ product, badge }) => {
         <div className="card-badge card-badge-bestseller">#1 Best Seller</div>
       )}
       {badge === 'amazons_choice' && (
-        <div className="card-badge card-badge-choice">Amazon's Choice</div>
+        <div className="card-badge card-badge-choice">ShopSmart's Choice</div>
       )}
       <div className="product-card-image">
-        <img src={product.images[0]} alt={product.name} />
+        <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
       </div>
       <div className="product-card-body">
         <div className="product-card-title">{product.name}</div>

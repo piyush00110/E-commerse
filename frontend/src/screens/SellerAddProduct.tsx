@@ -19,6 +19,7 @@ const SellerAddProduct: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const successTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [form, setForm] = useState({
     name: '', description: '', price: '', comparePrice: '',
@@ -35,6 +36,9 @@ const SellerAddProduct: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchCategories();
+    return () => {
+      if (successTimeout.current) clearTimeout(successTimeout.current);
+    };
   }, []);
 
   const handleFeatureChange = (index: number, value: string) => {
@@ -69,7 +73,7 @@ const SellerAddProduct: React.FC = () => {
 
       await productAPI.create(data);
       setSuccess(true);
-      setTimeout(() => navigate('/seller/products'), 2000);
+      successTimeout.current = setTimeout(() => navigate('/seller/products'), 2000);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create product';
       setError(msg);

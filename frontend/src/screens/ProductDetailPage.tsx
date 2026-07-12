@@ -35,9 +35,10 @@ const ProductDetailPage: React.FC = () => {
   const lightningDealEnd = new Date(Date.now() + 4 * 3600000 + 30 * 60000);
 
   useEffect(() => {
+    if (!id) { navigate('/products'); return; }
     const fetchProduct = async () => {
       try {
-        const res = await productAPI.getById(id!);
+        const res = await productAPI.getById(id);
         const prod = res.data.data;
         setProduct(prod);
         setSelectedImage(0);
@@ -67,7 +68,7 @@ const ProductDetailPage: React.FC = () => {
     try {
       const res = await wishlistAPI.get();
       const ids = (res.data.data.products || []).map((p: Product) => p._id);
-      setWishlisted(ids.includes(id));
+      setWishlisted(id ? ids.includes(id) : false);
     } catch { /* ignore */ }
   };
 
@@ -157,7 +158,7 @@ const ProductDetailPage: React.FC = () => {
     }
     setSubmittingReview(true);
     try {
-      const reviewData: any = { rating: reviewRating, title: reviewTitle, comment: reviewComment };
+      const reviewData: { rating: number; title: string; comment: string } = { rating: reviewRating, title: reviewTitle, comment: reviewComment };
       if (reviewImages.length > 0) {
         const existing = JSON.parse(localStorage.getItem('reviewImages') || '{}');
         const key = `product_${id}`;
@@ -250,7 +251,7 @@ const ProductDetailPage: React.FC = () => {
             ))}
           </div>
           <div className="product-main-image">
-            <img src={product.images[selectedImage]} alt={product.name} />
+            <img src={(product.images?.[selectedImage] || product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
           </div>
         </div>
 
@@ -275,7 +276,7 @@ const ProductDetailPage: React.FC = () => {
               )}
             </div>
             {product.comparePrice && (
-              <div style={{ fontSize: 13, color: '#565959', marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>
                 No Import Fees & Free Shipping Included
               </div>
             )}
@@ -295,7 +296,7 @@ const ProductDetailPage: React.FC = () => {
             </div>
             <div className="delivery-row">
               <span className="delivery-label">Or fastest</span>
-              <span style={{ color: '#007185' }}>Tomorrow, {new Date(Date.now() + 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+              <span style={{ color: 'var(--tertiary-dim)' }}>Tomorrow, {new Date(Date.now() + 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
             </div>
           </div>
 
@@ -385,7 +386,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="quantity-selector" style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 13, marginRight: 8, fontWeight: 500 }}>Qty:</label>
             <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}
-              style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #ddd', fontSize: 13 }}>
+              style={{ padding: '4px 8px', borderRadius: 6, border: '2px solid var(--border)', fontSize: 13, background: 'var(--bg-card)', color: 'var(--text)' }}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <option key={n} value={n} disabled={n > product.countInStock}>{n}</option>
               ))}
@@ -402,11 +403,11 @@ const ProductDetailPage: React.FC = () => {
           </div>
           <div className="seller-info">
             <div>Ships from <strong>ShopSmart</strong></div>
-            <div>Sold by <strong style={{ color: '#007185' }}>ShopSmart Direct</strong></div>
+            <div>Sold by <strong style={{ color: 'var(--tertiary-dim)' }}>ShopSmart Direct</strong></div>
             {product.countInStock > 0 && (
-              <div style={{ marginTop: 6, padding: 8, background: '#f0f8ff', borderRadius: 6, fontSize: 12 }}>
+              <div style={{ marginTop: 6, padding: 8, background: 'var(--tertiary-container)', borderRadius: 6, fontSize: 12 }}>
                 <strong>Free returns</strong>
-                <div style={{ color: '#565959', marginTop: 2 }}>Free 30-day returns. Learn more</div>
+                <div style={{ color: 'var(--text-secondary)', marginTop: 2 }}>Free 30-day returns. Learn more</div>
               </div>
             )}
           </div>
@@ -442,7 +443,7 @@ const ProductDetailPage: React.FC = () => {
               <div className="review-summary-left">
                 <div className="review-big-score">{product.rating.toFixed(1)}</div>
                 <div className="stars">{renderStars(product.rating)}</div>
-                <div style={{ fontSize: 13, color: '#565959' }}>{product.numReviews} total ratings</div>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{product.numReviews} total ratings</div>
               </div>
               <div className="review-histogram">
                 {getStarDistribution().map(({ star, count, pct }) => (
@@ -459,7 +460,8 @@ const ProductDetailPage: React.FC = () => {
 
             <div className="reviews-list">
               {getSortedReviews().map((review) => {
-                const stored = JSON.parse(localStorage.getItem('reviewImages') || '{}');
+                let stored: Record<string, string[]> = {};
+                try { stored = JSON.parse(localStorage.getItem('reviewImages') || '{}'); } catch { stored = {}; }
                 const key = `product_${id}`;
                 const imgs = stored[key] || [];
                 return (
@@ -489,7 +491,7 @@ const ProductDetailPage: React.FC = () => {
           </>
         ) : (
           <div style={{ textAlign: 'center', padding: 32 }}>
-            <p style={{ color: '#565959', marginBottom: 16 }}>No reviews yet. Be the first to review this product!</p>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>No reviews yet. Be the first to review this product!</p>
           </div>
         )}
 
@@ -511,7 +513,7 @@ const ProductDetailPage: React.FC = () => {
               <label>Review</label>
               <textarea placeholder="What did you like or dislike?" value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)} rows={4}
-                style={{ width: '100%', padding: '10px 14px', border: '1px solid #ddd', borderRadius: 8, fontSize: 14, resize: 'vertical' }} />
+                style={{ width: '100%', padding: '10px 14px', border: '2px solid var(--border)', borderRadius: 8, fontSize: 14, resize: 'vertical', background: 'var(--bg-card)', color: 'var(--text)' }} />
             </div>
             <div className="form-group">
               <label>Add Images (optional)</label>
@@ -551,12 +553,12 @@ const ProductDetailPage: React.FC = () => {
                 const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
-                    <img src={p.images[0]} alt={p.name} />
+                    <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
                       ${p.price.toFixed(2)}
-                      {p.comparePrice && <span style={{ fontSize: 12, color: '#565959', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
+                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
                     </div>
                   </div>
                 );
@@ -578,12 +580,12 @@ const ProductDetailPage: React.FC = () => {
                 const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
-                    <img src={p.images[0]} alt={p.name} />
+                    <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
                       ${p.price.toFixed(2)}
-                      {p.comparePrice && <span style={{ fontSize: 12, color: '#565959', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
+                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
                     </div>
                   </div>
                 );

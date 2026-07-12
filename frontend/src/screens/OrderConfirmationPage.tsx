@@ -25,9 +25,10 @@ const OrderConfirmationPage: React.FC = () => {
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (!stored) { navigate('/login'); return; }
+    if (!id) { navigate('/orders'); return; }
     const fetchOrder = async () => {
       try {
-        const res = await orderAPI.getById(id!);
+        const res = await orderAPI.getById(id);
         setOrder(res.data.data);
       } catch {
         showToast('Failed to load order', 'error');
@@ -37,7 +38,7 @@ const OrderConfirmationPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id, navigate]);
+  }, [id, navigate, showToast]);
 
   if (loading) return <div className="spinner" />;
 
@@ -57,7 +58,7 @@ const OrderConfirmationPage: React.FC = () => {
           Thank you for your purchase, <strong>{(() => { try { return JSON.parse(localStorage.getItem('user') || '{}').name || 'Customer'; } catch { return 'Customer'; } })()}</strong>!
         </p>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-          Order #{order._id.slice(-8).toUpperCase()}
+          Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}
         </p>
         <p style={{ color: 'var(--success)', fontSize: 14, fontWeight: 500, marginTop: 12 }}>
           {'\u{1F4E6}'} We'll send a confirmation when it ships.
@@ -69,7 +70,7 @@ const OrderConfirmationPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>Order Number</div>
-            <div style={{ fontWeight: 600, fontFamily: 'monospace' }}>#{order._id.slice(-8).toUpperCase()}</div>
+            <div style={{ fontWeight: 600, fontFamily: 'monospace' }}>#{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</div>
           </div>
           <div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>Order Date</div>

@@ -8,8 +8,10 @@ const SellerNavbar: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch { /* ignore corrupted data */ }
   }, []);
 
   return (

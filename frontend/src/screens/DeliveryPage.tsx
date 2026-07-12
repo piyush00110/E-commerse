@@ -33,6 +33,7 @@ const DeliveryPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDriver, setSelectedDriver] = useState(DELIVERY_DRIVERS[0]);
   const [markingId, setMarkingId] = useState<string | null>(null);
+  const [doneToday] = useState(5);
 
   const driver = selectedDriver;
   const truck = TRUCKS[DELIVERY_DRIVERS.indexOf(driver) % TRUCKS.length];
@@ -88,7 +89,7 @@ const DeliveryPage: React.FC = () => {
           </div>
           <div className="delivery-stat">
             <span className="delivery-stat-num done-today">
-              {deliveryList.filter((o) => o.status === 'shipped').length === 0 ? 0 : Math.floor(Math.random() * 5) + 3}
+              {deliveryList.filter((o) => o.status === 'shipped').length === 0 ? 0 : doneToday}
             </span>
             <span className="delivery-stat-lbl">Done Today</span>
           </div>

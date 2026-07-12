@@ -50,8 +50,13 @@ const ShippingDashboard: React.FC = () => {
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (!stored) { navigate('/login'); return; }
-    const u = JSON.parse(stored);
-    if (u.role !== 'admin') { navigate('/'); showToast('Admin access required', 'error'); return; }
+    try {
+      const u = JSON.parse(stored);
+      if (u.role !== 'admin') { navigate('/'); showToast('Admin access required', 'error'); return; }
+    } catch {
+      navigate('/login');
+      return;
+    }
     fetchOrders();
   }, [navigate]);
 

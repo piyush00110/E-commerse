@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import RootClientLayout from './RootClientLayout';
 import './globals.css';
 
@@ -9,9 +9,15 @@ export const metadata: Metadata = {
   description: 'Your one-stop shop for electronics, fashion, home goods and more.',
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <RootClientLayout>{children}</RootClientLayout>
       </body>
