@@ -80,140 +80,378 @@ const SellerOrders: React.FC = () => {
     setShowPdfForm(true);
   };
 
+  const buildInvoiceHtml = (ordersToPrint: Order[], mode: 'print' | 'download') => {
+    if (ordersToPrint.length === 0) return '';
+
+    const itemsTotal = ordersToPrint.reduce((sum, o) => sum + o.items.reduce((s, i) => s + i.price * i.quantity, 0), 0);
+    const totalTax = ordersToPrint.reduce((sum, o) => sum + (o.taxPrice || 0), 0);
+    const totalShipping = ordersToPrint.reduce((sum, o) => sum + (o.shippingPrice || 0), 0);
+    const grandTotal = ordersToPrint.reduce((sum, o) => sum + o.totalPrice, 0);
+
+    const statusColor = (s: string) => {
+      const map: Record<string, { bg: string; fg: string }> = {
+        pending: { bg: '#FFF8E1', fg: '#F57F17' },
+        processing: { bg: '#E3F2FD', fg: '#1565C0' },
+        shipped: { bg: '#E8F5E9', fg: '#2E7D32' },
+        delivered: { bg: '#E0F2F1', fg: '#00695C' },
+        cancelled: { bg: '#FFEBEE', fg: '#C62828' },
+      };
+      return map[s] || map.pending;
+    };
+
+    const paymentLabel = (m: string) => {
+      const map: Record<string, string> = {
+        credit_card: 'Credit / Debit Card',
+        paypal: 'PayPal',
+        upi: 'UPI',
+        cod: 'Cash on Delivery',
+      };
+      return map[m] || m;
+    };
+
+    const printStyles = mode === 'print'
+      ? '@media print { body { padding: 16px !important; } .no-print { display: none !important; } }'
+      : '';
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Invoice - ${pdfForm.companyName}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      font-size: 13px; color: #1a1a2e; background: #fff;
+      padding: 0; line-height: 1.5;
+    }
+
+    .invoice-wrapper { max-width: 800px; margin: 0 auto; padding: 40px; }
+
+    /* === HEADER === */
+    .inv-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding-bottom: 24px; margin-bottom: 28px;
+      border-bottom: 3px solid #1a1a2e;
+    }
+    .inv-brand h1 {
+      font-size: 28px; font-weight: 800; color: #1a1a2e;
+      letter-spacing: -0.5px; margin-bottom: 6px;
+    }
+    .inv-brand-tag {
+      display: inline-block; background: #ff9900; color: #fff;
+      font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
+      margin-bottom: 10px;
+    }
+    .inv-brand p { font-size: 11px; color: #666; line-height: 1.7; }
+    .inv-doc { text-align: right; }
+    .inv-doc-badge {
+      display: inline-block; background: #1a1a2e; color: #fff;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .inv-doc-date { font-size: 12px; color: #666; margin-bottom: 4px; }
+    .inv-doc-id { font-size: 14px; font-weight: 700; color: #1a1a2e; font-family: 'Courier New', monospace; }
+
+    /* === ORDER META GRID === */
+    .inv-meta {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 0; margin-bottom: 28px;
+      border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
+    }
+    .inv-meta-cell {
+      padding: 14px 16px; border-right: 1px solid #e0e0e0;
+    }
+    .inv-meta-cell:last-child { border-right: none; }
+    .inv-meta-label { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .inv-meta-value { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .inv-meta-value.mono { font-family: 'Courier New', monospace; font-size: 12px; }
+
+    /* === CUSTOMER + SHIPPING GRID === */
+    .inv-info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; margin-bottom: 28px;
+    }
+    .inv-info-card {
+      background: #f8f9fc; border: 1px solid #e8eaf0;
+      border-radius: 8px; padding: 18px 20px;
+    }
+    .inv-info-card h3 {
+      font-size: 10px; font-weight: 700; color: #999;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid #e0e3ea;
+    }
+    .inv-info-card p { font-size: 12px; color: #444; line-height: 1.8; }
+    .inv-info-card .name { font-weight: 700; color: #1a1a2e; font-size: 13px; }
+    .inv-info-card .email { color: #1565C0; font-size: 11px; }
+
+    /* === ITEMS TABLE === */
+    .inv-items-section { margin-bottom: 28px; }
+    .inv-items-title {
+      font-size: 10px; font-weight: 700; color: #999;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 12px;
+    }
+    .inv-table {
+      width: 100%; border-collapse: collapse;
+      border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
+    }
+    .inv-table thead th {
+      background: #1a1a2e; color: #fff;
+      padding: 12px 16px; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      text-align: left;
+    }
+    .inv-table thead th:nth-child(1) { width: 5%; text-align: center; }
+    .inv-table thead th:nth-child(2) { width: 45%; }
+    .inv-table thead th:nth-child(3) { width: 10%; text-align: center; }
+    .inv-table thead th:nth-child(4) { width: 20%; text-align: right; }
+    .inv-table thead th:nth-child(5) { width: 20%; text-align: right; }
+    .inv-table tbody td {
+      padding: 12px 16px; font-size: 12px; color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .inv-table tbody tr:nth-child(even) { background: #fafbfd; }
+    .inv-table tbody tr:hover { background: #f0f4ff; }
+    .inv-table .num { text-align: center; font-weight: 600; color: #666; }
+    .inv-table .right { text-align: right; font-family: 'Courier New', monospace; font-weight: 600; }
+    .inv-table .item-name { font-weight: 600; color: #1a1a2e; }
+    .inv-table .item-idx {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f0f4ff; color: #1565C0;
+      font-size: 10px; font-weight: 700;
+    }
+    .inv-table tfoot td {
+      padding: 10px 16px; font-size: 12px;
+      border-bottom: none;
+    }
+
+    /* === TOTALS === */
+    .inv-bottom {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 30px;
+    }
+    .inv-notes {
+      flex: 1; background: #f8f9fc; border: 1px solid #e8eaf0;
+      border-radius: 8px; padding: 16px 20px;
+    }
+    .inv-notes h4 {
+      font-size: 10px; font-weight: 700; color: #999;
+      text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;
+    }
+    .inv-notes p { font-size: 11px; color: #666; line-height: 1.6; }
+
+    .inv-totals { min-width: 280px; }
+    .inv-totals-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; font-size: 12px; color: #555;
+    }
+    .inv-totals-row .label { font-weight: 500; }
+    .inv-totals-row .value { font-family: 'Courier New', monospace; font-weight: 600; }
+    .inv-totals-row.free .value { color: #2E7D32; font-weight: 700; }
+    .inv-totals-divider { border-top: 2px solid #1a1a2e; margin: 4px 0; }
+    .inv-totals-total {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0 0; font-size: 18px; font-weight: 800; color: #1a1a2e;
+    }
+    .inv-totals-total .value { font-family: 'Courier New', monospace; color: #ff9900; }
+
+    /* === PAYMENT BADGE === */
+    .inv-payment-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* === FOOTER === */
+    .inv-footer {
+      margin-top: 36px; padding-top: 20px;
+      border-top: 2px solid #e8eaf0;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .inv-footer-left { font-size: 10px; color: #aaa; line-height: 1.8; }
+    .inv-footer-right { text-align: right; }
+    .inv-footer-thank {
+      font-size: 14px; font-weight: 700; color: #1a1a2e;
+      margin-bottom: 2px;
+    }
+    .inv-footer-tagline { font-size: 10px; color: #999; }
+
+    ${printStyles}
+  </style>
+</head>
+<body>
+  <div class="invoice-wrapper">
+
+    <!-- HEADER -->
+    <div class="inv-header">
+      <div class="inv-brand">
+        <div class="inv-brand-tag">ShopSmart</div>
+        <h1>${pdfForm.companyName}</h1>
+        ${pdfForm.companyAddress ? `<p>${pdfForm.companyAddress}</p>` : ''}
+        ${pdfForm.companyPhone || pdfForm.companyEmail ? `<p>${pdfForm.companyPhone ? `Tel: ${pdfForm.companyPhone}` : ''}${pdfForm.companyPhone && pdfForm.companyEmail ? ' &middot; ' : ''}${pdfForm.companyEmail ? `Email: ${pdfForm.companyEmail}` : ''}</p>` : ''}
+      </div>
+      <div class="inv-doc">
+        <div class="inv-doc-badge">Invoice</div>
+        <div class="inv-doc-date">${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+        ${pdfOrderId
+          ? `<div class="inv-doc-id">#${pdfOrderId.slice(-8).toUpperCase()}</div>`
+          : `<div class="inv-doc-id">${ordersToPrint.length} Order${ordersToPrint.length > 1 ? 's' : ''}</div>`
+        }
+      </div>
+    </div>
+
+    ${ordersToPrint.map((order, oIdx) => {
+      const sub = order.items.reduce((s, i) => s + i.price * i.quantity, 0);
+      const st = statusColor(order.status || 'pending');
+      return `
+    <div style="page-break-inside: avoid; ${oIdx > 0 ? 'margin-top: 36px; padding-top: 24px; border-top: 2px dashed #e0e0e0;' : ''}">
+
+      ${!pdfOrderId ? `<div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px;">Order #${order._id?.slice(-8).toUpperCase() ?? 'N/A'} &middot; ${new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>` : ''}
+
+      <!-- META -->
+      <div class="inv-meta">
+        <div class="inv-meta-cell">
+          <div class="inv-meta-label">Order ID</div>
+          <div class="inv-meta-value mono">#${order._id?.slice(-8).toUpperCase() ?? 'N/A'}</div>
+        </div>
+        <div class="inv-meta-cell">
+          <div class="inv-meta-label">Date Placed</div>
+          <div class="inv-meta-value">${new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+        </div>
+        <div class="inv-meta-cell">
+          <div class="inv-meta-label">Status</div>
+          <div class="inv-meta-value">
+            <span class="inv-payment-badge" style="background: ${st.bg}; color: ${st.fg}; border-color: ${st.fg}22;">
+              ${(order.status || 'pending').toUpperCase()}
+            </span>
+          </div>
+        </div>
+        <div class="inv-meta-cell">
+          <div class="inv-meta-label">Payment</div>
+          <div class="inv-meta-value" style="font-size: 11px;">${paymentLabel(order.paymentMethod || 'N/A')}</div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER + SHIPPING -->
+      <div class="inv-info-grid">
+        <div class="inv-info-card">
+          <h3>Customer</h3>
+          <p class="name">${order.user?.name || 'N/A'}</p>
+          ${order.user?.email ? `<p class="email">${order.user.email}</p>` : ''}
+        </div>
+        <div class="inv-info-card">
+          <h3>Shipping Address</h3>
+          <p>${order.shippingAddress?.street || 'N/A'}</p>
+          <p>${order.shippingAddress?.city || ''}${order.shippingAddress?.city && order.shippingAddress?.state ? ', ' : ''}${order.shippingAddress?.state || ''} ${order.shippingAddress?.zip || ''}</p>
+          ${order.shippingAddress?.phone ? `<p style="margin-top: 4px;">Tel: ${order.shippingAddress.phone}</p>` : ''}
+        </div>
+      </div>
+
+      <!-- ITEMS -->
+      <div class="inv-items-section">
+        <div class="inv-items-title">Items Ordered (${order.items.length})</div>
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Product</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Unit Price</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${order.items.map((item, idx) => `
+            <tr>
+              <td class="num"><span class="item-idx">${idx + 1}</span></td>
+              <td class="item-name">${item.name}</td>
+              <td class="num">${item.quantity}</td>
+              <td class="right">$${item.price.toFixed(2)}</td>
+              <td class="right" style="font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</td>
+            </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOTTOM: NOTES + TOTALS -->
+      <div class="inv-bottom">
+        <div class="inv-notes">
+          <h4>Notes</h4>
+          <p>${pdfForm.notes || 'Thank you for shopping with ShopSmart. This invoice serves as your official order receipt.'}</p>
+        </div>
+        <div class="inv-totals">
+          <div class="inv-totals-row">
+            <span class="label">Subtotal</span>
+            <span class="value">$${sub.toFixed(2)}</span>
+          </div>
+          ${pdfForm.includeShippingDetails ? `
+          <div class="inv-totals-row ${order.shippingPrice === 0 ? 'free' : ''}">
+            <span class="label">Shipping</span>
+            <span class="value">${order.shippingPrice === 0 ? 'FREE' : '$' + (order.shippingPrice || 0).toFixed(2)}</span>
+          </div>
+          ` : ''}
+          ${pdfForm.includeTaxDetails ? `
+          <div class="inv-totals-row">
+            <span class="label">Tax (8%)</span>
+            <span class="value">$${(order.taxPrice || 0).toFixed(2)}</span>
+          </div>
+          ` : ''}
+          <div class="inv-totals-divider"></div>
+          <div class="inv-totals-total">
+            <span>Total</span>
+            <span class="value">$${order.totalPrice.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>`;
+    }).join('')}
+
+    ${!pdfOrderId && ordersToPrint.length > 1 ? `
+    <!-- BULK SUMMARY -->
+    <div style="margin-top: 32px; padding: 20px; background: #1a1a2e; border-radius: 8px; color: #fff;">
+      <div style="font-size: 10px; font-weight: 700; color: #ff9900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Bulk Summary &mdash; ${ordersToPrint.length} Orders</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; text-align: center;">
+        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">ORDERS</div><div style="font-size: 18px; font-weight: 700;">${ordersToPrint.length}</div></div>
+        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">ITEMS TOTAL</div><div style="font-size: 18px; font-weight: 700;">$${itemsTotal.toFixed(2)}</div></div>
+        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">TAX TOTAL</div><div style="font-size: 18px; font-weight: 700;">$${totalTax.toFixed(2)}</div></div>
+        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">GRAND TOTAL</div><div style="font-size: 18px; font-weight: 700; color: #ff9900;">$${grandTotal.toFixed(2)}</div></div>
+      </div>
+    </div>
+    ` : ''}
+
+    <!-- FOOTER -->
+    <div class="inv-footer">
+      <div class="inv-footer-left">
+        <p>Generated on ${new Date().toLocaleString('en-US')}</p>
+        <p>${pdfForm.companyName} &middot; ShopSmart Marketplace</p>
+      </div>
+      <div class="inv-footer-right">
+        <div class="inv-footer-thank">Thank You!</div>
+        <div class="inv-footer-tagline">We appreciate your business.</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>`;
+  };
+
   const generatePdf = () => {
     const ordersToPrint = pdfOrderId
       ? orders.filter((o) => o._id === pdfOrderId)
       : filteredOrders;
 
-    if (ordersToPrint.length === 0) return;
-
-    const itemsTotal = ordersToPrint.reduce((sum, o) => {
-      return sum + o.items.reduce((s, i) => s + i.price * i.quantity, 0);
-    }, 0);
-    const totalTax = ordersToPrint.reduce((sum, o) => sum + (o.taxPrice || 0), 0);
-    const totalShipping = ordersToPrint.reduce((sum, o) => sum + (o.shippingPrice || 0), 0);
-    const grandTotal = ordersToPrint.reduce((sum, o) => sum + o.totalPrice, 0);
-
-    const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Order Report - ${pdfOrderId ? `Order #${pdfOrderId.slice(-8).toUpperCase()}` : 'All Orders'}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #333; padding: 40px; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #37475a; padding-bottom: 20px; margin-bottom: 24px; }
-    .company-info h1 { font-size: 24px; color: #37475a; margin-bottom: 4px; }
-    .company-info p { font-size: 11px; color: #666; line-height: 1.6; }
-    .doc-info { text-align: right; }
-    .doc-info h2 { font-size: 18px; color: #37475a; margin-bottom: 8px; }
-    .doc-info p { font-size: 11px; color: #666; }
-    .doc-info .order-id { font-family: monospace; font-size: 14px; font-weight: bold; color: #00576f; }
-    .section { margin-bottom: 20px; }
-    .section-title { font-size: 13px; font-weight: 700; color: #37475a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid #ddd; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    th { background: #f5f6ff; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #555; border-bottom: 2px solid #ddd; }
-    td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 12px; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .summary-table { width: 300px; margin-left: auto; }
-    .summary-table td { padding: 6px 12px; }
-    .summary-table .total-row { font-weight: 700; font-size: 14px; border-top: 2px solid #37475a; }
-    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-processing { background: #d4edff; color: #00576f; }
-    .status-shipped { background: #d4edda; color: #067d62; }
-    .status-delivered { background: #d4edda; color: #067d62; }
-    .status-cancelled { background: #f8d7da; color: #b31b25; }
-    .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 10px; color: #999; text-align: center; }
-    .notes { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 16px; font-size: 11px; color: #555; }
-    @media print { body { padding: 20px; } }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="company-info">
-      <h1>${pdfForm.companyName}</h1>
-      ${pdfForm.companyAddress ? `<p>${pdfForm.companyAddress}</p>` : ''}
-      ${pdfForm.companyPhone ? `<p>Phone: ${pdfForm.companyPhone}</p>` : ''}
-      ${pdfForm.companyEmail ? `<p>Email: ${pdfForm.companyEmail}</p>` : ''}
-    </div>
-    <div class="doc-info">
-      <h2>ORDER INVOICE</h2>
-      <p>Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      ${pdfOrderId ? `<p class="order-id">Order #${pdfOrderId.slice(-8).toUpperCase()}</p>` : `<p>${ordersToPrint.length} order(s) included</p>`}
-    </div>
-  </div>
-
-  ${ordersToPrint.map((order) => `
-    <div class="section" style="page-break-inside: avoid;">
-      ${!pdfOrderId ? `<div class="section-title">Order #${order._id?.slice(-8).toUpperCase() ?? 'N/A'} - ${new Date(order.createdAt).toLocaleDateString()}</div>` : ''}
-
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th class="text-center">Qty</th>
-            <th class="text-right">Unit Price</th>
-            <th class="text-right">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${order.items.map((item) => `
-            <tr>
-              <td>${item.name}</td>
-              <td class="text-center">${item.quantity}</td>
-              <td class="text-right">$${item.price.toFixed(2)}</td>
-              <td class="text-right">$${(item.price * item.quantity).toFixed(2)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div style="font-size: 11px; color: #666;">
-          <p><strong>Shipping Address:</strong></p>
-          <p>${order.shippingAddress?.street || 'N/A'}</p>
-          <p>${order.shippingAddress?.city || ''}, ${order.shippingAddress?.state || ''} ${order.shippingAddress?.zip || ''}</p>
-          <p>${order.shippingAddress?.country || 'US'}</p>
-          <p style="margin-top: 8px;"><strong>Payment:</strong> ${(order.paymentMethod || 'N/A').replace('_', ' ')}</p>
-          <p><strong>Status:</strong> <span class="status-badge status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span></p>
-          ${order.user ? `<p><strong>Customer:</strong> ${order.user.name} (${order.user.email})</p>` : ''}
-        </div>
-
-        <table class="summary-table">
-          <tr><td>Subtotal:</td><td class="text-right">$${order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)}</td></tr>
-          ${pdfForm.includeShippingDetails ? `<tr><td>Shipping:</td><td class="text-right" style="color: ${order.shippingPrice === 0 ? '#067d62' : 'inherit'};">${order.shippingPrice === 0 ? 'FREE' : '$' + (order.shippingPrice || 0).toFixed(2)}</td></tr>` : ''}
-          ${pdfForm.includeTaxDetails ? `<tr><td>Tax:</td><td class="text-right">$${(order.taxPrice || 0).toFixed(2)}</td></tr>` : ''}
-          <tr class="total-row"><td>Total:</td><td class="text-right">$${order.totalPrice.toFixed(2)}</td></tr>
-        </table>
-      </div>
-    </div>
-    ${ordersToPrint.indexOf(order) < ordersToPrint.length - 1 ? '<hr style="margin: 20px 0; border: none; border-top: 1px dashed #ddd;">' : ''}
-  `).join('')}
-
-  ${pdfOrderId ? '' : `
-    <div class="section" style="margin-top: 24px; background: #f5f6ff; padding: 16px; border-radius: 8px;">
-      <div class="section-title">Bulk Summary</div>
-      <table class="summary-table" style="width: 100%; max-width: 400px;">
-        <tr><td>Total Orders:</td><td class="text-right">${ordersToPrint.length}</td></tr>
-        <tr><td>Items Total:</td><td class="text-right">$${itemsTotal.toFixed(2)}</td></tr>
-        ${pdfForm.includeShippingDetails ? `<tr><td>Shipping Total:</td><td class="text-right">$${totalShipping.toFixed(2)}</td></tr>` : ''}
-        ${pdfForm.includeTaxDetails ? `<tr><td>Tax Total:</td><td class="text-right">$${totalTax.toFixed(2)}</td></tr>` : ''}
-        <tr class="total-row"><td>Grand Total:</td><td class="text-right">$${grandTotal.toFixed(2)}</td></tr>
-      </table>
-    </div>
-  `}
-
-  ${pdfForm.notes ? `<div class="notes"><strong>Notes:</strong> ${pdfForm.notes}</div>` : ''}
-
-  <div class="footer">
-    <p>Generated on ${new Date().toLocaleString('en-US')} | ${pdfForm.companyName}</p>
-    <p>Thank you for your business!</p>
-  </div>
-</body>
-</html>`;
+    const htmlContent = buildInvoiceHtml(ordersToPrint, 'print');
+    if (!htmlContent) return;
 
     const printWindow = window.open('', '_blank');
     if (printWindow) {
@@ -229,136 +467,16 @@ const SellerOrders: React.FC = () => {
       ? orders.filter((o) => o._id === pdfOrderId)
       : filteredOrders;
 
-    if (ordersToPrint.length === 0) return;
-
-    const itemsTotal = ordersToPrint.reduce((sum, o) => {
-      return sum + o.items.reduce((s, i) => s + i.price * i.quantity, 0);
-    }, 0);
-    const totalTax = ordersToPrint.reduce((sum, o) => sum + (o.taxPrice || 0), 0);
-    const totalShipping = ordersToPrint.reduce((sum, o) => sum + (o.shippingPrice || 0), 0);
-    const grandTotal = ordersToPrint.reduce((sum, o) => sum + o.totalPrice, 0);
-
-    const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Order Report</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #333; padding: 40px; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #37475a; padding-bottom: 20px; margin-bottom: 24px; }
-    .company-info h1 { font-size: 24px; color: #37475a; margin-bottom: 4px; }
-    .company-info p { font-size: 11px; color: #666; line-height: 1.6; }
-    .doc-info { text-align: right; }
-    .doc-info h2 { font-size: 18px; color: #37475a; margin-bottom: 8px; }
-    .doc-info p { font-size: 11px; color: #666; }
-    .section { margin-bottom: 20px; }
-    .section-title { font-size: 13px; font-weight: 700; color: #37475a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid #ddd; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    th { background: #f5f6ff; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #555; border-bottom: 2px solid #ddd; }
-    td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 12px; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .summary-table { width: 300px; margin-left: auto; }
-    .summary-table td { padding: 6px 12px; }
-    .summary-table .total-row { font-weight: 700; font-size: 14px; border-top: 2px solid #37475a; }
-    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-processing { background: #d4edff; color: #00576f; }
-    .status-shipped { background: #d4edda; color: #067d62; }
-    .status-delivered { background: #d4edda; color: #067d62; }
-    .status-cancelled { background: #f8d7da; color: #b31b25; }
-    .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 10px; color: #999; text-align: center; }
-    .notes { background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 16px; font-size: 11px; color: #555; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="company-info">
-      <h1>${pdfForm.companyName}</h1>
-      ${pdfForm.companyAddress ? `<p>${pdfForm.companyAddress}</p>` : ''}
-      ${pdfForm.companyPhone ? `<p>Phone: ${pdfForm.companyPhone}</p>` : ''}
-      ${pdfForm.companyEmail ? `<p>Email: ${pdfForm.companyEmail}</p>` : ''}
-    </div>
-    <div class="doc-info">
-      <h2>ORDER INVOICE</h2>
-      <p>Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      ${pdfOrderId ? `<p>Order #${pdfOrderId.slice(-8).toUpperCase()}</p>` : `<p>${ordersToPrint.length} order(s) included</p>`}
-    </div>
-  </div>
-
-  ${ordersToPrint.map((order) => `
-    <div class="section" style="page-break-inside: avoid;">
-      ${!pdfOrderId ? `<div class="section-title">Order #${order._id?.slice(-8).toUpperCase() ?? 'N/A'} - ${new Date(order.createdAt).toLocaleDateString()}</div>` : ''}
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th class="text-center">Qty</th>
-            <th class="text-right">Unit Price</th>
-            <th class="text-right">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${order.items.map((item) => `
-            <tr>
-              <td>${item.name}</td>
-              <td class="text-center">${item.quantity}</td>
-              <td class="text-right">$${item.price.toFixed(2)}</td>
-              <td class="text-right">$${(item.price * item.quantity).toFixed(2)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div style="font-size: 11px; color: #666;">
-          <p><strong>Shipping Address:</strong></p>
-          <p>${order.shippingAddress?.street || 'N/A'}</p>
-          <p>${order.shippingAddress?.city || ''}, ${order.shippingAddress?.state || ''} ${order.shippingAddress?.zip || ''}</p>
-          <p><strong>Payment:</strong> ${(order.paymentMethod || 'N/A').replace('_', ' ')}</p>
-          <p><strong>Status:</strong> <span class="status-badge status-${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span></p>
-        </div>
-        <table class="summary-table">
-          <tr><td>Subtotal:</td><td class="text-right">$${order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)}</td></tr>
-          ${pdfForm.includeShippingDetails ? `<tr><td>Shipping:</td><td class="text-right">${order.shippingPrice === 0 ? 'FREE' : '$' + (order.shippingPrice || 0).toFixed(2)}</td></tr>` : ''}
-          ${pdfForm.includeTaxDetails ? `<tr><td>Tax:</td><td class="text-right">$${(order.taxPrice || 0).toFixed(2)}</td></tr>` : ''}
-          <tr class="total-row"><td>Total:</td><td class="text-right">$${order.totalPrice.toFixed(2)}</td></tr>
-        </table>
-      </div>
-    </div>
-    ${ordersToPrint.indexOf(order) < ordersToPrint.length - 1 ? '<hr style="margin: 20px 0; border: none; border-top: 1px dashed #ddd;">' : ''}
-  `).join('')}
-
-  ${pdfOrderId ? '' : `
-    <div class="section" style="margin-top: 24px; background: #f5f6ff; padding: 16px; border-radius: 8px;">
-      <div class="section-title">Bulk Summary</div>
-      <table class="summary-table" style="width: 100%; max-width: 400px;">
-        <tr><td>Total Orders:</td><td class="text-right">${ordersToPrint.length}</td></tr>
-        <tr><td>Items Total:</td><td class="text-right">$${itemsTotal.toFixed(2)}</td></tr>
-        ${pdfForm.includeShippingDetails ? `<tr><td>Shipping Total:</td><td class="text-right">$${totalShipping.toFixed(2)}</td></tr>` : ''}
-        ${pdfForm.includeTaxDetails ? `<tr><td>Tax Total:</td><td class="text-right">$${totalTax.toFixed(2)}</td></tr>` : ''}
-        <tr class="total-row"><td>Grand Total:</td><td class="text-right">$${grandTotal.toFixed(2)}</td></tr>
-      </table>
-    </div>
-  `}
-
-  ${pdfForm.notes ? `<div class="notes"><strong>Notes:</strong> ${pdfForm.notes}</div>` : ''}
-
-  <div class="footer">
-    <p>Generated on ${new Date().toLocaleString('en-US')} | ${pdfForm.companyName}</p>
-    <p>Thank you for your business!</p>
-  </div>
-</body>
-</html>`;
+    const htmlContent = buildInvoiceHtml(ordersToPrint, 'download');
+    if (!htmlContent) return;
 
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = pdfOrderId
-      ? `order-${pdfOrderId.slice(-8).toUpperCase()}.html`
-      : `orders-report-${new Date().toISOString().slice(0, 10)}.html`;
+      ? `invoice-${pdfOrderId.slice(-8).toUpperCase()}.html`
+      : `invoices-report-${new Date().toISOString().slice(0, 10)}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
