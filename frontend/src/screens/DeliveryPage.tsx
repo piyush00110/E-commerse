@@ -47,9 +47,11 @@ const DeliveryPage: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const res = await orderAPI.getAll();
-      const all = res.data.data || [];
-      setShipped((all as DeliveryOrder[]).filter((o) => o.status === 'shipped' || o.status === 'processing'));
-    } catch { showToast('Failed to load deliveries', 'error'); }
+      const all = (res.data?.data || res.data || []) as DeliveryOrder[];
+      setShipped(all.filter((o) => o.status === 'shipped' || o.status === 'processing'));
+    } catch (e: any) {
+      showToast(e?.message || 'Failed to load deliveries', 'error');
+    }
     finally { setLoading(false); }
   };
 

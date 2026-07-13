@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const NAV_ITEMS = [
   { href: '/manage', icon: '\u2302', label: 'Dashboard' },
@@ -16,8 +16,23 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (!stored) { router.replace('/login'); return; }
+      const user = JSON.parse(stored);
+      if (user.role !== 'admin' && user.role !== 'seller') { router.replace('/'); return; }
+      setAuthorized(true);
+    } catch { router.replace('/login'); }
+  }, [router]);
+
   const search = typeof window !== 'undefined' ? window.location.search : '';
   const currentPath = pathname + search;
+
+  if (!authorized) return <div className="spinner" />;
 
   return (
     <div className="admin-layout">
