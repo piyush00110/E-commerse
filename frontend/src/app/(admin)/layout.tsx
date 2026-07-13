@@ -1,37 +1,78 @@
 'use client';
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const NAV_ITEMS = [
+  { href: '/manage', icon: '\u2302', label: 'Dashboard' },
+  { href: '/manage?tab=products', icon: '\u2261', label: 'Products' },
+  { href: '/manage?tab=orders', icon: '\u2299', label: 'Orders' },
+  { href: '/manage?tab=analytics', icon: '\u2197', label: 'Analytics' },
+  { href: '/manage?tab=users', icon: '\u263A', label: 'Users' },
+  { href: '/shipping', icon: '\u2708', label: 'Shipping' },
+  { href: '/shipping-dashboard', icon: '\u2699', label: 'Fulfillment' },
+  { href: '/delivery', icon: '\u2699', label: 'Delivery' },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const search = typeof window !== 'undefined' ? window.location.search : '';
+  const currentPath = pathname + search;
+
   return (
-    <>
-      <nav style={{
-        background: 'var(--surface-container)',
-        borderBottom: '1px solid var(--border)',
-        padding: '12px 24px', display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 1000,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <Link to="/manage" style={{
-            fontSize: 18, fontWeight: 700, color: 'var(--tertiary)', textDecoration: 'none',
-          }}>
-            ShopSmart <span style={{ fontWeight: 300, color: 'var(--text-secondary)' }}>Admin</span>
-          </Link>
-          <Link to="/manage" style={{ color: 'var(--text-secondary)', fontSize: 13, textDecoration: 'none' }}>Dashboard</Link>
-          <Link to="/shipping" style={{ color: 'var(--text-secondary)', fontSize: 13, textDecoration: 'none' }}>Shipping</Link>
-          <Link to="/shipping-dashboard" style={{ color: 'var(--text-secondary)', fontSize: 13, textDecoration: 'none' }}>Tracking</Link>
-          <Link to="/delivery" style={{ color: 'var(--text-secondary)', fontSize: 13, textDecoration: 'none' }}>Delivery</Link>
+    <div className="admin-layout">
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar-brand">
+          <div className="admin-sidebar-logo">S</div>
+          <div>
+            <div className="admin-sidebar-name">ShopSmart</div>
+            <div className="admin-sidebar-role">Admin Panel</div>
+          </div>
         </div>
-        <button onClick={() => navigate('/')}
-          style={{
-            padding: '6px 14px', background: 'var(--tertiary)', border: 'none',
-            borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-white)',
-          }}>
-          {'\u2190'} Main Store
-        </button>
-      </nav>
-      <main>{children}</main>
-    </>
+
+        <nav className="admin-sidebar-nav">
+          {NAV_ITEMS.map((item) => {
+            const active = currentPath === item.href || (item.href === '/manage' && pathname === '/manage' && !search.includes('tab='));
+            return (
+              <Link key={item.href} href={item.href}
+                className={`admin-sidebar-link ${active ? 'active' : ''}`}>
+                <span className="admin-sidebar-icon">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="admin-sidebar-footer">
+          <Link href="/" className="admin-sidebar-link">
+            <span className="admin-sidebar-icon">{'\u2190'}</span>
+            <span>Main Store</span>
+          </Link>
+          <div className="admin-sidebar-user">
+            <div className="admin-sidebar-avatar">A</div>
+            <div>
+              <div className="admin-sidebar-username">Admin</div>
+              <div className="admin-sidebar-userrole">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div className="admin-main">
+        <header className="admin-topbar">
+          <div className="admin-topbar-title">
+            {NAV_ITEMS.find((i) => currentPath === i.href)?.label || 'Dashboard'}
+          </div>
+          <div className="admin-topbar-actions">
+            <Link href="/" className="admin-topbar-btn">
+              {'\u{1F3E0}'} View Store
+            </Link>
+          </div>
+        </header>
+        <main className="admin-content">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }
