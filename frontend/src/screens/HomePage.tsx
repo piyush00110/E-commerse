@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import CountdownTimer from '../components/CountdownTimer';
 import { productAPI, categoryAPI } from '../services/api';
 import { Product, Category } from '../types';
 import { GridSkeleton } from '../components/Skeleton';
+import { useToast } from '../context/ToastContext';
 
 const BANNERS = [
   {
     title: 'Discover Amazing Deals',
     subtitle: 'Up to 70% off on top brands. Free delivery on orders over $50.',
     cta: 'Shop Now',
-    gradient: 'linear-gradient(135deg, var(--tertiary) 0%, #004d63 50%, var(--tertiary-container) 100%)',
+    gradient: 'linear-gradient(135deg, #0d2137 0%, #0a3d5c 40%, #006080 70%, #0d9488 100%)',
+    accent: '#14b8a6',
     icon: '\u{1F4B0}',
     link: '/products',
   },
@@ -19,7 +21,8 @@ const BANNERS = [
     title: 'New Electronics Arrived',
     subtitle: 'Latest gadgets, laptops, and accessories at unbeatable prices.',
     cta: 'Explore Tech',
-    gradient: 'linear-gradient(135deg, #004d63 0%, var(--tertiary) 50%, #00384a 100%)',
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #2563eb 70%, #3b82f6 100%)',
+    accent: '#60a5fa',
     icon: '\u{1F4F1}',
     link: '/products?category=electronics',
   },
@@ -27,13 +30,19 @@ const BANNERS = [
     title: 'Season Fashion Sale',
     subtitle: 'Refresh your wardrobe with trending styles. Extra 20% off on your first order.',
     cta: 'Shop Fashion',
-    gradient: 'linear-gradient(135deg, var(--secondary) 0%, #6b3d00 50%, #4a2a00 100%)',
+    gradient: 'linear-gradient(135deg, #1a0a2e 0%, #3d1566 40%, #7c3aed 70%, #a855f7 100%)',
+    accent: '#c084fc',
     icon: '\u{1F455}',
     link: '/products?category=fashion',
   },
 ];
 
-const CITIES = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+const TRUST_ITEMS = [
+  { icon: '\u{1F4E6}', title: 'Free Shipping', desc: 'On orders over $50' },
+  { icon: '\u{1F512}', title: 'Secure Payment', desc: '256-bit SSL encryption' },
+  { icon: '\u{1F504}', title: 'Easy Returns', desc: '30-day return policy' },
+  { icon: '\u260E\uFE0F', title: '24/7 Support', desc: 'Dedicated help center' },
+];
 
 const HomePage: React.FC = () => {
   const [featured, setFeatured] = useState<Product[]>([]);
@@ -46,6 +55,7 @@ const HomePage: React.FC = () => {
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const savedCity = localStorage.getItem('deliverCity');
@@ -61,7 +71,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setBannerIdx((prev) => (prev + 1) % BANNERS.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
@@ -113,18 +123,18 @@ const HomePage: React.FC = () => {
   }
 
   const topDeal = deals[0];
-
   const banner = BANNERS[bannerIdx];
 
   return (
     <div>
+      {/* Hero */}
       <section className="hero" style={{ background: banner.gradient }}>
         <div className="hero-bg-shapes">
           <div className="hero-shape hero-shape-1" />
           <div className="hero-shape hero-shape-2" />
           <div className="hero-shape hero-shape-3" />
         </div>
-        <div className="hero-content hero-animate">
+        <div className="hero-content hero-animate" key={bannerIdx}>
           <p className="hero-tagline">
             {deliverCity ? `Delivering to ${deliverCity}` : 'Nationwide Delivery'}
           </p>
@@ -147,6 +157,20 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Trust Strip */}
+      <section className="trust-strip">
+        {TRUST_ITEMS.map((item, i) => (
+          <div key={i} className="trust-item">
+            <span className="trust-icon">{item.icon}</span>
+            <div className="trust-text">
+              <strong>{item.title}</strong>
+              <span>{item.desc}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Recently Viewed */}
       {recent.length > 0 && (
         <section className="section">
           <div className="section-header">
@@ -176,6 +200,7 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
+      {/* Flash Deals */}
       {deals.length >= 3 && (
         <section className="section">
           <div className="section-header">
@@ -214,6 +239,7 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
+      {/* Categories */}
       <section className="section">
         <div className="section-header">
           <div className="section-title-highlight">
@@ -234,6 +260,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Trending */}
       {featured.length > 0 && (
         <section className="section">
           <div className="section-header">
@@ -257,6 +284,7 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
+      {/* Deal of the Day */}
       {topDeal && (
         <section className="section deal-of-day">
           <div className="deal-of-day-inner">
@@ -289,6 +317,7 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
+      {/* New Arrivals */}
       {allProducts.length > 0 && (
         <section className="section">
           <div className="section-header">
@@ -308,6 +337,23 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
+      {/* Newsletter */}
+      <section className="section newsletter-section">
+        <div className="newsletter-inner">
+          <div className="newsletter-content">
+            <h2>{'\u{1F4E7}'} Stay in the Loop</h2>
+            <p>Get exclusive deals, new arrivals, and insider-only discounts delivered to your inbox.</p>
+          </div>
+          <div className="newsletter-form">
+            <form onSubmit={(e) => { e.preventDefault(); showToast('Subscribed! Welcome aboard.', 'success'); }} style={{ display: 'flex', gap: 8, width: '100%' }}>
+              <input type="email" placeholder="Enter your email address" required style={{ flex: 1 }} />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Sell Banner */}
       {categories.length > 0 && (
         <section className="section sell-banner">
           <div className="sell-banner-content">
