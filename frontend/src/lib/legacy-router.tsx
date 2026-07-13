@@ -6,13 +6,13 @@ import React from 'react';
 
 export function useNavigate() {
   const router = useRouter();
-  return (to: string | number) => {
+  return React.useCallback((to: string | number) => {
     if (typeof to === 'number') {
       if (to < 0) router.back();
     } else {
       router.push(to);
     }
-  };
+  }, [router]);
 }
 
 export function useParams<T = Record<string, string | string[] | undefined>>(): T {

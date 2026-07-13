@@ -42,7 +42,7 @@ const OrdersPage: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchOrders();
-  }, [navigate]);
+  }, []);
 
   if (loading) return <div className="spinner" />;
 

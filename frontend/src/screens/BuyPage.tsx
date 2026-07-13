@@ -91,11 +91,14 @@ const BuyPage: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchCart();
+  }, [navigate]);
+
+  useEffect(() => {
     const addrs = loadAddresses();
     setSavedAddresses(addrs);
     if (addrs.length > 0) { setSelectedAddrId(addrs[0].id); }
     else { setUseNewAddr(true); setShowNewAddr(true); }
-  }, [navigate]);
+  }, []);
 
   const getActiveAddress = (): Address | null => {
     if (useNewAddr) return newAddr;

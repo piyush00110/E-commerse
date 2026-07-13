@@ -58,7 +58,7 @@ const ShippingDashboard: React.FC = () => {
       return;
     }
     fetchOrders();
-  }, [navigate]);
+  }, []);
 
   const fetchOrders = async () => {
     try {

@@ -133,7 +133,7 @@ const OrderDetailPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id, navigate, showToast]);
+  }, [id]);
 
   if (loading) return <div className="spinner" />;
   if (!order) return null;

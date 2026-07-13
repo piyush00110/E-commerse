@@ -55,7 +55,7 @@ const ShippingManagePage: React.FC = () => {
       return;
     }
     fetchAllOrders();
-  }, [navigate]);
+  }, []);
 
   const fetchAllOrders = async () => {
     try {

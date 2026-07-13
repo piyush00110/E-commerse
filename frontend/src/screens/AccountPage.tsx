@@ -39,7 +39,7 @@ const AccountPage: React.FC = () => {
     if (!stored) { navigate('/login'); return; }
     fetchData();
     try { setAddresses(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { /* ignore */ }
-  }, [navigate]);
+  }, []);
 
   const fetchData = async () => {
     try {

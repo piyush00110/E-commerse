@@ -38,7 +38,7 @@ const OrderConfirmationPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id, navigate, showToast]);
+  }, [id]);
 
   if (loading) return <div className="spinner" />;
 

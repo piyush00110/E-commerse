@@ -309,10 +309,11 @@ export const orderAPI = {
     const { error: itemsError } = await db.from('order_items').insert(orderItems);
     if (itemsError) throw { response: { data: { message: itemsError.message } } };
     for (const item of items) {
-      await db.rpc('decrement_stock', { pid: item.product_id, qty: item.quantity });
+      try { await db.rpc('decrement_stock', { pid: item.product_id, qty: item.quantity }); } catch { /* stock decrement optional */ }
     }
     await db.from('cart_items').delete().eq('cart_id', cart.id);
-    return { data: { success: true, data: mapOrder(order) } };
+    const { data: fullOrder } = await db.from('orders').select('*, order_items(*), users:user_id(name, email)').eq('id', order.id).single();
+    return { data: { success: true, data: mapOrder(fullOrder || order) } };
   },
 
   getMine: async () => {

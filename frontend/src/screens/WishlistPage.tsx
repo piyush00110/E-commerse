@@ -15,7 +15,7 @@ const WishlistPage: React.FC = () => {
     const stored = localStorage.getItem('user');
     if (!stored) { navigate('/login'); return; }
     fetchWishlist();
-  }, [navigate]);
+  }, []);
 
   const fetchWishlist = async () => {
     try {

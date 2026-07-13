@@ -42,7 +42,7 @@ const DeliveryPage: React.FC = () => {
     const stored = localStorage.getItem('user');
     if (!stored) { navigate('/login'); return; }
     fetchOrders();
-  }, [navigate]);
+  }, []);
 
   const fetchOrders = async () => {
     try {

@@ -1312,7 +1312,7 @@ input, select, textarea {
   left: 50%;
   width: 100%;
   height: 3px;
-  background: #e0e0e0;
+  background: var(--border);
   z-index: 0;
 }
 
@@ -1330,8 +1330,8 @@ input, select, textarea {
   font-size: 14px;
   font-weight: 700;
   z-index: 1;
-  background: #e0e0e0;
-  color: #999;
+  background: var(--border);
+  color: var(--text-secondary);
   transition: var(--transition);
   border: 2px solid transparent;
 }
@@ -1340,7 +1340,7 @@ input, select, textarea {
   background: var(--primary);
   color: var(--text-white);
   border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(35,47,62,0.12);
+  box-shadow: 0 0 0 4px rgba(0, 87, 111, 0.12);
 }
 
 .checkout-step-indicator.completed .step-circle {
@@ -1385,7 +1385,7 @@ input, select, textarea {
 }
 
 .step-back-btn:hover {
-  border-color: #999;
+  border-color: var(--text-secondary);
   color: var(--text);
 }
 
@@ -1461,7 +1461,7 @@ input, select, textarea {
   transition: all 0.15s;
 }
 
-.new-addr-btn:hover { border-color: var(--tertiary); background: #f0f8ff; }
+.new-addr-btn:hover { border-color: var(--tertiary); background: var(--tertiary-container); }
 
 .new-addr-form {
   background: var(--surface-container-low);
@@ -8263,6 +8263,8 @@ img[loading="lazy"]:not([src=""]) {
 .form-group select {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid var(--border-light);
+  color: var(--text);
+  background: var(--surface-container-low);
 }
 .form-group input:focus,
 .form-group textarea:focus,
