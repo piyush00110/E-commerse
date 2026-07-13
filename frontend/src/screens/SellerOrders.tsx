@@ -160,7 +160,7 @@ const SellerOrders: React.FC = () => {
     .inv-meta {
       display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 0; margin-bottom: 28px;
-      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
     }
     .inv-meta-cell {
       padding: 14px 16px; border-right: 1px solid #e0e0e0;
@@ -176,7 +176,7 @@ const SellerOrders: React.FC = () => {
       gap: 20px; margin-bottom: 28px;
     }
     .inv-info-card {
-      background: var(--surface-container-low); border: 1px solid var(--border-light);
+      background: #f8f9fc; border: 1px solid #e8eaf0;
       border-radius: 8px; padding: 18px 20px;
     }
     .inv-info-card h3 {
@@ -198,7 +198,7 @@ const SellerOrders: React.FC = () => {
     }
     .inv-table {
       width: 100%; border-collapse: collapse;
-      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
     }
     .inv-table thead th {
       background: #1a1a2e; color: #fff;
