@@ -179,7 +179,7 @@ const OrderDetailPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, borderTop: '1px solid var(--outline-variant)', paddingTop: 16 }}>
           <div>
             <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Total</div>
-            <div style={{ fontSize: 20, fontWeight: 700 }}>${order.totalPrice.toFixed(2)}</div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>${(order.totalPrice ?? 0).toFixed(2)}</div>
           </div>
           <div>
             <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 2 }}>Items</div>
@@ -317,7 +317,7 @@ const OrderDetailPage: React.FC = () => {
             <div className="shipping-detail-value">
               <div>Standard Shipping</div>
               <div style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
-                {order.shippingPrice === 0 ? 'FREE' : `$${order.shippingPrice.toFixed(2)}`}
+                {order.shippingPrice === 0 ? 'FREE' : `$${(order.shippingPrice ?? 0).toFixed(2)}`}
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Estimated 3-5 business days</div>
             </div>
@@ -347,14 +347,14 @@ const OrderDetailPage: React.FC = () => {
                   {item.name}
                 </Link>
                 <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
-                  Qty: {item.quantity} | ${item.price.toFixed(2)} each
+                  Qty: {item.quantity} | ${(item.price ?? 0).toFixed(2)} each
                 </div>
                 <div style={{ fontSize: 12, color: order.isDelivered ? 'var(--success)' : 'var(--text-secondary)', marginTop: 4 }}>
                   {order.isDelivered ? '\u2713 Item delivered' : order.status === 'shipped' ? '\u{1F4E6} In transit' : order.status === 'processing' ? '\u2699 Processing' : '\u23F3 Pending'}
                 </div>
               </div>
               <div style={{ fontSize: 18, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                ${(item.price * item.quantity).toFixed(2)}
+                ${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}
               </div>
             </div>
           ))}
@@ -368,21 +368,21 @@ const OrderDetailPage: React.FC = () => {
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Order Summary</h2>
         <div className="summary-row">
           <span>Items ({order.items.reduce((s, i) => s + i.quantity, 0)} total)</span>
-          <span>${itemsTotal.toFixed(2)}</span>
+          <span>${(itemsTotal ?? 0).toFixed(2)}</span>
         </div>
         <div className="summary-row">
           <span>Shipping</span>
           <span style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>
-            {order.shippingPrice === 0 ? 'FREE' : `$${order.shippingPrice.toFixed(2)}`}
+            {order.shippingPrice === 0 ? 'FREE' : `$${(order.shippingPrice ?? 0).toFixed(2)}`}
           </span>
         </div>
         <div className="summary-row">
           <span>Tax</span>
-          <span>${order.taxPrice.toFixed(2)}</span>
+          <span>${(order.taxPrice ?? 0).toFixed(2)}</span>
         </div>
         <div className="summary-row total">
           <span>Total</span>
-          <span>${order.totalPrice.toFixed(2)}</span>
+          <span>${(order.totalPrice ?? 0).toFixed(2)}</span>
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'center', marginTop: 12 }}>
           {order.isPaid ? 'Payment collected' : 'Payment pending'}

@@ -192,7 +192,7 @@ const ShippingManagePage: React.FC = () => {
                     <div className="shipping-info-block">
                       <div className="shipping-info-label">Items</div>
                       <div className="shipping-info-value">{order.items?.length || 0} items</div>
-                      <div className="shipping-info-sub">{order.items?.reduce((s, i) => s + i.quantity, 0)} units</div>
+                      <div className="shipping-info-sub">{order.items?.reduce((s, i) => s + i.quantity, 0) ?? 0} units</div>
                     </div>
                   </div>
 
@@ -205,7 +205,7 @@ const ShippingManagePage: React.FC = () => {
                       </div>
                     ))}
                     {(order.items?.length || 0) > 3 && (
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', padding: '4px 0' }}>+{order.items!.length - 3} more items</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', padding: '4px 0' }}>+{(order.items?.length ?? 0) - 3} more items</div>
                     )}
                   </div>
                 </div>

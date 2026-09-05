@@ -62,10 +62,10 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
           <div className="coupon-badge">{'\u2702'} Save {discount}% with coupon</div>
         )}
         <div className="product-card-price">
-          <span className="current-price">${product.price.toFixed(2)}</span>
+          <span className="current-price">${(product.price ?? 0).toFixed(2)}</span>
           {product.comparePrice && product.comparePrice > product.price && (
             <>
-              <span className="compare-price">${product.comparePrice.toFixed(2)}</span>
+              <span className="compare-price">${(product.comparePrice ?? 0).toFixed(2)}</span>
               <span className="discount-badge">-{discount}%</span>
             </>
           )}

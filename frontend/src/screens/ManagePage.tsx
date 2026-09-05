@@ -184,7 +184,7 @@ const ManagePage: React.FC = () => {
             {[
               { icon: '\u{1F4E6}', value: stats.totalProducts, label: 'Products', color: 'var(--accent)', bg: 'var(--tertiary-container)' },
               { icon: '\u{1F4CB}', value: stats.totalOrders, label: 'Orders', color: 'var(--tertiary-dim)', bg: 'var(--tertiary-container)' },
-              { icon: '\u{1F4B5}', value: `$${stats.revenue.toFixed(2)}`, label: 'Revenue', color: 'var(--success)', bg: 'var(--success-light)' },
+              { icon: '\u{1F4B5}', value: `$${(stats.revenue ?? 0).toFixed(2)}`, label: 'Revenue', color: 'var(--success)', bg: 'var(--success-light)' },
               { icon: '\u26A0', value: stats.lowStock, label: 'Low Stock', color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)', bg: stats.lowStock > 0 ? 'var(--error-light)' : 'var(--success-light)' },
               { icon: '\u23F3', value: stats.pendingOrders, label: 'Pending', color: 'var(--warning)', bg: 'var(--secondary-container)' },
               { icon: '\u{1F69A}', value: stats.shippedOrders, label: 'In Transit', color: 'var(--accent)', bg: 'var(--tertiary-container)' },
@@ -323,7 +323,7 @@ const ManagePage: React.FC = () => {
                     {order.items?.slice(0, 3).map((item, idx) => (
                       <div key={idx} className="mg-item-chip"><img src={item.image} alt="" /><span>{item.name.slice(0, 28)}</span><span className="mg-item-qty">x{item.quantity}</span></div>
                     ))}
-                    {(order.items?.length || 0) > 3 && <div className="mg-more">+{order.items!.length - 3} more</div>}
+                    {(order.items?.length || 0) > 3 && <div className="mg-more">+{(order.items?.length ?? 0) - 3} more</div>}
                   </div>
                   <div className="mg-order-actions">
                     <select value={order.status} onChange={(e) => handleStatusUpdate(order._id, e.target.value)} disabled={updatingId === order._id} className="mg-status-select">
@@ -382,9 +382,9 @@ const ManagePage: React.FC = () => {
             <div className="mg-card">
               <h3 className="mg-card-title">Revenue</h3>
               <div className="mg-revenue">
-                <div className="mg-revenue-item"><span className="mg-revenue-label">Total Revenue</span><span className="mg-revenue-num">${stats.revenue.toFixed(2)}</span></div>
+                <div className="mg-revenue-item"><span className="mg-revenue-label">Total Revenue</span><span className="mg-revenue-num">${(stats.revenue ?? 0).toFixed(2)}</span></div>
                 <div className="mg-revenue-divider" />
-                <div className="mg-revenue-item"><span className="mg-revenue-label">Avg Order Value</span><span className="mg-revenue-num">${stats.avgOrderValue.toFixed(2)}</span></div>
+                <div className="mg-revenue-item"><span className="mg-revenue-label">Avg Order Value</span><span className="mg-revenue-num">${(stats.avgOrderValue ?? 0).toFixed(2)}</span></div>
                 <div className="mg-revenue-divider" />
                 <div className="mg-revenue-item"><span className="mg-revenue-label">Paid Orders</span><span className="mg-revenue-num">{orders.filter(o => o.isPaid).length}</span></div>
               </div>

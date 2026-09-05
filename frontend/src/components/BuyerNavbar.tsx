@@ -264,7 +264,7 @@ const BuyerNavbar: React.FC = () => {
                         <div className="mini-cart-name">{item.name}</div>
                         <div className="mini-cart-qty">Qty: {item.quantity}</div>
                       </div>
-                      <div className="mini-cart-price">${(item.price * item.quantity).toFixed(2)}</div>
+                      <div className="mini-cart-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
                     </div>
                   ))}
                 </div>

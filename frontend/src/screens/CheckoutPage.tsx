@@ -428,7 +428,7 @@ const CheckoutPage: React.FC = () => {
                         style={{ color: 'var(--tertiary)', fontSize: 14 }}>{item.name}</Link>
                       <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
                     </div>
-                    <div className="review-item-price">${(item.price * item.quantity).toFixed(2)}</div>
+                    <div className="review-item-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
                   </div>
                 ))}
               </div>
@@ -449,7 +449,7 @@ const CheckoutPage: React.FC = () => {
         <h2>Order Summary</h2>
         <div className="summary-row">
           <span>Items ({cart.totalItems})</span>
-          <span>${cart.totalPrice.toFixed(2)}</span>
+          <span>${(cart.totalPrice ?? 0).toFixed(2)}</span>
         </div>
         <div className="summary-row">
           <span>Shipping</span>

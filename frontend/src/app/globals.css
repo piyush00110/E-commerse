@@ -1723,7 +1723,7 @@ input, select, textarea {
   width: 32px;
   height: 32px;
   border: none;
-  background: #f0f2f2;
+  background: var(--border);
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -1984,7 +1984,7 @@ input, select, textarea {
 .histogram-bar-bg {
   flex: 1;
   height: 14px;
-  background: #f0f2f2;
+  background: var(--border);
   border-radius: 7px;
   overflow: hidden;
 }
@@ -2440,13 +2440,6 @@ input, select, textarea {
 }
 
 /* Skeleton Loaders */
-.skeleton {
-  background: linear-gradient(90deg, var(--border) 25%, var(--bg-container) 50%, var(--border) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-  border-radius: 8px;
-}
-
 .skeleton-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -2783,7 +2776,7 @@ input, select, textarea {
   font-variant-numeric: tabular-nums;
 }
 .countdown-sep {
-  color: #999;
+  color: var(--text-light);
   font-weight: 700;
 }
 
@@ -3071,8 +3064,8 @@ input, select, textarea {
   height: 32px;
   border-radius: 50%;
   margin: 0 auto 4px;
-  background: #e0e0e0;
-  color: #999;
+  background: var(--border);
+  color: var(--text-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3666,7 +3659,7 @@ input, select, textarea {
 .histogram-bar-bg {
   flex: 1;
   height: 14px;
-  background: #f0f2f2;
+  background: var(--border);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -5443,7 +5436,7 @@ input, select, textarea {
 .buy-form-row { display: grid; gap: 12px; margin-bottom: 12px; }
 .buy-form-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
 .buy-field { display: flex; flex-direction: column; gap: 4px; }
-.buy-field label { font-size: 13px; font-weight: 600; color: #333; }
+.buy-field label { font-size: 13px; font-weight: 600; color: var(--text); }
 .buy-field input {
   padding: 10px 14px;
   border: 1px solid var(--border);
@@ -5480,7 +5473,7 @@ input, select, textarea {
   border-radius: 10px;
   transition: var(--transition);
 }
-.buy-gift-toggle:hover { background: #f0f0f0; }
+.buy-gift-toggle:hover { background: var(--bg-container-low); }
 .buy-gift-toggle input { display: none; }
 .buy-gift-check {
   width: 22px;
@@ -5631,7 +5624,7 @@ input, select, textarea {
 .buy-review-body { padding: 14px 18px; }
 .buy-review-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
 .buy-review-label { color: var(--text-secondary); font-weight: 500; min-width: 80px; }
-.buy-review-gift-msg { font-style: italic; font-size: 13px; color: #666; }
+.buy-review-gift-msg { font-style: italic; font-size: 13px; color: var(--text-secondary); }
 .buy-review-item { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
 .buy-review-item:last-child { border-bottom: none; }
 .buy-review-item img { width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: var(--surface-container-low); }

@@ -66,16 +66,16 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
                 <img src={item.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'} alt={item.name} onClick={(e) => { e.stopPropagation(); navigate(`/products/${item._id}`); }} />
                 <div className="fbt-item-info">
                   <div className="fbt-item-name">{item.name}</div>
-                  <div className="fbt-item-price">${item.price.toFixed(2)}</div>
+                  <div className="fbt-item-price">${(item.price ?? 0).toFixed(2)}</div>
                 </div>
               </div>
             </React.Fragment>
           ))}
         </div>
         <div className="fbt-total">
-          <div className="fbt-total-price">${totalPrice.toFixed(2)}</div>
+          <div className="fbt-total-price">${(totalPrice ?? 0).toFixed(2)}</div>
           {savings > 0 && (
-            <div className="fbt-savings">Save ${savings.toFixed(2)}</div>
+            <div className="fbt-savings">Save ${(savings ?? 0).toFixed(2)}</div>
           )}
           <button className="fbt-add-btn" onClick={handleAddAll}
             disabled={selected.length <= 1}>

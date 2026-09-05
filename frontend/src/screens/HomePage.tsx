@@ -191,8 +191,8 @@ const HomePage: React.FC = () => {
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div className="mini-product-price">
-                      ${p.price.toFixed(2)}
-                      {p.comparePrice && <span className="mini-compare">${p.comparePrice.toFixed(2)}</span>}
+                      ${(p.price ?? 0).toFixed(2)}
+                      {p.comparePrice && <span className="mini-compare">${(p.comparePrice ?? 0).toFixed(2)}</span>}
                     </div>
                   </div>
                 );
@@ -229,7 +229,7 @@ const HomePage: React.FC = () => {
                     <div className="deal-info">
                       <div className="deal-name">{product.name}</div>
                       <div className="deal-pricing">
-                        <span className="deal-price">${product.price.toFixed(2)}</span>
+                        <span className="deal-price">${(product.price ?? 0).toFixed(2)}</span>
                         <span className="deal-compare">{comp > 0 ? `$${comp.toFixed(2)}` : ''}</span>
                       </div>
                       <div className="deal-ship">{'\u2713'} FREE delivery</div>
@@ -296,10 +296,10 @@ const HomePage: React.FC = () => {
               <h2 className="deal-of-day-title">{topDeal.name}</h2>
               <p className="deal-of-day-desc">{topDeal.description?.slice(0, 120)}...</p>
               <div className="deal-of-day-pricing">
-                <span className="deal-of-day-price">${topDeal.price.toFixed(2)}</span>
+                <span className="deal-of-day-price">${(topDeal.price ?? 0).toFixed(2)}</span>
                 {topDeal.comparePrice && (
                   <>
-                    <span className="deal-of-day-compare">${topDeal.comparePrice.toFixed(2)}</span>
+                    <span className="deal-of-day-compare">${(topDeal.comparePrice ?? 0).toFixed(2)}</span>
                     <span className="deal-of-day-discount">
                       -{topDeal.comparePrice && topDeal.comparePrice > 0 ? Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100) : 0}%
                     </span>

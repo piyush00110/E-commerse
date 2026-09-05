@@ -111,17 +111,17 @@ const OrderConfirmationPage: React.FC = () => {
               <Link to={`/products/${item.product}`} style={{ color: 'var(--tertiary)', fontSize: 14, fontWeight: 500 }}>{item.name}</Link>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
             </div>
-            <div style={{ fontWeight: 600 }}>${(item.price * item.quantity).toFixed(2)}</div>
+            <div style={{ fontWeight: 600 }}>${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
           </div>
         ))}
       </div>
 
       <div style={{ background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 24 }}>
         <h2 style={{ fontSize: 18, marginBottom: 16 }}>Order Total</h2>
-        <div className="summary-row"><span>Items Total</span><span>${(order.totalPrice - order.taxPrice - order.shippingPrice).toFixed(2)}</span></div>
-        <div className="summary-row"><span>Shipping</span><span style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>{order.shippingPrice === 0 ? 'FREE' : `$${order.shippingPrice.toFixed(2)}`}</span></div>
-        <div className="summary-row"><span>Tax</span><span>${order.taxPrice.toFixed(2)}</span></div>
-        <div className="summary-row total"><span>Total</span><span>${order.totalPrice.toFixed(2)}</span></div>
+        <div className="summary-row"><span>Items Total</span><span>${((order.totalPrice ?? 0) - (order.taxPrice ?? 0) - (order.shippingPrice ?? 0)).toFixed(2)}</span></div>
+        <div className="summary-row"><span>Shipping</span><span style={{ color: order.shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: order.shippingPrice === 0 ? 600 : 400 }}>{order.shippingPrice === 0 ? 'FREE' : `$${(order.shippingPrice ?? 0).toFixed(2)}`}</span></div>
+        <div className="summary-row"><span>Tax</span><span>${(order.taxPrice ?? 0).toFixed(2)}</span></div>
+        <div className="summary-row total"><span>Total</span><span>${(order.totalPrice ?? 0).toFixed(2)}</span></div>
       </div>
 
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>

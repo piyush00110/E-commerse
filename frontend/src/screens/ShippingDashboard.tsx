@@ -266,9 +266,9 @@ const ShippingDashboard: React.FC = () => {
                             <img src={item.image} alt="" />
                             <div className="sd-detail-item-info">
                               <span>{item.name}</span>
-                              <span>Qty: {item.quantity} x ${item.price.toFixed(2)}</span>
+                              <span>Qty: {item.quantity} x ${(item.price ?? 0).toFixed(2)}</span>
                             </div>
-                            <span className="sd-detail-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                            <span className="sd-detail-item-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</span>
                           </div>
                         ))}
                       </div>

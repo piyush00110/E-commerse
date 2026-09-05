@@ -118,7 +118,7 @@ const SellerDashboard: React.FC = () => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Revenue Overview</h2>
-            <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--success)', fontFamily: "'Courier New', monospace" }}>${stats.revenue.toFixed(2)}</span>
+            <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--success)', fontFamily: "'Courier New', monospace" }}>${(stats.revenue ?? 0).toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
@@ -164,7 +164,7 @@ const SellerDashboard: React.FC = () => {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-                      {'⭐'} {p.rating?.toFixed(1) || 'N/A'} · ${p.price?.toFixed(2)}
+                      {'⭐'} {p.rating?.toFixed(1) || 'N/A'} · ${(p.price ?? 0).toFixed(2)}
                     </div>
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>{p.countInStock} in stock</div>

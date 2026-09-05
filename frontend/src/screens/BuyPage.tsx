@@ -85,7 +85,7 @@ const BuyPage: React.FC = () => {
     const fetchCart = async () => {
       try {
         const res = await cartAPI.get();
-        if (!res.data.data.items.length) { navigate('/cart'); return; }
+        if (!res.data.data?.items?.length) { navigate('/cart'); return; }
         setCart(res.data.data);
       } catch { navigate('/cart'); }
       finally { setLoading(false); }

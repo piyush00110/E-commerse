@@ -96,7 +96,7 @@ const OrdersPage: React.FC = () => {
                         <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--tertiary)' }}>{item.name}</span>
                         <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
                       </div>
-                      <div style={{ fontWeight: 600 }}>${(item.price * item.quantity).toFixed(2)}</div>
+                      <div style={{ fontWeight: 600 }}>${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
                     </div>
                   ))}
                 </div>

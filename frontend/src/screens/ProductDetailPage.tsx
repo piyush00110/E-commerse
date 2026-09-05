@@ -274,10 +274,10 @@ const ProductDetailPage: React.FC = () => {
 
           <div className="price-box">
             <div className="price-box-row">
-              <span className="current-price">${product.price.toFixed(2)}</span>
+              <span className="current-price">${(product.price ?? 0).toFixed(2)}</span>
               {product.comparePrice && product.comparePrice > product.price && (
                 <>
-                  <span className="compare-price">${product.comparePrice.toFixed(2)}</span>
+                  <span className="compare-price">${(product.comparePrice ?? 0).toFixed(2)}</span>
                   <span className="discount-badge">-{discount}%</span>
                 </>
               )}
@@ -384,7 +384,7 @@ const ProductDetailPage: React.FC = () => {
               </div>
             </div>
           )}
-          <div className="buy-box-price">${product.price.toFixed(2)}</div>
+          <div className="buy-box-price">${(product.price ?? 0).toFixed(2)}</div>
           {product.countInStock > 0 ? (
             <span className="in-stock" style={{ fontSize: 14, display: 'block', marginBottom: 8 }}>In Stock</span>
           ) : (
@@ -561,8 +561,8 @@ const ProductDetailPage: React.FC = () => {
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
-                      ${p.price.toFixed(2)}
-                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
+                      ${(p.price ?? 0).toFixed(2)}
+                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${(p.comparePrice ?? 0).toFixed(2)}</span>}
                     </div>
                   </div>
                 );
@@ -588,8 +588,8 @@ const ProductDetailPage: React.FC = () => {
                     <div className="mini-product-name">{p.name}</div>
                     <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
                     <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
-                      ${p.price.toFixed(2)}
-                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${p.comparePrice.toFixed(2)}</span>}
+                      ${(p.price ?? 0).toFixed(2)}
+                      {p.comparePrice && <span style={{ fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'line-through', marginLeft: 4 }}>${(p.comparePrice ?? 0).toFixed(2)}</span>}
                     </div>
                   </div>
                 );
@@ -604,9 +604,9 @@ const ProductDetailPage: React.FC = () => {
         <div className="sticky-cart-bar">
           <div className="sticky-cart-bar-inner">
             <div>
-              <div className="sticky-cart-price">${product.price.toFixed(2)}</div>
+              <div className="sticky-cart-price">${(product.price ?? 0).toFixed(2)}</div>
               {product.comparePrice && (
-                <div className="sticky-cart-compare">${product.comparePrice.toFixed(2)}</div>
+                <div className="sticky-cart-compare">${(product.comparePrice ?? 0).toFixed(2)}</div>
               )}
             </div>
             <div className="sticky-cart-actions">

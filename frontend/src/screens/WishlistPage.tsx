@@ -79,10 +79,10 @@ const WishlistPage: React.FC = () => {
                     {product.name}
                   </Link>
                   <div className="product-card-price">
-                    <span className="current-price">${product.price.toFixed(2)}</span>
+                    <span className="current-price">${(product.price ?? 0).toFixed(2)}</span>
                     {product.comparePrice && (
                       <>
-                        <span className="compare-price">${product.comparePrice.toFixed(2)}</span>
+                        <span className="compare-price">${(product.comparePrice ?? 0).toFixed(2)}</span>
                         <span className="discount-badge">-{discount}%</span>
                       </>
                     )}
