@@ -43,7 +43,7 @@ const SellerProducts: React.FC = () => {
       const data: Record<string, unknown> = {
         name: editForm.name,
         price: parseFloat(editForm.price),
-        countInStock: parseInt(editForm.countInStock, 10),
+        countInStock: parseInt(editForm.countInStock, 10) || 0,
         description: editForm.description,
       };
       if (editForm.comparePrice) data.comparePrice = parseFloat(editForm.comparePrice);

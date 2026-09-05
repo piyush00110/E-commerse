@@ -170,7 +170,11 @@ const CheckoutPage: React.FC = () => {
     if (!addr) { showToast('Please provide a shipping address', 'warning'); return; }
     setSubmitting(true);
     try {
-      const res = await orderAPI.create({ shippingAddress: addr, paymentMethod });
+      const orderData = {
+        shippingAddress: { ...addr, giftWrap, giftMessage: giftWrap ? giftMessage : '', walletApplied, promoDiscount: promoDiscountValue },
+        paymentMethod,
+      };
+      const res = await orderAPI.create(orderData);
       showToast('Order placed successfully!', 'success');
       navigate(`/order-confirmation/${res.data.data._id}`);
     } catch (err: any) {
@@ -406,7 +410,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 <div className="review-gift">
                   <div>{'\u{1F381}'} Gift wrap included</div>
-                  {giftMessage && <div className="review-gift-msg">"{giftMessage}"</div>}
+                  {giftMessage && <div className="review-gift-msg">&quot;{giftMessage}&quot;</div>}
                 </div>
               </div>
             )}

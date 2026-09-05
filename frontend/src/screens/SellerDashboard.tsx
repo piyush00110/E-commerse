@@ -48,7 +48,7 @@ const SellerDashboard: React.FC = () => {
   if (loading) return <div className="spinner" />;
 
   const statCards = [
-    { label: 'Total Revenue', value: `$${stats.revenue.toFixed(2)}`, icon: '\u{1F4B5}', color: 'var(--success)', bg: 'rgba(16,185,129,0.1)' },
+    { label: 'Total Revenue', value: `$${(stats.revenue ?? 0).toFixed(2)}`, icon: '\u{1F4B5}', color: 'var(--success)', bg: 'rgba(16,185,129,0.1)' },
     { label: 'Total Orders', value: stats.totalOrders, icon: '\u{1F4CB}', color: 'var(--tertiary)', bg: 'rgba(255,153,0,0.1)' },
     { label: 'Products', value: stats.totalProducts, icon: '\u{1F4E6}', color: 'var(--primary-color)', bg: 'rgba(83,144,217,0.1)' },
     { label: 'Pending Shipments', value: stats.pendingOrders, icon: '\u{1F4E8}', color: 'var(--tertiary-dim)', bg: 'rgba(255,153,0,0.08)' },
@@ -67,7 +67,7 @@ const SellerDashboard: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)' }}>Seller Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Welcome back! Here's your store overview.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Welcome back! Here&apos;s your store overview.</p>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: 4, background: 'var(--surface-container)', borderRadius: 10, padding: 4 }}>

@@ -50,7 +50,12 @@ const BuyerNavbar: React.FC = () => {
   useEffect(() => {
     fetchCart();
     const interval = setInterval(fetchCart, 120000);
-    return () => clearInterval(interval);
+    const handleCartUpdate = () => fetchCart();
+    window.addEventListener('cart-updated', handleCartUpdate);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('cart-updated', handleCartUpdate);
+    };
   }, []);
 
   useEffect(() => {

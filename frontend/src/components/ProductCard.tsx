@@ -11,7 +11,7 @@ interface Props {
 
 const PRIME_DELIVERY_DATE = new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
-const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
+const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -25,7 +25,7 @@ const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
     return stars.join(' ');
   };
 
-  const discount = product.comparePrice
+  const discount = product.comparePrice && product.comparePrice > 0
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : 0;
 
@@ -47,7 +47,7 @@ const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
         <div className="card-badge card-badge-bestseller">#1 Best Seller</div>
       )}
       {badge === 'amazons_choice' && (
-        <div className="card-badge card-badge-choice">ShopSmart's Choice</div>
+        <div className="card-badge card-badge-choice">ShopSmart&apos;s Choice</div>
       )}
       <div className="product-card-image">
         <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
@@ -56,7 +56,7 @@ const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
         <div className="product-card-title">{product.name}</div>
         <div className="product-card-rating">
           <span className="stars">{renderStars(product.rating)}</span>
-          <span className="review-count">{product.numReviews.toLocaleString()}</span>
+          <span className="review-count">{(product.numReviews ?? 0).toLocaleString()}</span>
         </div>
         {product.comparePrice && discount >= 20 && (
           <div className="coupon-badge">{'\u2702'} Save {discount}% with coupon</div>
@@ -86,6 +86,9 @@ const ProductCard: React.FC<Props> = React.memo(({ product, badge }) => {
       </div>
     </div>
   );
-});
+};
+
+const ProductCard = React.memo(ProductCardInner);
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

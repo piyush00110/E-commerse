@@ -341,7 +341,7 @@ const BuyPage: React.FC = () => {
               <div className="buy-form-section animate-in">
                 <div className="buy-form-header">
                   <h2>{'\u{1F4B3}'} Payment Method</h2>
-                  <p>Choose how you'd like to pay</p>
+                  <p>Choose how you&apos;d like to pay</p>
                 </div>
 
                 <div className="payment-options">
@@ -452,7 +452,7 @@ const BuyPage: React.FC = () => {
                     </div>
                     <div>
                       <div>{'\u{1F381}'} Included</div>
-                      {giftMessage && <div className="review-gift-msg">"{giftMessage}"</div>}
+                      {giftMessage && <div className="review-gift-msg">&quot;{giftMessage}&quot;</div>}
                     </div>
                   </div>
                 )}
@@ -469,7 +469,7 @@ const BuyPage: React.FC = () => {
                           <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}>{item.name}</Link>
                           <span>Qty: {item.quantity}</span>
                         </div>
-                        <span className="review-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="review-item-price">${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -505,7 +505,7 @@ const BuyPage: React.FC = () => {
                       <span className="buy-sidebar-item-name">{item.name}</span>
                       <span className="buy-sidebar-item-qty">Qty: {item.quantity}</span>
                     </div>
-                    <span className="buy-sidebar-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="buy-sidebar-item-price">${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</span>
                   </div>
                 ))}
                 {cart.items.length > 3 && (
@@ -516,7 +516,7 @@ const BuyPage: React.FC = () => {
               <div className="buy-sidebar-breakdown">
                 <div className="buy-sidebar-row">
                   <span>Items ({cart.totalItems})</span>
-                  <span>${cart.totalPrice.toFixed(2)}</span>
+                  <span>${(cart.totalPrice || 0).toFixed(2)}</span>
                 </div>
                 <div className="buy-sidebar-row">
                   <span>Shipping</span>

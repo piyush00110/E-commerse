@@ -31,6 +31,7 @@ const CartPage: React.FC = () => {
     try {
       const res = await cartAPI.update(itemId, newQty);
       setCart(res.data.data);
+      window.dispatchEvent(new Event('cart-updated'));
     } catch {
       showToast('Failed to update quantity', 'error');
     }
@@ -40,6 +41,7 @@ const CartPage: React.FC = () => {
     try {
       const res = await cartAPI.remove(itemId);
       setCart(res.data.data);
+      window.dispatchEvent(new Event('cart-updated'));
       showToast('Item removed from cart', 'info');
     } catch {
       showToast('Failed to remove item', 'error');
@@ -53,7 +55,7 @@ const CartPage: React.FC = () => {
       <div className="empty-state">
         <div style={{ fontSize: 72, marginBottom: 16 }}>{'\u{1F6D2}'}</div>
         <h2>Your Cart is Empty</h2>
-        <p>Looks like you haven't added any items yet.</p>
+        <p>Looks like you haven&apos;t added any items yet.</p>
         <Link to="/products" className="hero-cta" style={{ textDecoration: 'none', display: 'inline-block' }}>
           Continue Shopping
         </Link>

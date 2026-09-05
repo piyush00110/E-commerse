@@ -168,7 +168,7 @@ const ShippingManagePage: React.FC = () => {
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     {statusBadge(order.status)}
-                    <span style={{ fontSize: 18, fontWeight: 700 }}>${order.totalPrice.toFixed(2)}</span>
+                    <span style={{ fontSize: 18, fontWeight: 700 }}>${(order.totalPrice ?? 0).toFixed(2)}</span>
                   </div>
                 </div>
 

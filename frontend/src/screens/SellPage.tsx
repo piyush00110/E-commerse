@@ -327,7 +327,7 @@ const SellPage: React.FC = () => {
                       </div>
                     ))}
                     <div style={{ marginTop: 20, padding: 16, background: 'var(--tertiary-container)', borderRadius: 10, fontSize: 12, color: 'var(--tertiary-dim)' }}>
-                      By submitting, you agree to ShopSmart's Seller Terms and Conditions. Our team will review your application within 24-48 hours.
+                      By submitting, you agree to ShopSmart&apos;s Seller Terms and Conditions. Our team will review your application within 24-48 hours.
                     </div>
                   </div>
                 )}

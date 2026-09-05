@@ -9,13 +9,10 @@ const CountdownTimer: React.FC<Props> = ({ endDate, size = 'small' }) => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [expired, setExpired] = useState(false);
   const endRef = useRef(endDate.getTime());
-  const initialized = useRef(false);
 
   useEffect(() => {
-    if (!initialized.current) {
-      endRef.current = endDate.getTime();
-      initialized.current = true;
-    }
+    endRef.current = endDate.getTime();
+    setExpired(false);
   }, [endDate]);
 
   useEffect(() => {

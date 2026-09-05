@@ -88,10 +88,12 @@ const HomePage: React.FC = () => {
         setAllProducts(allRes.data.data || []);
         const fetchedProducts = allRes.data.data || [];
         const filtered = fetchedProducts.filter(
-          (p: Product) => p.comparePrice && p.comparePrice > p.price
+          (p: Product) => p.comparePrice && p.comparePrice > 0 && p.comparePrice > p.price
         ).sort((a: Product, b: Product) => {
-          const aDisc = ((a.comparePrice! - a.price) / a.comparePrice!) * 100;
-          const bDisc = ((b.comparePrice! - b.price) / b.comparePrice!) * 100;
+          const aComp = a.comparePrice || 0;
+          const bComp = b.comparePrice || 0;
+          const aDisc = aComp > 0 ? ((aComp - a.price) / aComp) * 100 : 0;
+          const bDisc = bComp > 0 ? ((bComp - b.price) / bComp) * 100 : 0;
           return bDisc - aDisc;
         }).slice(0, 8);
         setDeals(filtered);
@@ -182,7 +184,7 @@ const HomePage: React.FC = () => {
           <div className="deals-carousel">
             <div className="deals-scroll">
               {recent.map((p) => {
-                const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
+                const d = p.comparePrice && p.comparePrice > 0 ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
                     <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
@@ -215,7 +217,8 @@ const HomePage: React.FC = () => {
           <div className="deals-carousel">
             <div className="deals-scroll">
               {deals.map((product, idx) => {
-                const discount = Math.round(((product.comparePrice! - product.price) / product.comparePrice!) * 100);
+                const comp = product.comparePrice || 0;
+                const discount = comp > 0 ? Math.round(((comp - product.price) / comp) * 100) : 0;
                 return (
                   <div key={product._id} className="deal-card" onClick={() => navigate(`/products/${product._id}`)}>
                     <div className="deal-badge">-{discount}%</div>
@@ -227,7 +230,7 @@ const HomePage: React.FC = () => {
                       <div className="deal-name">{product.name}</div>
                       <div className="deal-pricing">
                         <span className="deal-price">${product.price.toFixed(2)}</span>
-                        <span className="deal-compare">${product.comparePrice!.toFixed(2)}</span>
+                        <span className="deal-compare">{comp > 0 ? `$${comp.toFixed(2)}` : ''}</span>
                       </div>
                       <div className="deal-ship">{'\u2713'} FREE delivery</div>
                     </div>
@@ -298,7 +301,7 @@ const HomePage: React.FC = () => {
                   <>
                     <span className="deal-of-day-compare">${topDeal.comparePrice.toFixed(2)}</span>
                     <span className="deal-of-day-discount">
-                      -{Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100)}%
+                      -{topDeal.comparePrice && topDeal.comparePrice > 0 ? Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100) : 0}%
                     </span>
                   </>
                 )}

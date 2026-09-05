@@ -33,9 +33,13 @@ export const authAPI = {
     if (signUpError || !authData?.user) throw { response: { data: { message: signUpError?.message || 'Registration failed' } } };
     const userId = authData.user.id;
     const { error: insertError } = await db.from('users').insert({ id: userId, name: data.name, email: data.email, role: 'user' });
-    if (insertError) await supabase.auth.admin.deleteUser(userId);
+    if (insertError) throw { response: { data: { message: 'Failed to create user profile' } } };
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
-    if (signInError || !signInData?.session) throw { response: { data: { message: 'Login after registration failed' } } };
+    if (signInError || !signInData?.session) {
+      const userData = { _id: userId, name: data.name, email: data.email, role: 'user', token: '' };
+      setStoredUser(userData);
+      return { data: { success: true, data: userData } };
+    }
     const userData = { _id: userId, name: data.name, email: data.email, role: 'user', token: signInData.session.access_token };
     setStoredUser(userData);
     return { data: { success: true, data: userData } };
@@ -444,11 +448,11 @@ export const adminAPI = {
   },
 
   createAdmin: async (data: { name: string; email: string; password: string }) => {
-    const { data: authData, error: authError } = await supabase.auth.signUp({ email: data.email, password: data.password, options: { data: { name: data.name, role: 'admin' } } });
+    const { data: authData, error: authError } = await supabase.auth.signUp({ email: data.email, password: data.password, options: { data: { name: data.name } } });
     if (authError) throw { response: { data: { message: authError.message?.includes('already') ? 'User already exists' : authError.message } } };
     if (!authData?.user) throw { response: { data: { message: 'Failed to create user' } } };
-    const { data: user, error: dbError } = await db.from('users').insert({ id: authData.user.id, name: data.name, email: data.email, role: 'admin' }).select('id, name, email, role').single();
-    if (dbError) throw { response: { data: { message: 'Failed to create admin profile' } } };
+    const { data: user, error: dbError } = await db.from('users').upsert({ id: authData.user.id, name: data.name, email: data.email, role: 'admin' }, { onConflict: 'id' }).select('id, name, email, role').single();
+    if (dbError) throw { response: { data: { message: 'Failed to create admin profile: ' + dbError.message } } };
     return { data: { success: true, data: { _id: user.id, name: user.name, email: user.email, role: user.role } } };
   },
 };

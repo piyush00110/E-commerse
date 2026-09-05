@@ -22,7 +22,9 @@ export function useParams<T = Record<string, string | string[] | undefined>>(): 
 
 export function useLocation() {
   const pathname = usePathname();
-  return { pathname, search: '', hash: '', state: null, key: '' };
+  const sp = useNextSearchParams();
+  const search = sp.toString() ? `?${sp.toString()}` : '';
+  return { pathname, search, hash: '', state: null, key: '' };
 }
 
 export function useSearchParams(): [URLSearchParams, (params: URLSearchParams) => void] {

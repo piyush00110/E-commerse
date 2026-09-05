@@ -59,17 +59,24 @@ const SellerAddProduct: React.FC = () => {
     setSubmitting(true);
 
     try {
+      const price = parseFloat(form.price);
+      const countInStock = parseInt(form.countInStock, 10);
+      if (isNaN(price) || price <= 0) { setError('Please enter a valid price'); setSubmitting(false); return; }
+      if (isNaN(countInStock) || countInStock < 0) { setError('Please enter a valid stock quantity'); setSubmitting(false); return; }
       const data: Record<string, unknown> = {
         name: form.name,
         description: form.description,
-        price: parseFloat(form.price),
+        price,
         category: form.category,
         brand: form.brand,
-        countInStock: parseInt(form.countInStock, 10),
+        countInStock,
         images: form.image ? [form.image] : [],
         features: form.features.filter((f) => f.trim()),
       };
-      if (form.comparePrice) data.comparePrice = parseFloat(form.comparePrice);
+      if (form.comparePrice) {
+        const cp = parseFloat(form.comparePrice);
+        if (!isNaN(cp) && cp > 0) data.comparePrice = cp;
+      }
 
       await productAPI.create(data);
       setSuccess(true);

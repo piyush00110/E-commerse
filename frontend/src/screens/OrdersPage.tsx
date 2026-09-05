@@ -59,7 +59,7 @@ const OrdersPage: React.FC = () => {
         <div className="empty-state">
           <div style={{ fontSize: 72, marginBottom: 16 }}>{'\u{1F4ED}'}</div>
           <h2>No orders yet</h2>
-          <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
+          <p>You haven&apos;t placed any orders yet. Start shopping to see your orders here.</p>
           <Link to="/products" className="hero-cta" style={{ textDecoration: 'none', display: 'inline-block' }}>
             Start Shopping
           </Link>
@@ -85,7 +85,7 @@ const OrdersPage: React.FC = () => {
                       Placed on {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 700 }}>${order.totalPrice?.toFixed(2)}</div>
+                  <div style={{ fontSize: 22, fontWeight: 700 }}>${order.totalPrice?.toFixed(2) ?? '0.00'}</div>
                 </div>
 
                 <div className="order-items-list">

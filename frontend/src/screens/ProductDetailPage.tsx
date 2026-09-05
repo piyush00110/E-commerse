@@ -102,8 +102,8 @@ const ProductDetailPage: React.FC = () => {
     try {
       const stored = localStorage.getItem('user');
       if (!stored) { navigate('/login'); return; }
-      await cartAPI.add(product!._id, quantity);
-      showToast(`${product!.name} added to cart!`, 'success');
+      await cartAPI.add(product?._id ?? '', quantity);
+      showToast(`${product?.name} added to cart!`, 'success');
       navigate('/cart');
     } catch {
       showToast('Failed to add to cart', 'error');
@@ -114,7 +114,7 @@ const ProductDetailPage: React.FC = () => {
     try {
       const stored = localStorage.getItem('user');
       if (!stored) { navigate('/login'); return; }
-      await cartAPI.add(product!._id, quantity);
+      await cartAPI.add(product?._id ?? '', quantity);
       navigate('/checkout');
     } catch {
       showToast('Failed to process', 'error');
@@ -126,11 +126,11 @@ const ProductDetailPage: React.FC = () => {
       const stored = localStorage.getItem('user');
       if (!stored) { navigate('/login'); return; }
       if (wishlisted) {
-        await wishlistAPI.remove(product!._id);
+        await wishlistAPI.remove(product?._id ?? '');
         setWishlisted(false);
         showToast('Removed from wishlist', 'info');
       } else {
-        await wishlistAPI.add(product!._id);
+        await wishlistAPI.add(product?._id ?? '');
         setWishlisted(true);
         showToast('Saved to wishlist', 'success');
       }
@@ -165,13 +165,13 @@ const ProductDetailPage: React.FC = () => {
         existing[key] = [...(existing[key] || []), ...reviewImages];
         localStorage.setItem('reviewImages', JSON.stringify(existing));
       }
-      await productAPI.createReview(id!, reviewData);
+      await productAPI.createReview(id ?? '', reviewData);
       showToast('Review submitted!', 'success');
       setReviewTitle('');
       setReviewComment('');
       setReviewRating(5);
       setReviewImages([]);
-      const res = await productAPI.getById(id!);
+      const res = await productAPI.getById(id ?? '');
       setProduct(res.data.data);
     } catch {
       showToast('Failed to submit review', 'error');
@@ -216,7 +216,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="empty-state">
         <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u{1F50D}'}</div>
         <h2>Product not found</h2>
-        <p>The product you're looking for doesn't exist.</p>
+        <p>The product you&apos;re looking for doesn&apos;t exist.</p>
         <Link to="/products" className="hero-cta" style={{ textDecoration: 'none', display: 'inline-block', marginTop: 8 }}>
           Browse Products
         </Link>
@@ -224,7 +224,7 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const discount = product.comparePrice
+  const discount = product.comparePrice && product.comparePrice > 0
     ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : 0;
 
@@ -251,7 +251,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="product-detail-main">
         <div className="product-gallery">
           <div className="product-thumbnails">
-            {product.images.map((img, idx) => (
+            {(product.images || []).map((img, idx) => (
               <img key={idx} src={img} alt=""
                 className={idx === selectedImage ? 'active' : ''}
                 onClick={() => setSelectedImage(idx)} />
@@ -263,7 +263,7 @@ const ProductDetailPage: React.FC = () => {
         </div>
 
         <div className="product-info">
-          {product.isFeatured && <div className="amazon-choice-badge">ShopSmart's Choice</div>}
+          {product.isFeatured && <div className="amazon-choice-badge">ShopSmart&apos;s Choice</div>}
           <h1>{product.name}</h1>
           <div className="product-info-rating">
             <span className="stars">{renderStars(product.rating)}</span>
@@ -554,7 +554,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="deals-carousel">
             <div className="deals-scroll">
               {alsoViewed.map((p) => {
-                const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
+                const d = p.comparePrice && p.comparePrice > 0 ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
                     <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
@@ -581,7 +581,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="deals-carousel">
             <div className="deals-scroll">
               {related.map((p) => {
-                const d = p.comparePrice ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
+                const d = p.comparePrice && p.comparePrice > 0 ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
                 return (
                   <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
                     <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />

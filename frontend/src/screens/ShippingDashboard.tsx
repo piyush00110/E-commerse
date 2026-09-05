@@ -215,7 +215,7 @@ const ShippingDashboard: React.FC = () => {
                       <div className="sd-order-id">#{order._id.slice(-8).toUpperCase()}</div>
                       <div className="sd-order-status-wrap">
                         {statusBadge(order.status)}
-                        <div className="sd-order-price">${order.totalPrice.toFixed(2)}</div>
+                        <div className="sd-order-price">${(order.totalPrice ?? 0).toFixed(2)}</div>
                       </div>
                     </div>
                     <div className="sd-order-meta">
@@ -229,7 +229,7 @@ const ShippingDashboard: React.FC = () => {
                       </div>
                       <div className="sd-meta-item">
                         <span className="sd-meta-label">Items</span>
-                        <span className="sd-meta-value">{order.items?.length || 0} items · {order.items?.reduce((s, i) => s + i.quantity, 0)} units</span>
+                        <span className="sd-meta-value">{order.items?.length || 0} items · {order.items?.reduce((s, i) => s + i.quantity, 0) ?? 0} units</span>
                       </div>
                       <div className="sd-meta-item">
                         <span className="sd-meta-label">Date</span>
@@ -366,7 +366,7 @@ const ShippingDashboard: React.FC = () => {
           </div>
 
           <div className="sd-sidebar-card">
-            <h3>{'\u26A1'} Today's Summary</h3>
+            <h3>{'\u26A1'} Today&apos;s Summary</h3>
             <div className="sd-today-stats">
               <div className="sd-today-item">
                 <span className="sd-today-num">{stats.delivered}</span>

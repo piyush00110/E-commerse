@@ -373,8 +373,8 @@ const SellerOrders: React.FC = () => {
               <td class="num"><span class="item-idx">${idx + 1}</span></td>
               <td class="item-name">${item.name}</td>
               <td class="num">${item.quantity}</td>
-              <td class="right">$${item.price.toFixed(2)}</td>
-              <td class="right" style="font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</td>
+              <td class="right">$${(item.price ?? 0).toFixed(2)}</td>
+              <td class="right" style="font-weight: 700;">$${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</td>
             </tr>
             `).join('')}
           </tbody>
@@ -407,7 +407,7 @@ const SellerOrders: React.FC = () => {
           <div class="inv-totals-divider"></div>
           <div class="inv-totals-total">
             <span>Total</span>
-            <span class="value">$${order.totalPrice.toFixed(2)}</span>
+            <span class="value">$${(order.totalPrice ?? 0).toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -680,9 +680,9 @@ const SellerOrders: React.FC = () => {
                     <img src={item.image} alt="" className="seller-orders-item-img" />
                     <div className="seller-orders-item-info">
                       <div className="seller-orders-item-name">{item.name}</div>
-                      <div className="seller-orders-item-qty">Qty: {item.quantity} x ${item.price.toFixed(2)}</div>
+                      <div className="seller-orders-item-qty">Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>
                     </div>
-                    <div className="seller-orders-item-total">${(item.price * item.quantity).toFixed(2)}</div>
+                    <div className="seller-orders-item-total">${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</div>
                   </div>
                 ))}
               </div>

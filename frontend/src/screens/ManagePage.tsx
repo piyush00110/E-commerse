@@ -92,7 +92,7 @@ const ManagePage: React.FC = () => {
     const cancelledOrders = orders.filter((o) => o.status === 'cancelled').length;
     const processingOrders = orders.filter((o) => o.status === 'processing').length;
     const avgRating = products.length ? (products.reduce((s, p) => s + (p.rating || 0), 0) / products.length) : 0;
-    const avgOrderValue = totalOrders ? revenue / paidOrders.length : 0;
+    const avgOrderValue = paidOrders.length > 0 ? revenue / paidOrders.length : 0;
     return { totalProducts, totalOrders, revenue, lowStock, pendingOrders, shippedOrders, deliveredOrders, cancelledOrders, processingOrders, avgRating, avgOrderValue };
   }, [products, orders]);
 
@@ -310,7 +310,7 @@ const ManagePage: React.FC = () => {
                     <div className="mg-order-id">#{order._id.slice(-8).toUpperCase()}</div>
                     <div className="mg-order-top-right">
                       <span className="mg-badge" style={{ background: statusBg(order.status), color: statusColor(order.status) }}>{order.status}</span>
-                      <span className="mg-order-total">${order.totalPrice.toFixed(2)}</span>
+                      <span className="mg-order-total">${(order.totalPrice || 0).toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="mg-order-info">

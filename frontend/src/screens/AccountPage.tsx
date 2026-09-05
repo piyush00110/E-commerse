@@ -142,7 +142,7 @@ const AccountPage: React.FC = () => {
               <div style={{ marginBottom: 8 }}><strong>Name:</strong> {user.name}</div>
               <div style={{ marginBottom: 8 }}><strong>Email:</strong> {user.email}</div>
               <div style={{ marginBottom: 8 }}><strong>Role:</strong> {user.role}</div>
-              <div style={{ marginBottom: 8 }}><strong>Member since:</strong> {new Date(user.createdAt).toLocaleDateString()}</div>
+              <div style={{ marginBottom: 8 }}><strong>Member since:</strong> {new Date(user.created_at || user.createdAt).toLocaleDateString()}</div>
             </div>
           )}
         </div>

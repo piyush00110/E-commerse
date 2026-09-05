@@ -29,7 +29,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     } catch { router.replace('/login'); }
   }, [router]);
 
-  const search = typeof window !== 'undefined' ? window.location.search : '';
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    setSearch(window.location.search);
+  }, [pathname]);
   const currentPath = pathname + search;
 
   if (!authorized) return <div className="spinner" />;

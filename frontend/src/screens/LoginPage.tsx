@@ -70,11 +70,6 @@ const LoginPage: React.FC = () => {
         <div className="auth-link">
           New here? <Link to="/register">Create your account</Link>
         </div>
-        <div style={{ marginTop: 16, padding: 12, background: 'var(--surface-container-low)', borderRadius: 8, fontSize: 13, color: 'var(--on-surface-variant)' }}>
-          <strong>Demo accounts:</strong><br />
-          Admin: admin@shop.com / admin123<br />
-          User: user@shop.com / user123
-        </div>
       </div>
     </div>
   );

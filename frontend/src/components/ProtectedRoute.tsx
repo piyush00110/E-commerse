@@ -1,5 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   children: React.ReactNode;
@@ -7,18 +9,34 @@ interface Props {
 }
 
 const ProtectedRoute: React.FC<Props> = ({ children, adminOnly }) => {
-  const stored = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-  if (!stored) return <Navigate to="/login" replace />;
+  const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
+  const [checked, setChecked] = useState(false);
 
-  if (adminOnly) {
-    try {
-      const user = JSON.parse(stored);
-      if (user.role !== 'admin') return <Navigate to="/" replace />;
-    } catch {
-      return <Navigate to="/login" replace />;
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (!stored) {
+      router.replace('/login');
+      return;
     }
-  }
+    if (adminOnly) {
+      try {
+        const user = JSON.parse(stored);
+        if (user.role !== 'admin') {
+          router.replace('/');
+          return;
+        }
+      } catch {
+        router.replace('/login');
+        return;
+      }
+    }
+    setAuthorized(true);
+    setChecked(true);
+  }, [adminOnly, router]);
 
+  if (!checked) return <div className="spinner" />;
+  if (!authorized) return null;
   return <>{children}</>;
 };
 

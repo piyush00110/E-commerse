@@ -61,7 +61,7 @@ const OrderConfirmationPage: React.FC = () => {
           Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}
         </p>
         <p style={{ color: 'var(--success)', fontSize: 14, fontWeight: 500, marginTop: 12 }}>
-          {'\u{1F4E6}'} We'll send a confirmation when it ships.
+          {'\u{1F4E6}'} We&apos;ll send a confirmation when it ships.
         </p>
       </div>
 
