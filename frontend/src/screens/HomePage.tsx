@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ProductCard from '../components/ProductCard';
 import CountdownTimer from '../components/CountdownTimer';
 import { productAPI, categoryAPI } from '../services/api';
@@ -12,9 +15,9 @@ const BANNERS = [
     title: 'Discover Amazing Deals',
     subtitle: 'Up to 70% off on top brands. Free delivery on orders over $50.',
     cta: 'Shop Now',
-    gradient: 'linear-gradient(135deg, #0d2137 0%, #0a3d5c 40%, #006080 70%, #0d9488 100%)',
-    accent: '#14b8a6',
-    icon: '\u{1F4B0}',
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #6366f1 70%, #06b6d4 100%)',
+    accent: '#06b6d4',
+    icon: '💰',
     link: '/products',
   },
   {
@@ -23,25 +26,25 @@ const BANNERS = [
     cta: 'Explore Tech',
     gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #2563eb 70%, #3b82f6 100%)',
     accent: '#60a5fa',
-    icon: '\u{1F4F1}',
+    icon: '📱',
     link: '/products?category=electronics',
   },
   {
     title: 'Season Fashion Sale',
     subtitle: 'Refresh your wardrobe with trending styles. Extra 20% off on your first order.',
     cta: 'Shop Fashion',
-    gradient: 'linear-gradient(135deg, #1a0a2e 0%, #3d1566 40%, #7c3aed 70%, #a855f7 100%)',
-    accent: '#c084fc',
-    icon: '\u{1F455}',
+    gradient: 'linear-gradient(135deg, #0f172a 0%, #3d1566 40%, #6366f1 70%, #a855f7 100%)',
+    accent: '#a855f7',
+    icon: '👗',
     link: '/products?category=fashion',
   },
 ];
 
 const TRUST_ITEMS = [
-  { icon: '\u{1F4E6}', title: 'Free Shipping', desc: 'On orders over $50' },
-  { icon: '\u{1F512}', title: 'Secure Payment', desc: '256-bit SSL encryption' },
-  { icon: '\u{1F504}', title: 'Easy Returns', desc: '30-day return policy' },
-  { icon: '\u260E\uFE0F', title: '24/7 Support', desc: 'Dedicated help center' },
+  { icon: '📦', title: 'Free Shipping', desc: 'On orders over $50' },
+  { icon: '🔒', title: 'Secure Payment', desc: '256-bit SSL encryption' },
+  { icon: '🔄', title: 'Easy Returns', desc: '30-day return policy' },
+  { icon: '📞', title: '24/7 Support', desc: 'Dedicated help center' },
 ];
 
 const HomePage: React.FC = () => {
@@ -54,7 +57,7 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -87,17 +90,23 @@ const HomePage: React.FC = () => {
         setCategories(catRes.data.data);
         setAllProducts(allRes.data.data || []);
         const fetchedProducts = allRes.data.data || [];
-        const filtered = fetchedProducts.filter(
-          (p: Product) => p.comparePrice && p.comparePrice > 0 && p.comparePrice > p.price
-        ).sort((a: Product, b: Product) => {
-          const aComp = a.comparePrice || 0;
-          const bComp = b.comparePrice || 0;
-          const aDisc = aComp > 0 ? ((aComp - a.price) / aComp) * 100 : 0;
-          const bDisc = bComp > 0 ? ((bComp - b.price) / bComp) * 100 : 0;
-          return bDisc - aDisc;
-        }).slice(0, 8);
+        const filtered = fetchedProducts
+          .filter(
+            (p: Product) =>
+              p.comparePrice && p.comparePrice > 0 && p.comparePrice > p.price
+          )
+          .sort((a: Product, b: Product) => {
+            const aComp = a.comparePrice || 0;
+            const bComp = b.comparePrice || 0;
+            const aDisc = aComp > 0 ? ((aComp - a.price) / aComp) * 100 : 0;
+            const bDisc = bComp > 0 ? ((bComp - b.price) / bComp) * 100 : 0;
+            return bDisc - aDisc;
+          })
+          .slice(0, 8);
         setDeals(filtered);
-        setDealEndDates(filtered.map(() => new Date(Date.now() + (3 + Math.random() * 5) * 3600000)));
+        setDealEndDates(
+          filtered.map(() => new Date(Date.now() + (3 + Math.random() * 5) * 3600000))
+        );
       } catch (err) {
         console.error('Failed to load data', err);
       } finally {
@@ -106,12 +115,6 @@ const HomePage: React.FC = () => {
     };
     fetchData();
   }, []);
-
-  const renderStars = (rating: number) => {
-    const stars: string[] = [];
-    for (let i = 1; i <= 5; i++) stars.push(i <= Math.floor(rating) ? '\u2605' : '\u2606');
-    return stars.join(' ');
-  };
 
   if (loading) {
     return (
@@ -129,7 +132,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      {/* Hero */}
+      {/* Hero Section */}
       <section className="hero" style={{ background: banner.gradient }}>
         <div className="hero-bg-shapes">
           <div className="hero-shape hero-shape-1" />
@@ -137,17 +140,46 @@ const HomePage: React.FC = () => {
           <div className="hero-shape hero-shape-3" />
         </div>
         <div className="hero-content hero-animate" key={bannerIdx}>
-          <p className="hero-tagline">
-            {deliverCity ? `Delivering to ${deliverCity}` : 'Nationwide Delivery'}
+          <span className="hero-badge">
+            {deliverCity ? `📍 Delivering to ${deliverCity}` : '🌍 Nationwide Delivery'}
+          </span>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{banner.icon}</div>
+          <h1 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            marginBottom: 16,
+            background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
+            {banner.title}
+          </h1>
+          <p style={{
+            fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+            color: 'rgba(255,255,255,0.8)',
+            maxWidth: 600,
+            margin: '0 auto 32px',
+            lineHeight: 1.6,
+          }}>
+            {banner.subtitle}
           </p>
-          <div className="hero-icon">{banner.icon}</div>
-          <h1>{banner.title}</h1>
-          <p>{banner.subtitle}</p>
-          <button className="hero-cta" onClick={() => navigate(banner.link)}>
-            {banner.cta}
-          </button>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="hero-cta-primary" onClick={() => router.push(banner.link)}>
+              {banner.cta} →
+            </button>
+            <button className="hero-cta-secondary" onClick={() => router.push('/products')}>
+              Explore All
+            </button>
+          </div>
         </div>
-        <div className="hero-dots">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 8,
+          marginTop: 32,
+        }}>
           {BANNERS.map((_, idx) => (
             <button
               key={idx}
@@ -159,8 +191,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Trust Strip */}
-      <section className="trust-strip">
+      {/* Trust Bar */}
+      <section className="trust-bar">
         {TRUST_ITEMS.map((item, i) => (
           <div key={i} className="trust-item">
             <span className="trust-icon">{item.icon}</span>
@@ -174,106 +206,236 @@ const HomePage: React.FC = () => {
 
       {/* Recently Viewed */}
       {recent.length > 0 && (
-        <section className="section">
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
-            <div className="section-title-highlight">
-              <span className="icon">{'\u{1F440}'}</span>
-              <span className="text">Recently viewed</span>
+            <div className="section-title">
+              <span style={{ fontSize: 24 }}>👀</span>
+              <h2>Recently Viewed</h2>
             </div>
           </div>
-          <div className="deals-carousel">
-            <div className="deals-scroll">
-              {recent.map((p) => {
-                const d = p.comparePrice && p.comparePrice > 0 ? Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100) : 0;
-                return (
-                  <div key={p._id} className="mini-product-card" onClick={() => navigate(`/products/${p._id}`)}>
-                    <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name} />
-                    <div className="mini-product-name">{p.name}</div>
-                    <div className="stars" style={{ fontSize: 12 }}>{renderStars(p.rating)}</div>
-                    <div className="mini-product-price">
-                      ${(p.price ?? 0).toFixed(2)}
-                      {p.comparePrice && <span className="mini-compare">${(p.comparePrice ?? 0).toFixed(2)}</span>}
-                    </div>
+          <div className="carousel-scroll" style={{ padding: '8px 0' }}>
+            {recent.map((p) => (
+              <div
+                key={p._id}
+                className="card"
+                style={{
+                  minWidth: 200,
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                onClick={() => router.push(`/products/${p._id}`)}
+              >
+                <img
+                  src={p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                  alt={p.name}
+                  style={{
+                    width: '100%',
+                    height: 160,
+                    objectFit: 'cover',
+                    borderRadius: '12px 12px 0 0',
+                  }}
+                />
+                <div style={{ padding: 12 }}>
+                  <div style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    marginBottom: 4,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {p.name}
                   </div>
-                );
-              })}
-            </div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--primary)' }}>
+                    ${(p.price ?? 0).toFixed(2)}
+                    {p.comparePrice && (
+                      <span style={{
+                        fontSize: 12,
+                        color: 'var(--text-secondary)',
+                        textDecoration: 'line-through',
+                        marginLeft: 8,
+                      }}>
+                        ${(p.comparePrice ?? 0).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
       {/* Flash Deals */}
       {deals.length >= 3 && (
-        <section className="section">
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
-            <div className="section-title-highlight">
-              <span className="icon">{'\u26A1'}</span>
-              <span className="text">Flash Deals</span>
+            <div className="section-title">
+              <span style={{ fontSize: 24 }}>⚡</span>
+              <h2>Flash Deals</h2>
             </div>
-            <span className="section-link" onClick={() => navigate('/products?sort=-discount')}>
-              See all {'\u2192'}
-            </span>
+            <Link href="/products?sort=-discount" className="section-link">
+              See all →
+            </Link>
           </div>
-          <div className="deals-carousel">
-            <div className="deals-scroll">
-              {deals.map((product, idx) => {
-                const comp = product.comparePrice || 0;
-                const discount = comp > 0 ? Math.round(((comp - product.price) / comp) * 100) : 0;
-                return (
-                  <div key={product._id} className="deal-card" onClick={() => navigate(`/products/${product._id}`)}>
-                    <div className="deal-badge">-{discount}%</div>
-                    <div className="deal-countdown" style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
-                      <CountdownTimer endDate={dealEndDates[idx] || new Date()} size="small" />
+          <div className="carousel-scroll" style={{ padding: '8px 0' }}>
+            {deals.map((product, idx) => {
+              const comp = product.comparePrice || 0;
+              const discount =
+                comp > 0 ? Math.round(((comp - product.price) / comp) * 100) : 0;
+              return (
+                <div
+                  key={product._id}
+                  className="card"
+                  style={{
+                    minWidth: 260,
+                    flexShrink: 0,
+                    cursor: 'pointer',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                  }}
+                  onClick={() => router.push(`/products/${product._id}`)}
+                >
+                  <span className="badge" style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    zIndex: 2,
+                    background: 'var(--error)',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                  }}>
+                    -{discount}%
+                  </span>
+                  <div style={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    zIndex: 2,
+                  }}>
+                    <CountdownTimer endDate={dealEndDates[idx] || new Date()} size="small" />
+                  </div>
+                  <img
+                    src={product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: 200,
+                      objectFit: 'cover',
+                      borderRadius: '12px 12px 0 0',
+                    }}
+                  />
+                  <div style={{ padding: 16 }}>
+                    <div style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      marginBottom: 8,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {product.name}
                     </div>
-                    <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
-                    <div className="deal-info">
-                      <div className="deal-name">{product.name}</div>
-                      <div className="deal-pricing">
-                        <span className="deal-price">${(product.price ?? 0).toFixed(2)}</span>
-                        <span className="deal-compare">{comp > 0 ? `$${comp.toFixed(2)}` : ''}</span>
-                      </div>
-                      <div className="deal-ship">{'\u2713'} FREE delivery</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--primary)' }}>
+                        ${(product.price ?? 0).toFixed(2)}
+                      </span>
+                      {comp > 0 && (
+                        <span style={{
+                          fontSize: 14,
+                          color: 'var(--text-secondary)',
+                          textDecoration: 'line-through',
+                        }}>
+                          ${comp.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{
+                      fontSize: 12,
+                      color: 'var(--success)',
+                      fontWeight: 600,
+                    }}>
+                      ✓ FREE delivery
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
 
       {/* Categories */}
-      <section className="section">
+      <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
         <div className="section-header">
-          <div className="section-title-highlight">
-            <span className="icon">{'\u{1F4AB}'}</span>
-            <span className="text">Shop by Category</span>
+          <div className="section-title">
+            <span style={{ fontSize: 24 }}>✨</span>
+            <h2>Shop by Category</h2>
           </div>
-          <span className="section-link" onClick={() => navigate('/products')}>
-            Explore all {'\u2192'}
-          </span>
+          <Link href="/products" className="section-link">
+            Explore all →
+          </Link>
         </div>
         <div className="category-grid">
           {categories.slice(0, 8).map((cat) => (
-            <div key={cat._id} className="category-card" onClick={() => navigate(`/products?category=${cat.slug}`)}>
-              <img src={cat.image || 'https://via.placeholder.com/400?text=' + cat.name} alt={cat.name} />
-              <h3>{cat.name}</h3>
+            <div
+              key={cat._id}
+              className="category-card"
+              onClick={() => router.push(`/products?category=${cat.slug}`)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 12,
+              }}>
+                <img
+                  src={cat.image || `https://via.placeholder.com/48?text=${cat.name.charAt(0)}`}
+                  alt={cat.name}
+                  style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }}
+                />
+              </div>
+              <h3 style={{
+                fontSize: 16,
+                fontWeight: 600,
+                margin: 0,
+                color: 'var(--text)',
+              }}>
+                {cat.name}
+              </h3>
+              <p style={{
+                fontSize: 12,
+                color: 'var(--text-secondary)',
+                margin: '4px 0 0',
+              }}>
+                View all
+              </p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Trending */}
+      {/* Trending Products */}
       {featured.length > 0 && (
-        <section className="section">
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
-            <div className="section-title-highlight">
-              <span className="icon">{'\u{1F525}'}</span>
-              <span className="text">Trending Products</span>
+            <div className="section-title">
+              <span style={{ fontSize: 24 }}>🔥</span>
+              <h2>Trending Products</h2>
             </div>
-            <span className="section-link" onClick={() => navigate('/products')}>
-              See all {'\u2192'}
-            </span>
+            <Link href="/products" className="section-link">
+              See all →
+            </Link>
           </div>
           <div className="product-grid">
             {featured.slice(0, 8).map((product, idx) => (
@@ -289,32 +451,113 @@ const HomePage: React.FC = () => {
 
       {/* Deal of the Day */}
       {topDeal && (
-        <section className="section deal-of-day">
-          <div className="deal-of-day-inner">
-            <div className="deal-of-day-content">
-              <div className="deal-of-day-badge">{'\u{1F3C6}'} DEAL OF THE DAY</div>
-              <h2 className="deal-of-day-title">{topDeal.name}</h2>
-              <p className="deal-of-day-desc">{topDeal.description?.slice(0, 120)}...</p>
-              <div className="deal-of-day-pricing">
-                <span className="deal-of-day-price">${(topDeal.price ?? 0).toFixed(2)}</span>
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+            borderRadius: 16,
+            padding: 'clamp(24px, 4vw, 48px)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'clamp(24px, 4vw, 48px)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 200,
+              height: 200,
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }} />
+            <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
+              <span className="badge" style={{
+                background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                color: '#fff',
+                fontSize: 12,
+                fontWeight: 700,
+                padding: '6px 14px',
+                borderRadius: 8,
+                marginBottom: 16,
+                display: 'inline-block',
+              }}>
+                🏆 DEAL OF THE DAY
+              </span>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+                fontWeight: 800,
+                color: '#fff',
+                margin: '0 0 12px',
+                lineHeight: 1.2,
+              }}>
+                {topDeal.name}
+              </h2>
+              <p style={{
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: 16,
+                margin: '0 0 20px',
+                lineHeight: 1.6,
+              }}>
+                {topDeal.description?.slice(0, 120)}...
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+                <span style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  fontWeight: 800,
+                  color: '#fff',
+                }}>
+                  ${(topDeal.price ?? 0).toFixed(2)}
+                </span>
                 {topDeal.comparePrice && (
                   <>
-                    <span className="deal-of-day-compare">${(topDeal.comparePrice ?? 0).toFixed(2)}</span>
-                    <span className="deal-of-day-discount">
-                      -{topDeal.comparePrice && topDeal.comparePrice > 0 ? Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100) : 0}%
+                    <span style={{
+                      fontSize: 16,
+                      color: 'rgba(255,255,255,0.5)',
+                      textDecoration: 'line-through',
+                    }}>
+                      ${(topDeal.comparePrice ?? 0).toFixed(2)}
+                    </span>
+                    <span className="badge" style={{
+                      background: 'var(--success)',
+                      color: '#fff',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                    }}>
+                      -{Math.round(((topDeal.comparePrice - topDeal.price) / topDeal.comparePrice) * 100)}%
                     </span>
                   </>
                 )}
               </div>
-              <button className="hero-cta" onClick={() => navigate(`/products/${topDeal._id}`)}>
-                Grab the Deal {'\u2192'}
+              <button className="hero-cta-primary" onClick={() => router.push(`/products/${topDeal._id}`)}>
+                Grab the Deal →
               </button>
             </div>
-            <div className="deal-of-day-image">
-              <img
-                src={(topDeal.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')}
-                alt={topDeal.name}
-              />
+            <div style={{
+              flex: '0 0 300px',
+              maxWidth: 300,
+              position: 'relative',
+              zIndex: 1,
+            }}>
+              <div style={{
+                borderRadius: 16,
+                overflow: 'hidden',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              }}>
+                <img
+                  src={topDeal.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                  alt={topDeal.name}
+                  style={{
+                    width: '100%',
+                    height: 300,
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -322,15 +565,15 @@ const HomePage: React.FC = () => {
 
       {/* New Arrivals */}
       {allProducts.length > 0 && (
-        <section className="section">
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
-            <div className="section-title-highlight">
-              <span className="icon">{'\u{1F4CA}'}</span>
-              <span className="text">New Arrivals</span>
+            <div className="section-title">
+              <span style={{ fontSize: 24 }}>📊</span>
+              <h2>New Arrivals</h2>
             </div>
-            <span className="section-link" onClick={() => navigate('/products?sort=-created_at')}>
-              See all {'\u2192'}
-            </span>
+            <Link href="/products?sort=-created_at" className="section-link">
+              See all →
+            </Link>
           </div>
           <div className="product-grid">
             {allProducts.slice(0, 4).map((product) => (
@@ -341,32 +584,108 @@ const HomePage: React.FC = () => {
       )}
 
       {/* Newsletter */}
-      <section className="section newsletter-section">
-        <div className="newsletter-inner">
-          <div className="newsletter-content">
-            <h2>{'\u{1F4E7}'} Stay in the Loop</h2>
-            <p>Get exclusive deals, new arrivals, and insider-only discounts delivered to your inbox.</p>
+      <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+          borderRadius: 16,
+          padding: 'clamp(32px, 5vw, 64px)',
+          textAlign: 'center',
+        }}>
+          <div style={{
+            fontSize: 48,
+            marginBottom: 16,
+          }}>
+            📧
           </div>
-          <div className="newsletter-form">
-            <form onSubmit={(e) => { e.preventDefault(); showToast('Subscribed! Welcome aboard.', 'success'); }} style={{ display: 'flex', gap: 8, width: '100%' }}>
-              <input type="email" placeholder="Enter your email address" required style={{ flex: 1 }} />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+            fontWeight: 800,
+            color: '#fff',
+            margin: '0 0 12px',
+          }}>
+            Stay in the Loop
+          </h2>
+          <p style={{
+            color: 'rgba(255,255,255,0.8)',
+            fontSize: 16,
+            margin: '0 auto 32px',
+            maxWidth: 500,
+          }}>
+            Get exclusive deals, new arrivals, and insider-only discounts delivered to your inbox.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              showToast('Subscribed! Welcome aboard.', 'success');
+            }}
+            style={{
+              display: 'flex',
+              gap: 12,
+              maxWidth: 480,
+              margin: '0 auto',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              required
+              className="form-input"
+              style={{
+                flex: 1,
+                minWidth: 250,
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                color: '#fff',
+                padding: '12px 16px',
+                borderRadius: 8,
+                fontSize: 14,
+              }}
+            />
+            <button
+              type="submit"
+              className="hero-cta-primary"
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
       </section>
 
       {/* Sell Banner */}
       {categories.length > 0 && (
-        <section className="section sell-banner">
-          <div className="sell-banner-content">
-            <div>
-              <h2>{'\u{1F4BC}'} Start Selling Today</h2>
-              <p>Reach millions of customers with your products on ShopSmart.</p>
-              <button className="hero-cta" onClick={() => navigate('/sell')}>
-                Become a Seller
-              </button>
-            </div>
+        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+          <div style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: 16,
+            padding: 'clamp(32px, 5vw, 64px)',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>💼</div>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+              fontWeight: 800,
+              margin: '0 0 12px',
+              color: 'var(--text)',
+            }}>
+              Start Selling Today
+            </h2>
+            <p style={{
+              color: 'var(--text-secondary)',
+              fontSize: 16,
+              margin: '0 auto 32px',
+              maxWidth: 500,
+            }}>
+              Reach millions of customers with your products on ShopSmart.
+            </p>
+            <button className="hero-cta-primary" onClick={() => router.push('/sell')}>
+              Become a Seller →
+            </button>
           </div>
         </section>
       )}

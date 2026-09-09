@@ -1,0 +1,164 @@
+/* ============================================
+   ShopSmart Premium - Design Tokens
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  /* === Primary Palette === */
+  --primary: #0f172a;
+  --primary-dark: #020617;
+  --primary-light: #1e293b;
+  --secondary: #6366f1;
+  --secondary-dark: #4f46e5;
+  --secondary-light: #818cf8;
+  --tertiary: #06b6d4;
+  --tertiary-dark: #0891b2;
+  --tertiary-light: #22d3ee;
+  --accent: #8b5cf6;
+  --accent-dark: #7c3aed;
+
+  /* === Backgrounds === */
+  --bg: #f8fafc;
+  --bg-white: #ffffff;
+  --bg-card: #ffffff;
+  --bg-container: #f1f5f9;
+  --bg-container-low: #f8fafc;
+  --bg-elevated: #ffffff;
+
+  /* === Text === */
+  --text: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --text-light: #cbd5e1;
+  --text-white: #ffffff;
+  --text-inverse: #f8fafc;
+
+  /* === Borders === */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-focus: #6366f1;
+
+  /* === Status === */
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --success-dark: #059669;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --error-dark: #dc2626;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+
+  /* === Rating === */
+  --rating: #f59e0b;
+  --rating-star: #f59e0b;
+
+  /* === Shadows (Layered) === */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.06), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.12);
+  --shadow-glow: 0 0 20px rgba(99,102,241,0.15);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
+
+  /* === Border Radius === */
+  --radius-xs: 4px;
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* === Typography === */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* === Spacing === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* === Transitions === */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration: 200ms;
+  --duration-slow: 300ms;
+  --transition: all var(--duration) var(--ease);
+
+  /* === Z-Index === */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* === Layout === */
+  --max-width: 1280px;
+  --max-width-lg: 1440px;
+  --navbar-height: 64px;
+  --subnavbar-height: 40px;
+  --sidebar-width: 260px;
+}
+
+/* === Dark Theme === */
+[data-theme="dark"] {
+  --primary: #1e293b;
+  --primary-dark: #0f172a;
+  --primary-light: #334155;
+  --secondary: #818cf8;
+  --secondary-dark: #6366f1;
+  --secondary-light: #a5b4fc;
+  --tertiary: #22d3ee;
+  --tertiary-dark: #06b6d4;
+  --tertiary-light: #67e8f9;
+  --accent: #a78bfa;
+  --accent-dark: #8b5cf6;
+
+  --bg: #0f172a;
+  --bg-white: #1e293b;
+  --bg-card: #1e293b;
+  --bg-container: #1e293b;
+  --bg-container-low: #162032;
+  --bg-elevated: #253449;
+
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-light: #475569;
+
+  --border: #334155;
+  --border-light: #1e293b;
+  --border-focus: #818cf8;
+
+  --success: #34d399;
+  --success-light: #064e3b;
+  --error: #f87171;
+  --error-light: #450a0a;
+  --warning: #fbbf24;
+  --warning-light: #451a03;
+  --info: #60a5fa;
+  --info-light: #1e3a5f;
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+  --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -4px rgba(0,0,0,0.2);
+  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.2);
+  --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 20px rgba(129,140,248,0.2);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.03);
+}

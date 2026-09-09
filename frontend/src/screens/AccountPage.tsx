@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { authAPI, orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -17,7 +20,7 @@ interface SavedAddress {
 const STORAGE_KEY = 'savedAddresses';
 
 const AccountPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
@@ -36,7 +39,7 @@ const AccountPage: React.FC = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     fetchData();
     try { setAddresses(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { /* ignore */ }
   }, []);
@@ -105,145 +108,723 @@ const AccountPage: React.FC = () => {
     setShowAddrForm(true);
   };
 
-  if (loading) return <div className="spinner" />;
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  if (loading) return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '60vh',
+    }}>
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '3px solid #e2e8f0',
+        borderTopColor: '#6366f1',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+      }} />
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
   if (!user) return null;
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>My Account</h1>
+    <div style={{
+      maxWidth: '1100px',
+      margin: '0 auto',
+      padding: '40px 24px',
+      fontFamily: "'Inter', sans-serif",
+    }}>
+      {/* Page Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '20px',
+        marginBottom: '40px',
+      }}>
+        <div style={{
+          width: '64px',
+          height: '64px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#ffffff',
+          fontSize: '22px',
+          fontWeight: 700,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          boxShadow: '0 4px 16px rgba(99, 102, 241, 0.3)',
+        }}>
+          {getInitials(user.name || 'U')}
+        </div>
+        <div>
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: 800,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            color: '#0f172a',
+            margin: 0,
+          }}>
+            My Account
+          </h1>
+          <p style={{
+            fontSize: '14px',
+            color: '#64748b',
+            margin: '4px 0 0',
+          }}>
+            Manage your profile and preferences
+          </p>
+        </div>
+      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* Profile */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 18 }}>Profile</h2>
-            <button onClick={() => setEditing(!editing)}
-              style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg-card)', fontSize: 13, cursor: 'pointer' }}>
-              {editing ? 'Cancel' : 'Edit'}
+      {/* Two Column Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '24px',
+      }}>
+        {/* Left Column - Profile Card */}
+        <div className="card" style={{
+          padding: '28px',
+          borderRadius: '12px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          background: '#ffffff',
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+          }}>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              color: '#0f172a',
+              margin: 0,
+            }}>
+              Profile
+            </h2>
+            <button
+              onClick={() => setEditing(!editing)}
+              className="btn btn-ghost"
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                background: '#ffffff',
+                fontSize: '13px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                color: '#64748b',
+                transition: 'all 0.2s',
+              }}
+            >
+              {editing ? 'Cancel' : 'Edit Profile'}
             </button>
           </div>
 
-          {saved && <div style={{ color: 'var(--success)', marginBottom: 12, fontSize: 14 }}>{'\u2713'} Profile updated!</div>}
-
-          {editing ? (
-            <form onSubmit={handleSave}>
-              <div className="form-group">
-                <label>Name</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-              </div>
-              <button type="submit" className="submit-btn" style={{ marginTop: 8 }}>Save Changes</button>
-            </form>
-          ) : (
-            <div>
-              <div style={{ marginBottom: 8 }}><strong>Name:</strong> {user.name}</div>
-              <div style={{ marginBottom: 8 }}><strong>Email:</strong> {user.email}</div>
-              <div style={{ marginBottom: 8 }}><strong>Role:</strong> {user.role}</div>
-              <div style={{ marginBottom: 8 }}><strong>Member since:</strong> {new Date(user.created_at || user.createdAt).toLocaleDateString()}</div>
+          {saved && (
+            <div style={{
+              padding: '12px 16px',
+              background: '#f0fdf4',
+              border: '1px solid #bbf7d0',
+              borderRadius: '8px',
+              color: '#16a34a',
+              fontSize: '13px',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/>
+              </svg>
+              Profile updated successfully!
             </div>
+          )}
+
+          {!editing ? (
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '20px',
+                background: '#f8fafc',
+                borderRadius: '12px',
+                marginBottom: '20px',
+              }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: 700,
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}>
+                  {getInitials(user.name || 'U')}
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: '#0f172a',
+                    marginBottom: '2px',
+                  }}>
+                    {user.name}
+                  </div>
+                  <div style={{
+                    fontSize: '13px',
+                    color: '#64748b',
+                  }}>
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[
+                  { label: 'Role', value: user.role },
+                  { label: 'Member since', value: new Date(user.created_at || user.createdAt).toLocaleDateString() },
+                ].map((item) => (
+                  <div key={item.label} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '12px 0',
+                    borderBottom: '1px solid #f1f5f9',
+                  }}>
+                    <span style={{ fontSize: '13px', color: '#64748b' }}>{item.label}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSave}>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  Name
+                </label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: '20px' }}>
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  Email
+                </label>
+                <input
+                  className="form-input"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{
+                  padding: '10px 24px',
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)',
+                }}
+              >
+                Save Changes
+              </button>
+            </form>
           )}
         </div>
 
-        {/* Quick Links */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-          <h2 style={{ fontSize: 18, marginBottom: 16 }}>Quick Links</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <Link to="/orders" style={{
-              padding: '14px 20px', background: 'var(--tertiary-container)', borderRadius: 8,
-              border: '1px solid var(--border)', color: 'var(--text)', fontWeight: 600, fontSize: 14, textDecoration: 'none',
+        {/* Right Column - Quick Links */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="card" style={{
+            padding: '28px',
+            borderRadius: '12px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+            background: '#ffffff',
+          }}>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              color: '#0f172a',
+              margin: '0 0 20px',
             }}>
-              {'\u{1F4E6}'} My Orders ({orders.length})
-            </Link>
-            <Link to="/wishlist" style={{
-              padding: '14px 20px', background: 'var(--secondary-container)', borderRadius: 8,
-              border: '1px solid var(--border)', color: 'var(--error)', fontWeight: 600, fontSize: 14, textDecoration: 'none',
-            }}>
-              {'\u2764'} My Wishlist
-            </Link>
-            <Link to="/cart" style={{
-              padding: '14px 20px', background: 'var(--tertiary-container)', borderRadius: 8,
-              border: '1px solid var(--border)', color: 'var(--tertiary)', fontWeight: 600, fontSize: 14, textDecoration: 'none',
-            }}>
-              {'\u{1F6D2}'} Shopping Cart
-            </Link>
+              Quick Links
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { href: '/orders', icon: '📦', label: 'My Orders', count: orders.length, color: '#6366f1' },
+                { href: '/wishlist', icon: '❤️', label: 'My Wishlist', count: null, color: '#ef4444' },
+                { href: '/cart', icon: '🛒', label: 'Shopping Cart', count: null, color: '#06b6d4' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  style={{
+                    padding: '16px 20px',
+                    background: '#f8fafc',
+                    borderRadius: '12px',
+                    border: '1px solid #f1f5f9',
+                    color: '#0f172a',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <span style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '10px',
+                    background: `${link.color}10`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                  }}>
+                    {link.icon}
+                  </span>
+                  <span style={{ flex: 1 }}>{link.label}</span>
+                  {link.count !== null && (
+                    <span className="badge" style={{
+                      background: `${link.color}15`,
+                      color: link.color,
+                      padding: '4px 10px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                    }}>
+                      {link.count}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Gift Card Wallet */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
-        <h2 style={{ fontSize: 18, marginBottom: 16 }}>{'\u{1F3B1}'} Gift Card Balance</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--error)' }}>
+      {/* Gift Card Wallet - Full Width */}
+      <div className="card" style={{
+        padding: '28px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        background: '#ffffff',
+        marginTop: '24px',
+      }}>
+        <h2 style={{
+          fontSize: '18px',
+          fontWeight: 700,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          color: '#0f172a',
+          margin: '0 0 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+        }}>
+          <span style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '16px',
+          }}>
+            🎁
+          </span>
+          Gift Card Balance
+        </h2>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          flexWrap: 'wrap',
+        }}>
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <div style={{
+              fontSize: '36px',
+              fontWeight: 800,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>
               ${walletBalance.toFixed(2)}
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Available balance</div>
+            <div style={{
+              fontSize: '13px',
+              color: '#64748b',
+              marginTop: '4px',
+            }}>
+              Available balance
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input type="number" placeholder="Amount" min="1" max="1000"
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+          }}>
+            <input
+              className="form-input"
+              type="number"
+              placeholder="Amount"
+              min="1"
+              max="1000"
               value={walletInput}
               onChange={(e) => setWalletInput(e.target.value)}
-              style={{ width: 100, padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 6, fontSize: 14 }} />
-            <button onClick={() => {
-              const amt = parseFloat(walletInput);
-              if (isNaN(amt) || amt <= 0) { showToast('Enter a valid amount', 'warning'); return; }
-              const newBalance = walletBalance + amt;
-              localStorage.setItem('walletBalance', String(newBalance));
-              setWalletBalance(newBalance);
-              setWalletInput('');
-              showToast(`$${amt.toFixed(2)} added to gift card balance!`, 'success');
-            }} className="btn-primary" style={{ padding: '10px 20px', flex: 0, maxWidth: 120 }}>Add Funds</button>
+              style={{
+                width: '120px',
+                padding: '12px 16px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '14px',
+                background: '#ffffff',
+                color: '#0f172a',
+                outline: 'none',
+              }}
+            />
+            <button
+              onClick={() => {
+                const amt = parseFloat(walletInput);
+                if (isNaN(amt) || amt <= 0) { showToast('Enter a valid amount', 'warning'); return; }
+                const newBalance = walletBalance + amt;
+                localStorage.setItem('walletBalance', String(newBalance));
+                setWalletBalance(newBalance);
+                setWalletInput('');
+                showToast(`$${amt.toFixed(2)} added to gift card balance!`, 'success');
+              }}
+              className="btn btn-primary"
+              style={{
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Add Funds
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Addresses */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18 }}>My Addresses</h2>
-          <button onClick={() => { setShowAddrForm(!showAddrForm); setEditAddrId(null); setAddrForm({ street: '', city: '', state: '', zip: '', phone: '' }); }}
-            style={{ padding: '6px 14px', background: 'var(--tertiary-dim)', color: 'var(--text-white)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-            + Add Address
+      {/* Addresses - Full Width */}
+      <div className="card" style={{
+        padding: '28px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        background: '#ffffff',
+        marginTop: '24px',
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}>
+          <h2 style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            color: '#0f172a',
+            margin: 0,
+          }}>
+            My Addresses
+          </h2>
+          <button
+            onClick={() => {
+              setShowAddrForm(!showAddrForm);
+              setEditAddrId(null);
+              setAddrForm({ street: '', city: '', state: '', zip: '', phone: '' });
+            }}
+            className="btn btn-secondary"
+            style={{
+              padding: '8px 16px',
+              background: showAddrForm ? '#f1f5f9' : 'linear-gradient(135deg, #06b6d4, #0891b2)',
+              color: showAddrForm ? '#64748b' : '#ffffff',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              boxShadow: showAddrForm ? 'none' : '0 2px 8px rgba(6, 182, 212, 0.2)',
+            }}
+          >
+            {showAddrForm ? 'Cancel' : '+ Add Address'}
           </button>
         </div>
 
         {showAddrForm && (
-          <div style={{ background: 'var(--surface-container)', borderRadius: 8, padding: 20, marginBottom: 16 }}>
-            <h3 style={{ fontSize: 15, marginBottom: 12 }}>{editAddrId ? 'Edit Address' : 'New Address'}</h3>
-            <div className="form-group">
-              <label>Street Address</label>
-              <input type="text" value={addrForm.street} onChange={(e) => setAddrForm({ ...addrForm, street: e.target.value })} placeholder="123 Main Street" />
+          <div style={{
+            background: '#f8fafc',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '20px',
+            border: '1px solid #f1f5f9',
+          }}>
+            <h3 style={{
+              fontSize: '15px',
+              fontWeight: 600,
+              color: '#0f172a',
+              margin: '0 0 16px',
+            }}>
+              {editAddrId ? 'Edit Address' : 'New Address'}
+            </h3>
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label" style={{
+                display: 'block',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#374151',
+                marginBottom: '6px',
+              }}>
+                Street Address
+              </label>
+              <input
+                className="form-input"
+                type="text"
+                value={addrForm.street}
+                onChange={(e) => setAddrForm({ ...addrForm, street: e.target.value })}
+                placeholder="123 Main Street"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
             </div>
-            <div className="form-row">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
               <div className="form-group">
-                <label>City</label>
-                <input type="text" value={addrForm.city} onChange={(e) => setAddrForm({ ...addrForm, city: e.target.value })} placeholder="New York" />
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  City
+                </label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={addrForm.city}
+                  onChange={(e) => setAddrForm({ ...addrForm, city: e.target.value })}
+                  placeholder="New York"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
               <div className="form-group">
-                <label>State</label>
-                <input type="text" value={addrForm.state} onChange={(e) => setAddrForm({ ...addrForm, state: e.target.value })} placeholder="NY" />
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  State
+                </label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={addrForm.state}
+                  onChange={(e) => setAddrForm({ ...addrForm, state: e.target.value })}
+                  placeholder="NY"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
             </div>
-            <div className="form-row">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
               <div className="form-group">
-                <label>ZIP Code</label>
-                <input type="text" value={addrForm.zip} onChange={(e) => setAddrForm({ ...addrForm, zip: e.target.value })} placeholder="10001" />
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  ZIP Code
+                </label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={addrForm.zip}
+                  onChange={(e) => setAddrForm({ ...addrForm, zip: e.target.value })}
+                  placeholder="10001"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
               <div className="form-group">
-                <label>Phone</label>
-                <input type="tel" value={addrForm.phone} onChange={(e) => setAddrForm({ ...addrForm, phone: e.target.value })} placeholder="+1 (555) 000-0000" />
+                <label className="form-label" style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}>
+                  Phone
+                </label>
+                <input
+                  className="form-input"
+                  type="tel"
+                  value={addrForm.phone}
+                  onChange={(e) => setAddrForm({ ...addrForm, phone: e.target.value })}
+                  placeholder="+1 (555) 000-0000"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="submit-btn" onClick={handleSaveAddress} style={{ maxWidth: 160 }}>
-                {editAddrId ? 'Update' : 'Save Address'}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={handleSaveAddress}
+                className="btn btn-primary"
+                style={{
+                  padding: '10px 24px',
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 2px 8px rgba(99, 102, 241, 0.2)',
+                }}
+              >
+                {editAddrId ? 'Update Address' : 'Save Address'}
               </button>
-              <button onClick={() => { setShowAddrForm(false); setEditAddrId(null); }}
-                style={{ padding: '10px 20px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--bg-card)', fontSize: 14, cursor: 'pointer' }}>
+              <button
+                onClick={() => { setShowAddrForm(false); setEditAddrId(null); }}
+                className="btn btn-ghost"
+                style={{
+                  padding: '10px 24px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  background: '#ffffff',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  color: '#64748b',
+                  transition: 'all 0.2s',
+                }}
+              >
                 Cancel
               </button>
             </div>
@@ -251,26 +832,107 @@ const AccountPage: React.FC = () => {
         )}
 
         {addresses.length === 0 && !showAddrForm ? (
-          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 24 }}>No saved addresses. Add one for faster checkout!</p>
+          <div className="empty-state" style={{
+            textAlign: 'center',
+            padding: '48px 24px',
+            background: '#f8fafc',
+            borderRadius: '12px',
+            border: '1px dashed #e2e8f0',
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: '#f1f5f9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              fontSize: '28px',
+            }}>
+              📍
+            </div>
+            <p style={{ color: '#64748b', fontSize: '14px', margin: '0 0 8px' }}>
+              No saved addresses yet
+            </p>
+            <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>
+              Add an address for faster checkout!
+            </p>
+          </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '16px',
+          }}>
             {addresses.map((addr) => (
               <div key={addr.id} style={{
-                border: '1px solid var(--border)', borderRadius: 8, padding: 16, position: 'relative',
+                border: '1px solid #f1f5f9',
+                borderRadius: '12px',
+                padding: '20px',
+                background: '#f8fafc',
+                position: 'relative',
+                transition: 'all 0.2s',
               }}>
-                <div style={{ fontWeight: 600, marginBottom: 4 }}>{addr.label}</div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '12px',
+                }}>
+                  <div style={{
+                    padding: '4px 12px',
+                    background: '#6366f115',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#6366f1',
+                  }}>
+                    {addr.label}
+                  </div>
+                </div>
+                <div style={{
+                  fontSize: '13px',
+                  color: '#475569',
+                  lineHeight: 1.6,
+                  marginBottom: '16px',
+                }}>
                   <div>{addr.street}</div>
                   <div>{addr.city}, {addr.state} {addr.zip}</div>
                   <div>{addr.phone}</div>
                 </div>
-                <div style={{ marginTop: 8, display: 'flex', gap: 12 }}>
-                  <button onClick={() => startEditAddress(addr)}
-                    style={{ background: 'none', border: 'none', color: 'var(--tertiary)', fontSize: 13, cursor: 'pointer', padding: 0 }}>
+                <div style={{
+                  display: 'flex',
+                  gap: '16px',
+                  paddingTop: '12px',
+                  borderTop: '1px solid #e2e8f0',
+                }}>
+                  <button
+                    onClick={() => startEditAddress(addr)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#6366f1',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
                     Edit
                   </button>
-                  <button onClick={() => handleDeleteAddress(addr.id)}
-                    style={{ background: 'none', border: 'none', color: 'var(--error)', fontSize: 13, cursor: 'pointer', padding: 0 }}>
+                  <button
+                    onClick={() => handleDeleteAddress(addr.id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
                     Remove
                   </button>
                 </div>
@@ -280,29 +942,148 @@ const AccountPage: React.FC = () => {
         )}
       </div>
 
-      {/* Recent Orders */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginTop: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18 }}>Recent Orders</h2>
-          {orders.length > 0 && <Link to="/orders" style={{ color: 'var(--tertiary)', fontSize: 13 }}>View all {'\u2192'}</Link>}
+      {/* Recent Orders - Full Width */}
+      <div className="card" style={{
+        padding: '28px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        background: '#ffffff',
+        marginTop: '24px',
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}>
+          <h2 style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            color: '#0f172a',
+            margin: 0,
+          }}>
+            Recent Orders
+          </h2>
+          {orders.length > 0 && (
+            <Link href="/orders" style={{
+              color: '#6366f1',
+              fontSize: '13px',
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}>
+              View all →
+            </Link>
+          )}
         </div>
+
         {orders.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 24 }}>No orders yet. <Link to="/products" style={{ color: 'var(--tertiary)' }}>Start shopping!</Link></p>
+          <div className="empty-state" style={{
+            textAlign: 'center',
+            padding: '48px 24px',
+            background: '#f8fafc',
+            borderRadius: '12px',
+            border: '1px dashed #e2e8f0',
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: '#f1f5f9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              fontSize: '28px',
+            }}>
+              📦
+            </div>
+            <p style={{ color: '#64748b', fontSize: '14px', margin: '0 0 8px' }}>
+              No orders yet
+            </p>
+            <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 16px' }}>
+              Start shopping to see your orders here!
+            </p>
+            <Link
+              href="/products"
+              className="btn btn-primary"
+              style={{
+                display: 'inline-block',
+                padding: '10px 24px',
+                background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                color: '#ffffff',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              Start Shopping
+            </Link>
+          </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {orders.slice(0, 3).map((order) => (
-              <div key={order._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
-                <div>
-                   <div style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 600 }}>#{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{new Date(order.createdAt).toLocaleDateString()} - {order.items?.length} items</div>
+              <div key={order._id} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px 20px',
+                background: '#f8fafc',
+                borderRadius: '12px',
+                border: '1px solid #f1f5f9',
+                transition: 'all 0.2s',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '10px',
+                    background: order.isDelivered ? '#10b98115' : order.isPaid ? '#6366f115' : '#f59e0b15',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                  }}>
+                    {order.isDelivered ? '✓' : order.isPaid ? '💳' : '⏳'}
+                  </div>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      color: '#0f172a',
+                      marginBottom: '2px',
+                    }}>
+                      #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#64748b',
+                    }}>
+                      {new Date(order.createdAt).toLocaleDateString()} · {order.items?.length} items
+                    </div>
+                  </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700 }}>${order.totalPrice?.toFixed(2) ?? '0.00'}</div>
-                  <span style={{
-                    fontSize: 12, padding: '2px 8px', borderRadius: 4,
-                    background: order.isDelivered ? 'var(--success-light)' : order.isPaid ? 'var(--secondary-container)' : 'var(--error-light)',
-                    color: order.isDelivered ? 'var(--success)' : order.isPaid ? 'var(--on-secondary-container)' : 'var(--error)',
+                  <div style={{
+                    fontWeight: 700,
+                    fontSize: '15px',
+                    color: '#0f172a',
+                    marginBottom: '4px',
                   }}>
+                    ${order.totalPrice?.toFixed(2) ?? '0.00'}
+                  </div>
+                  <span
+                    className={`badge ${order.isDelivered ? 'badge-success' : order.isPaid ? 'badge-warning' : 'badge-error'}`}
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      padding: '4px 10px',
+                      borderRadius: '20px',
+                    }}
+                  >
                     {order.isDelivered ? 'Delivered' : order.isPaid ? 'Processing' : 'Pending'}
                   </span>
                 </div>
@@ -311,6 +1092,14 @@ const AccountPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          div[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

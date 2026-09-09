@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
 
@@ -129,7 +131,6 @@ const SellerOrders: React.FC = () => {
 
     .invoice-wrapper { max-width: 800px; margin: 0 auto; padding: 40px; }
 
-    /* === HEADER === */
     .inv-header {
       display: flex; justify-content: space-between; align-items: flex-start;
       padding-bottom: 24px; margin-bottom: 28px;
@@ -140,7 +141,7 @@ const SellerOrders: React.FC = () => {
       letter-spacing: -0.5px; margin-bottom: 6px;
     }
     .inv-brand-tag {
-      display: inline-block; background: #ff9900; color: #fff;
+      display: inline-block; background: #6366f1; color: #fff;
       font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
       text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
       margin-bottom: 10px;
@@ -148,15 +149,14 @@ const SellerOrders: React.FC = () => {
     .inv-brand p { font-size: 11px; color: #666; line-height: 1.7; }
     .inv-doc { text-align: right; }
     .inv-doc-badge {
-      display: inline-block; background: #1a1a2e; color: #fff;
+      display: inline-block; background: #0f172a; color: #fff;
       font-size: 11px; font-weight: 700; letter-spacing: 2px;
       text-transform: uppercase; padding: 6px 16px; border-radius: 4px;
       margin-bottom: 10px;
     }
     .inv-doc-date { font-size: 12px; color: #666; margin-bottom: 4px; }
-    .inv-doc-id { font-size: 14px; font-weight: 700; color: #1a1a2e; font-family: 'Courier New', monospace; }
+    .inv-doc-id { font-size: 14px; font-weight: 700; color: #0f172a; font-family: 'Courier New', monospace; }
 
-    /* === ORDER META GRID === */
     .inv-meta {
       display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 0; margin-bottom: 28px;
@@ -167,10 +167,9 @@ const SellerOrders: React.FC = () => {
     }
     .inv-meta-cell:last-child { border-right: none; }
     .inv-meta-label { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-    .inv-meta-value { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .inv-meta-value { font-size: 13px; font-weight: 600; color: #0f172a; }
     .inv-meta-value.mono { font-family: 'Courier New', monospace; font-size: 12px; }
 
-    /* === CUSTOMER + SHIPPING GRID === */
     .inv-info-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 20px; margin-bottom: 28px;
@@ -186,10 +185,9 @@ const SellerOrders: React.FC = () => {
       border-bottom: 1px solid #e0e3ea;
     }
     .inv-info-card p { font-size: 12px; color: #444; line-height: 1.8; }
-    .inv-info-card .name { font-weight: 700; color: #1a1a2e; font-size: 13px; }
-    .inv-info-card .email { color: #1565C0; font-size: 11px; }
+    .inv-info-card .name { font-weight: 700; color: #0f172a; font-size: 13px; }
+    .inv-info-card .email { color: #6366f1; font-size: 11px; }
 
-    /* === ITEMS TABLE === */
     .inv-items-section { margin-bottom: 28px; }
     .inv-items-title {
       font-size: 10px; font-weight: 700; color: #999;
@@ -201,7 +199,7 @@ const SellerOrders: React.FC = () => {
       border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;
     }
     .inv-table thead th {
-      background: #1a1a2e; color: #fff;
+      background: #0f172a; color: #fff;
       padding: 12px 16px; font-size: 11px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.5px;
       text-align: left;
@@ -219,11 +217,11 @@ const SellerOrders: React.FC = () => {
     .inv-table tbody tr:hover { background: #f0f4ff; }
     .inv-table .num { text-align: center; font-weight: 600; color: #666; }
     .inv-table .right { text-align: right; font-family: 'Courier New', monospace; font-weight: 600; }
-    .inv-table .item-name { font-weight: 600; color: #1a1a2e; }
+    .inv-table .item-name { font-weight: 600; color: #0f172a; }
     .inv-table .item-idx {
       display: inline-flex; align-items: center; justify-content: center;
       width: 22px; height: 22px; border-radius: 50%;
-      background: #f0f4ff; color: #1565C0;
+      background: #f0f4ff; color: #6366f1;
       font-size: 10px; font-weight: 700;
     }
     .inv-table tfoot td {
@@ -231,7 +229,6 @@ const SellerOrders: React.FC = () => {
       border-bottom: none;
     }
 
-    /* === TOTALS === */
     .inv-bottom {
       display: flex; justify-content: space-between; align-items: flex-start;
       gap: 30px;
@@ -253,15 +250,14 @@ const SellerOrders: React.FC = () => {
     }
     .inv-totals-row .label { font-weight: 500; }
     .inv-totals-row .value { font-family: 'Courier New', monospace; font-weight: 600; }
-    .inv-totals-row.free .value { color: #2E7D32; font-weight: 700; }
-    .inv-totals-divider { border-top: 2px solid #1a1a2e; margin: 4px 0; }
+    .inv-totals-row.free .value { color: #10b981; font-weight: 700; }
+    .inv-totals-divider { border-top: 2px solid #0f172a; margin: 4px 0; }
     .inv-totals-total {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0 0; font-size: 18px; font-weight: 800; color: #1a1a2e;
+      padding: 12px 0 0; font-size: 18px; font-weight: 800; color: #0f172a;
     }
-    .inv-totals-total .value { font-family: 'Courier New', monospace; color: #ff9900; }
+    .inv-totals-total .value { font-family: 'Courier New', monospace; color: #6366f1; }
 
-    /* === PAYMENT BADGE === */
     .inv-payment-badge {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 12px; border-radius: 6px;
@@ -269,7 +265,6 @@ const SellerOrders: React.FC = () => {
       border: 1px solid #e0e0e0;
     }
 
-    /* === FOOTER === */
     .inv-footer {
       margin-top: 36px; padding-top: 20px;
       border-top: 2px solid #e8eaf0;
@@ -278,7 +273,7 @@ const SellerOrders: React.FC = () => {
     .inv-footer-left { font-size: 10px; color: #aaa; line-height: 1.8; }
     .inv-footer-right { text-align: right; }
     .inv-footer-thank {
-      font-size: 14px; font-weight: 700; color: #1a1a2e;
+      font-size: 14px; font-weight: 700; color: #0f172a;
       margin-bottom: 2px;
     }
     .inv-footer-tagline { font-size: 10px; color: #999; }
@@ -289,7 +284,6 @@ const SellerOrders: React.FC = () => {
 <body>
   <div class="invoice-wrapper">
 
-    <!-- HEADER -->
     <div class="inv-header">
       <div class="inv-brand">
         <div class="inv-brand-tag">ShopSmart</div>
@@ -315,7 +309,6 @@ const SellerOrders: React.FC = () => {
 
       ${!pdfOrderId ? `<div style="font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px;">Order #${order._id?.slice(-8).toUpperCase() ?? 'N/A'} &middot; ${new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>` : ''}
 
-      <!-- META -->
       <div class="inv-meta">
         <div class="inv-meta-cell">
           <div class="inv-meta-label">Order ID</div>
@@ -339,7 +332,6 @@ const SellerOrders: React.FC = () => {
         </div>
       </div>
 
-      <!-- CUSTOMER + SHIPPING -->
       <div class="inv-info-grid">
         <div class="inv-info-card">
           <h3>Customer</h3>
@@ -354,7 +346,6 @@ const SellerOrders: React.FC = () => {
         </div>
       </div>
 
-      <!-- ITEMS -->
       <div class="inv-items-section">
         <div class="inv-items-title">Items Ordered (${order.items.length})</div>
         <table class="inv-table">
@@ -381,7 +372,6 @@ const SellerOrders: React.FC = () => {
         </table>
       </div>
 
-      <!-- BOTTOM: NOTES + TOTALS -->
       <div class="inv-bottom">
         <div class="inv-notes">
           <h4>Notes</h4>
@@ -416,19 +406,17 @@ const SellerOrders: React.FC = () => {
     }).join('')}
 
     ${!pdfOrderId && ordersToPrint.length > 1 ? `
-    <!-- BULK SUMMARY -->
-    <div style="margin-top: 32px; padding: 20px; background: #1a1a2e; border-radius: 8px; color: #fff;">
-      <div style="font-size: 10px; font-weight: 700; color: #ff9900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Bulk Summary &mdash; ${ordersToPrint.length} Orders</div>
+    <div style="margin-top: 32px; padding: 20px; background: #0f172a; border-radius: 8px; color: #fff;">
+      <div style="font-size: 10px; font-weight: 700; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Bulk Summary &mdash; ${ordersToPrint.length} Orders</div>
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; text-align: center;">
         <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">ORDERS</div><div style="font-size: 18px; font-weight: 700;">${ordersToPrint.length}</div></div>
         <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">ITEMS TOTAL</div><div style="font-size: 18px; font-weight: 700;">$${itemsTotal.toFixed(2)}</div></div>
         <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">TAX TOTAL</div><div style="font-size: 18px; font-weight: 700;">$${totalTax.toFixed(2)}</div></div>
-        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">GRAND TOTAL</div><div style="font-size: 18px; font-weight: 700; color: #ff9900;">$${grandTotal.toFixed(2)}</div></div>
+        <div><div style="font-size: 10px; color: #aaa; margin-bottom: 2px;">GRAND TOTAL</div><div style="font-size: 18px; font-weight: 700; color: #6366f1;">$${grandTotal.toFixed(2)}</div></div>
       </div>
     </div>
     ` : ''}
 
-    <!-- FOOTER -->
     <div class="inv-footer">
       <div class="inv-footer-left">
         <p>Generated on ${new Date().toLocaleString('en-US')}</p>
@@ -486,94 +474,79 @@ const SellerOrders: React.FC = () => {
   if (loading) return <div className="spinner" />;
 
   return (
-    <div className="seller-orders-page">
-      <div className="seller-orders-header">
+    <div style={{ maxWidth: 1440, margin: '0 auto', padding: '32px 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1>Orders</h1>
-          <p>{orders.length} total orders</p>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)' }}>Seller Orders</h1>
+          <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>{orders.length} total orders</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={() => openPdfForm()}
-            style={{
-              padding: '10px 20px', background: 'var(--tertiary-dim)', color: 'var(--text-white)',
-              border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
-            Export PDF
-          </button>
-        </div>
+        <button onClick={() => openPdfForm()} className="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style={{ marginRight: 6 }}><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+          Export PDF
+        </button>
       </div>
 
-      {/* PDF Configuration Modal */}
       {showPdfForm && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           background: 'rgba(0,0,0,0.5)', zIndex: 9999,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }} onClick={() => setShowPdfForm(false)}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, padding: 32,
-            maxWidth: 500, width: '90%', maxHeight: '90vh', overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-          }} onClick={(e) => e.stopPropagation()}>
+          <div className="card" style={{ padding: 32, maxWidth: 500, width: '90%', maxHeight: '90vh', overflowY: 'auto' }}
+            onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700 }}>PDF Order Report</h2>
-              <button onClick={() => setShowPdfForm(false)}
-                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: 'var(--text)' }}>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>PDF Order Report</h2>
+              <button onClick={() => setShowPdfForm(false)} className="btn btn-ghost btn-sm" style={{ fontSize: 20 }}>
                 {'\u2715'}
               </button>
             </div>
 
             {pdfOrderId && (
-              <div style={{
-                background: 'var(--secondary-container)', borderRadius: 8, padding: 12,
-                marginBottom: 16, fontSize: 13,
-              }}>
+              <div className="badge badge-info" style={{ display: 'block', padding: '12px 16px', marginBottom: 16, fontSize: 13 }}>
                 Generating PDF for Order #{pdfOrderId.slice(-8).toUpperCase()}
               </div>
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Company Name</label>
+              <div className="form-group">
+                <label className="form-label">Company Name</label>
                 <input type="text" value={pdfForm.companyName}
                   onChange={(e) => setPdfForm({ ...pdfForm, companyName: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }} />
+                  className="form-input" />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Company Address</label>
+              <div className="form-group">
+                <label className="form-label">Company Address</label>
                 <input type="text" value={pdfForm.companyAddress}
                   onChange={(e) => setPdfForm({ ...pdfForm, companyAddress: e.target.value })}
                   placeholder="123 Business St, City, State 12345"
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }} />
+                  className="form-input" />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Phone</label>
+                <div className="form-group">
+                  <label className="form-label">Phone</label>
                   <input type="tel" value={pdfForm.companyPhone}
                     onChange={(e) => setPdfForm({ ...pdfForm, companyPhone: e.target.value })}
                     placeholder="+1 (555) 000-0000"
-                    style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }} />
+                    className="form-input" />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Email</label>
+                <div className="form-group">
+                  <label className="form-label">Email</label>
                   <input type="email" value={pdfForm.companyEmail}
                     onChange={(e) => setPdfForm({ ...pdfForm, companyEmail: e.target.value })}
                     placeholder="seller@example.com"
-                    style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }} />
+                    className="form-input" />
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Notes (optional)</label>
+              <div className="form-group">
+                <label className="form-label">Notes (optional)</label>
                 <textarea value={pdfForm.notes}
                   onChange={(e) => setPdfForm({ ...pdfForm, notes: e.target.value })}
                   placeholder="Thank you for your purchase!"
                   rows={3}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, resize: 'vertical' }} />
+                  className="form-textarea" />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -589,29 +562,21 @@ const SellerOrders: React.FC = () => {
                 </label>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13 }}>Paper Size</label>
+              <div className="form-group">
+                <label className="form-label">Paper Size</label>
                 <select value={pdfForm.paperSize}
                   onChange={(e) => setPdfForm({ ...pdfForm, paperSize: e.target.value as 'a4' | 'letter' })}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14 }}>
+                  className="form-select">
                   <option value="a4">A4</option>
                   <option value="letter">Letter</option>
                 </select>
               </div>
 
               <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-                <button onClick={generatePdf}
-                  style={{
-                    flex: 1, padding: '12px 20px', background: 'var(--tertiary-dim)', color: 'var(--text-white)',
-                    border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer',
-                  }}>
+                <button onClick={generatePdf} className="btn btn-primary" style={{ flex: 1 }}>
                   Print / Preview
                 </button>
-                <button onClick={downloadPdf}
-                  style={{
-                    flex: 1, padding: '12px 20px', background: 'var(--success)', color: 'var(--text-white)',
-                    border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer',
-                  }}>
+                <button onClick={downloadPdf} className="btn btn-secondary" style={{ flex: 1 }}>
                   Download File
                 </button>
               </div>
@@ -620,40 +585,40 @@ const SellerOrders: React.FC = () => {
         </div>
       )}
 
-      <div className="seller-orders-tabs">
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
         {(['all', 'pending', 'paid', 'delivered'] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`seller-orders-tab ${filter === f ? 'active' : ''}`}>
-            {f === 'paid' ? 'Processing' : f}
+            className={`btn ${filter === f ? 'btn-primary' : 'btn-ghost'}`}>
+            {f === 'paid' ? 'Processing' : f.charAt(0).toUpperCase() + f.slice(1)}
             {f === 'all' ? ` (${orders.length})` : ''}
           </button>
         ))}
       </div>
 
       {filteredOrders.length === 0 ? (
-        <div className="seller-orders-empty">
-          <div className="seller-orders-empty-icon">{'\u{1F4ED}'}</div>
-          <h2>No orders found</h2>
-          <p>Orders will appear here when customers make purchases.</p>
+        <div className="empty-state" style={{ padding: 80 }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u{1F4ED}'}</div>
+          <h2 style={{ marginBottom: 8, color: '#0f172a' }}>No orders found</h2>
+          <p style={{ color: '#64748b' }}>Orders will appear here when customers make purchases.</p>
         </div>
       ) : (
-        <div className="seller-orders-list">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {filteredOrders.map((order) => (
-            <div key={order._id} className="seller-orders-card">
-              <div className="seller-orders-card-top">
-                <div>
-                  <div className="seller-orders-id">Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</div>
-                  <div className="seller-orders-date">
+            <div key={order._id} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontWeight: 700, fontFamily: 'monospace', fontSize: 14, color: '#0f172a' }}>Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</span>
+                  <span style={{ fontSize: 13, color: '#64748b' }}>
                     {new Date(order.createdAt).toLocaleDateString('en-US', {
                       year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
                     })}
-                  </div>
-                </div>
-                <div className="seller-orders-actions">
-                  <span className={`seller-orders-badge ${order.isDelivered ? 'delivered' : order.isPaid ? 'paid' : 'pending'}`}>
-                    {order.isDelivered ? 'Delivered' : order.isPaid ? 'Processing' : 'Pending'}
                   </span>
-                  <select className="seller-orders-select"
+                  <span className={`status status-${order.status || 'pending'}`}>
+                    {(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <select className="form-select" style={{ padding: '6px 10px', fontSize: 12, minWidth: 120 }}
                     value={order.status || 'pending'}
                     onChange={(e) => handleStatusUpdate(order._id, e.target.value)}>
                     <option value="pending">Pending</option>
@@ -662,37 +627,34 @@ const SellerOrders: React.FC = () => {
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
-                  <button onClick={() => openPdfForm(order._id)}
-                    style={{
-                      padding: '6px 12px', background: 'var(--surface-container)', border: '1px solid var(--border)',
-                      borderRadius: 6, fontSize: 12, cursor: 'pointer', color: 'var(--text)',
-                      display: 'flex', alignItems: 'center', gap: 4,
-                    }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+                  <button onClick={() => openPdfForm(order._id)} className="btn btn-ghost btn-sm">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 4 }}><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
                     PDF
                   </button>
                 </div>
               </div>
 
-              <div className="seller-orders-items">
+              <div style={{ padding: '12px 20px' }}>
                 {order.items?.map((item: OrderItem, idx: number) => (
-                  <div key={idx} className="seller-orders-item">
-                    <img src={item.image} alt="" className="seller-orders-item-img" />
-                    <div className="seller-orders-item-info">
-                      <div className="seller-orders-item-name">{item.name}</div>
-                      <div className="seller-orders-item-qty">Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < (order.items?.length || 0) - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                    <img src={item.image} alt="" style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{item.name}</div>
+                      <div style={{ fontSize: 12, color: '#64748b' }}>Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>
                     </div>
-                    <div className="seller-orders-item-total">${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="seller-orders-card-footer">
-                <div className="seller-orders-address">
+              <div style={{ padding: '12px 20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+                <div style={{ fontSize: 13, color: '#64748b' }}>
                   {order.shippingAddress?.city}, {order.shippingAddress?.state}
-                  <span className="seller-orders-payment">{order.paymentMethod?.replace('_', ' ')}</span>
+                  <span className="badge badge-info" style={{ marginLeft: 8 }}>
+                    {order.paymentMethod?.replace('_', ' ')}
+                  </span>
                 </div>
-                <div className="seller-orders-total-price">${order.totalPrice?.toFixed(2)}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>${order.totalPrice?.toFixed(2)}</div>
               </div>
             </div>
           ))}

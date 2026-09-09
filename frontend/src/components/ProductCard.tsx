@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -9,20 +12,22 @@ interface Props {
   badge?: 'bestseller' | 'amazons_choice' | null;
 }
 
-const PRIME_DELIVERY_DATE = new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-
 const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
 
   const renderStars = (rating: number) => {
-    const stars: string[] = [];
+    const stars: React.ReactNode[] = [];
     for (let i = 1; i <= 5; i++) {
-      if (i <= Math.floor(rating)) stars.push('\u2605');
-      else if (i - 0.5 <= rating) stars.push('\u2605');
-      else stars.push('\u2606');
+      if (i <= Math.floor(rating)) {
+        stars.push(<span key={i} className="star">&#9733;</span>);
+      } else if (i - 0.5 <= rating) {
+        stars.push(<span key={i} className="star">&#9733;</span>);
+      } else {
+        stars.push(<span key={i} className="star-empty">&#9734;</span>);
+      }
     }
-    return stars.join(' ');
+    return stars;
   };
 
   const discount = product.comparePrice && product.comparePrice > 0
@@ -30,10 +35,11 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
     : 0;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     try {
       const stored = localStorage.getItem('user');
-      if (!stored) { navigate('/login'); return; }
+      if (!stored) { router.push('/login'); return; }
       await cartAPI.add(product._id);
       showToast(`${product.name} added to cart!`, 'success');
     } catch {
@@ -41,50 +47,99 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
     }
   };
 
+  const imageUrl = product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image';
+
   return (
-    <div className="product-card" onClick={() => navigate(`/products/${product._id}`)}>
+    <Link href={`/products/${product._id}`} className="product-card" style={{ display: 'block', textDecoration: 'none' }}>
       {badge === 'bestseller' && (
-        <div className="card-badge card-badge-bestseller">#1 Best Seller</div>
+        <div style={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
+          zIndex: 2,
+          background: 'var(--secondary)',
+          color: '#fff',
+          fontSize: 11,
+          fontWeight: 700,
+          padding: '4px 10px',
+          borderRadius: 'var(--radius-full)',
+          letterSpacing: 0.3,
+        }}>
+          #1 Best Seller
+        </div>
       )}
       {badge === 'amazons_choice' && (
-        <div className="card-badge card-badge-choice">ShopSmart&apos;s Choice</div>
-      )}
-      <div className="product-card-image">
-        <img src={(product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={product.name} />
-      </div>
-      <div className="product-card-body">
-        <div className="product-card-title">{product.name}</div>
-        <div className="product-card-rating">
-          <span className="stars">{renderStars(product.rating)}</span>
-          <span className="review-count">{(product.numReviews ?? 0).toLocaleString()}</span>
+        <div style={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
+          zIndex: 2,
+          background: 'var(--primary)',
+          color: '#fff',
+          fontSize: 11,
+          fontWeight: 700,
+          padding: '4px 10px',
+          borderRadius: 'var(--radius-full)',
+          letterSpacing: 0.3,
+        }}>
+          ShopSmart&apos;s Choice
         </div>
-        {product.comparePrice && discount >= 20 && (
-          <div className="coupon-badge">{'\u2702'} Save {discount}% with coupon</div>
-        )}
-        <div className="product-card-price">
-          <span className="current-price">${(product.price ?? 0).toFixed(2)}</span>
+      )}
+
+      {discount >= 5 && (
+        <div className="badge badge-success" style={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+          zIndex: 2,
+        }}>
+          -{discount}%
+        </div>
+      )}
+
+      <div className="product-card-image">
+        <img
+          src={imageUrl}
+          alt={product.name}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+      </div>
+
+      <div className="product-card-body">
+        <h3 className="product-card-name">{product.name}</h3>
+
+        <div className="product-card-rating">
+          {renderStars(product.rating)}
+          <span>{(product.numReviews ?? 0).toLocaleString()} reviews</span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+          <span className="product-card-price">${(product.price ?? 0).toFixed(2)}</span>
           {product.comparePrice && product.comparePrice > product.price && (
-            <>
-              <span className="compare-price">${(product.comparePrice ?? 0).toFixed(2)}</span>
-              <span className="discount-badge">-{discount}%</span>
-            </>
+            <span className="product-card-compare">${(product.comparePrice ?? 0).toFixed(2)}</span>
+          )}
+          {discount >= 5 && (
+            <span className="product-card-discount">Save {discount}%</span>
           )}
         </div>
-        {product.price < 25 && (
-          <span style={{ fontSize: 12, color: 'var(--success)', display: 'block', marginTop: 2 }}>
-            {'\u{1F6CD}'} FREE delivery {PRIME_DELIVERY_DATE}
-          </span>
-        )}
+
         {product.countInStock <= 5 && product.countInStock > 0 && (
-          <span style={{ fontSize: 12, color: 'var(--tertiary)', display: 'block', marginTop: 2 }}>
+          <p style={{ fontSize: 12, color: 'var(--tertiary)', marginTop: 6, fontWeight: 500 }}>
             Only {product.countInStock} left in stock - order soon.
-          </span>
+          </p>
         )}
-        <button className="add-to-cart-btn" onClick={handleAddToCart}>
-          Add to Cart
-        </button>
+
+        <div className="product-card-actions">
+          <button
+            className="btn btn-primary btn-sm"
+            style={{ width: '100%' }}
+            onClick={handleAddToCart}
+          >
+            Add to Cart
+          </button>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

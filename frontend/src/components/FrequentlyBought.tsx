@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -10,7 +12,7 @@ interface Props {
 }
 
 const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [selected, setSelected] = React.useState<string[]>([product._id]);
 
@@ -35,7 +37,7 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
 
   const handleAddAll = async () => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     try {
       for (const id of selected) {
         await cartAPI.add(id, 1);
@@ -63,7 +65,7 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
                     {selected.includes(item._id) ? '\u2713' : ''}
                   </div>
                 </div>
-                <img src={item.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'} alt={item.name} onClick={(e) => { e.stopPropagation(); navigate(`/products/${item._id}`); }} />
+                <img src={item.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'} alt={item.name} onClick={(e) => { e.stopPropagation(); router.push(`/products/${item._id}`); }} />
                 <div className="fbt-item-info">
                   <div className="fbt-item-name">{item.name}</div>
                   <div className="fbt-item-price">${(item.price ?? 0).toFixed(2)}</div>

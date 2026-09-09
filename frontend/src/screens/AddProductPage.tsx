@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { productAPI, categoryAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { Category } from '../types';
@@ -14,7 +16,7 @@ const FALLBACK_CATEGORIES: Category[] = [
 ];
 
 const AddProductPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
@@ -94,7 +96,7 @@ const AddProductPage: React.FC = () => {
     try {
       const res = await productAPI.create(productData);
       showToast('Product created successfully!', 'success');
-      navigate(`/products/${res.data.data._id}`);
+      router.push(`/products/${res.data.data._id}`);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create product';
       setError(msg);
@@ -209,7 +211,7 @@ const AddProductPage: React.FC = () => {
               style={{ opacity: submitting ? 0.6 : 1, flex: 1 }}>
               {submitting ? 'Creating...' : 'Create Product'}
             </button>
-            <button type="button" onClick={() => navigate(-1)} style={{
+            <button type="button" onClick={() => router.back()} style={{
               padding: '12px 24px', border: '1px solid var(--border)', borderRadius: 8,
               background: 'var(--bg-white)', fontSize: 16, fontWeight: 600, cursor: 'pointer',
             }}>

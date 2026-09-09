@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { productAPI, categoryAPI } from '../services/api';
 import { Category } from '../types';
 
@@ -13,7 +15,7 @@ const FALLBACK_CATEGORIES: Category[] = [
 ];
 
 const SellerAddProduct: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -80,7 +82,7 @@ const SellerAddProduct: React.FC = () => {
 
       await productAPI.create(data);
       setSuccess(true);
-      successTimeout.current = setTimeout(() => navigate('/seller/products'), 2000);
+      successTimeout.current = setTimeout(() => router.push('/seller/products'), 2000);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create product';
       setError(msg);
@@ -93,93 +95,121 @@ const SellerAddProduct: React.FC = () => {
 
   if (success) {
     return (
-      <div className="seller-add-success">
-        <div className="seller-add-success-icon">{'\u2705'}</div>
-        <h1 className="seller-add-success-title">Product Added!</h1>
-        <p className="seller-add-success-text">Redirecting to your products...</p>
+      <div className="empty-state" style={{ maxWidth: 600, margin: '80px auto', padding: 60 }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u2705'}</div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0f172a', marginBottom: 8 }}>Product Added!</h1>
+        <p style={{ color: '#64748b' }}>Redirecting to your products...</p>
       </div>
     );
   }
 
   return (
-    <div className="seller-add-page">
-      <h1 className="seller-add-heading">Add New Product</h1>
-      <p className="seller-add-subtext">List a new product in your store</p>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
+      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)', marginBottom: 4 }}>Add New Product</h1>
+      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 32 }}>List a new product in your store</p>
 
-      <div className="seller-add-card">
-        {error && <div className="seller-add-error">{error}</div>}
+      <div className="card" style={{ padding: 32 }}>
+        {error && (
+          <div className="badge badge-error" style={{ display: 'block', padding: '12px 16px', marginBottom: 24, fontSize: 14 }}>
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Product Name *</label>
-            <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="e.g. Wireless Bluetooth Headphones" required />
-          </div>
-
-          <div className="form-group">
-            <label>Description *</label>
-            <textarea className="seller-add-textarea" value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={4} placeholder="Describe your product features, condition, and benefits..." required />
-          </div>
-
-          <div className="seller-add-grid-2">
-            <div className="form-group">
-              <label>Selling Price *</label>
-              <input type="number" step="0.01" min="0" value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
-                placeholder="29.99" required />
-            </div>
-            <div className="form-group">
-              <label>Original Price (was)</label>
-              <input type="number" step="0.01" min="0" value={form.comparePrice}
-                onChange={(e) => setForm({ ...form, comparePrice: e.target.value })}
-                placeholder="49.99 (shows discount)" />
-            </div>
-            <div className="form-group">
-              <label>Category *</label>
-              <select className="seller-add-select" value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })} required>
-                <option value="">Select category...</option>
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Stock Quantity *</label>
-              <input type="number" min="0" value={form.countInStock}
-                onChange={(e) => setForm({ ...form, countInStock: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label>Brand</label>
-              <input type="text" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}
-                placeholder="Brand name" />
-            </div>
-            <div className="form-group">
-              <label>Image URL</label>
-              <input type="url" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })}
-                placeholder="https://images.unsplash.com/..." />
-            </div>
-          </div>
-
-          <div className="seller-add-features-section">
-            <label className="seller-add-features-label">Key Features</label>
-            {form.features.map((feat, idx) => (
-              <div key={idx} className="seller-add-feature-row">
-                <input type="text" value={feat} onChange={(e) => handleFeatureChange(idx, e.target.value)}
-                  placeholder={`Feature ${idx + 1}`} className="seller-add-feature-input" />
-                {form.features.length > 1 && (
-                  <button type="button" onClick={() => removeFeature(idx)} className="seller-add-remove-feature">
-                    X
-                  </button>
-                )}
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Basic Information</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">Product Name *</label>
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="form-input" placeholder="e.g. Wireless Bluetooth Headphones" required />
               </div>
-            ))}
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">Description *</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  className="form-textarea" rows={4} placeholder="Describe your product features, condition, and benefits..." required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Category *</label>
+                <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  className="form-select" required>
+                  <option value="">Select category...</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat._id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Brand</label>
+                <input type="text" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                  className="form-input" placeholder="Brand name" />
+              </div>
+            </div>
           </div>
 
-          <button type="submit" className="seller-add-submit" disabled={submitting}>
-            {submitting ? 'Adding Product...' : 'Add Product to Store'}
-          </button>
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Pricing</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="form-group">
+                <label className="form-label">Selling Price *</label>
+                <input type="number" step="0.01" min="0" value={form.price}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  className="form-input" placeholder="29.99" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Original Price (was)</label>
+                <input type="number" step="0.01" min="0" value={form.comparePrice}
+                  onChange={(e) => setForm({ ...form, comparePrice: e.target.value })}
+                  className="form-input" placeholder="49.99 (shows discount)" />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Inventory</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="form-group">
+                <label className="form-label">Stock Quantity *</label>
+                <input type="number" min="0" value={form.countInStock}
+                  onChange={(e) => setForm({ ...form, countInStock: e.target.value })}
+                  className="form-input" required />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Images</h2>
+            <div className="form-group">
+              <label className="form-label">Image URL</label>
+              <input type="url" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })}
+                className="form-input" placeholder="https://images.unsplash.com/..." />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 32 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Features</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {form.features.map((feat, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <input type="text" value={feat} onChange={(e) => handleFeatureChange(idx, e.target.value)}
+                    placeholder={`Feature ${idx + 1}`} className="form-input" style={{ flex: 1 }} />
+                  {form.features.length > 1 && (
+                    <button type="button" onClick={() => removeFeature(idx)} className="btn btn-ghost btn-sm">
+                      ✕
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+            <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
+              {submitting ? 'Adding Product...' : 'Add Product to Store'}
+            </button>
+            <button type="button" onClick={() => router.back()} className="btn btn-ghost btn-lg">
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>

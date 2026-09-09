@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -26,7 +29,7 @@ const DELIVERY_DRIVERS = ['Mike Johnson', 'Sarah Williams', 'David Brown', 'Emil
 const TRUCKS = ['Truck #A-142', 'Truck #B-207', 'Truck #C-089', 'Truck #D-315', 'Van #E-056'];
 
 const DeliveryPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [view, setView] = useState<'pickup' | 'delivery'>('pickup');
   const [shipped, setShipped] = useState<DeliveryOrder[]>([]);
@@ -40,7 +43,7 @@ const DeliveryPage: React.FC = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     fetchOrders();
   }, []);
 
@@ -210,7 +213,7 @@ const DeliveryPage: React.FC = () => {
                       </div>
                     </div>
                     <div className="delivery-card-actions">
-                      <button className="delivery-view-btn" onClick={() => navigate(`/orders/${order._id}`)}>
+                      <button className="delivery-view-btn" onClick={() => router.push(`/orders/${order._id}`)}>
                         View Items
                       </button>
                       <button className="delivery-complete-btn" onClick={() => handleMarkDelivered(order._id)}

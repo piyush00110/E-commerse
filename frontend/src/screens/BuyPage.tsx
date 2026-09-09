@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { cartAPI, orderAPI } from '../services/api';
 import { Cart, Address } from '../types';
 import { useToast } from '../context/ToastContext';
@@ -30,7 +31,7 @@ const PAYMENT_METHODS = [
 ];
 
 const BuyPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,17 +82,17 @@ const BuyPage: React.FC = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     const fetchCart = async () => {
       try {
         const res = await cartAPI.get();
-        if (!res.data.data?.items?.length) { navigate('/cart'); return; }
+        if (!res.data.data?.items?.length) { router.push('/cart'); return; }
         setCart(res.data.data);
-      } catch { navigate('/cart'); }
+      } catch { router.push('/cart'); }
       finally { setLoading(false); }
     };
     fetchCart();
-  }, [navigate]);
+  }, [router]);
 
   useEffect(() => {
     const addrs = loadAddresses();
@@ -167,7 +168,7 @@ const BuyPage: React.FC = () => {
     try {
       const res = await orderAPI.create({ shippingAddress: addr, paymentMethod });
       showToast('Order placed successfully!', 'success');
-      navigate(`/order-confirmation/${res.data.data._id}`);
+      router.push(`/order-confirmation/${res.data.data._id}`);
     } catch (err: any) {
       showToast(err?.response?.data?.message || 'Failed to place order', 'error');
     } finally {
@@ -466,7 +467,7 @@ const BuyPage: React.FC = () => {
                       <div key={item._id} className="review-item">
                         <img src={item.image} alt={item.name} />
                         <div className="review-item-info">
-                          <Link to={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}>{item.name}</Link>
+                          <Link href={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}>{item.name}</Link>
                           <span>Qty: {item.quantity}</span>
                         </div>
                         <span className="review-item-price">${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</span>

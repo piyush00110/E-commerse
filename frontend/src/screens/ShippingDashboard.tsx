@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -37,7 +39,7 @@ const DELIVERY_DRIVERS = [
 ];
 
 const ShippingDashboard: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [orders, setOrders] = useState<FullOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,12 +51,12 @@ const ShippingDashboard: React.FC = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     try {
       const u = JSON.parse(stored);
-      if (u.role !== 'admin') { navigate('/'); showToast('Admin access required', 'error'); return; }
+      if (u.role !== 'admin') { router.push('/'); showToast('Admin access required', 'error'); return; }
     } catch {
-      navigate('/login');
+      router.push('/login');
       return;
     }
     fetchOrders();
@@ -274,7 +276,7 @@ const ShippingDashboard: React.FC = () => {
                       </div>
 
                       <div className="sd-detail-actions">
-                        <button className="sd-btn outline" onClick={() => navigate(`/orders/${order._id}`)}>
+                        <button className="sd-btn outline" onClick={() => router.push(`/orders/${order._id}`)}>
                           Full Details
                         </button>
                         {order.status === 'pending' && (

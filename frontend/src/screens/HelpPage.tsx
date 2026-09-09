@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface FAQ {
   q: string;
@@ -71,7 +73,7 @@ const FAQS: FAQ[] = [
   {
     category: 'Account',
     q: 'How do I reset my password?',
-    a: 'Click "Forgot Password" on the login page. Enter your registered email address and we\'ll send you a password reset link within minutes.',
+    a: 'Click "Forgot Password" on the login page. Enter your registered email address and we will send you a password reset link within minutes.',
   },
   {
     category: 'Account',
@@ -85,45 +87,80 @@ const CATEGORIES = FAQS.map((f) => f.category).filter((v, i, a) => a.indexOf(v) 
 const HelpPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('Orders');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = FAQS.filter((f) => f.category === activeCategory);
+  const filtered = FAQS.filter((f) => {
+    const matchesCategory = f.category === activeCategory;
+    const matchesSearch = searchQuery === '' ||
+      f.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      f.a.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
       {/* Hero */}
-      <div className="help-hero">
-        <h1>Help Center</h1>
-        <p>How can we help you today?</p>
+      <div style={{
+        textAlign: 'center', padding: '48px 24px', marginBottom: 40,
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        borderRadius: 16, color: '#fff',
+      }}>
+        <h1 style={{ fontSize: 36, fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: 8 }}>Help Center</h1>
+        <p style={{ fontSize: 16, color: '#94a3b8', marginBottom: 24 }}>How can we help you today?</p>
+        <div style={{ maxWidth: 500, margin: '0 auto' }}>
+          <input
+            type="text"
+            placeholder="Search for answers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-input"
+            style={{ width: '100%', padding: '14px 20px', fontSize: 16, borderRadius: 12 }}
+          />
+        </div>
       </div>
 
       {/* Quick Links */}
-      <div className="help-quick-grid">
-        <Link to="/orders" className="help-quick-card">
-          <div className="help-quick-icon">{'\u{1F4E6}'}</div>
-          <strong>Track Order</strong>
-          <span>See where your package is</span>
-        </Link>
-        <Link to="/orders" className="help-quick-card">
-          <div className="help-quick-icon">{'\u{1F504}'}</div>
-          <strong>Return Items</strong>
-          <span>Start a return or replacement</span>
-        </Link>
-        <Link to="/account" className="help-quick-card">
-          <div className="help-quick-icon">{'\u{1F4CB}'}</div>
-          <strong>Manage Account</strong>
-          <span>Update profile and addresses</span>
-        </Link>
-        <a href="mailto:support@shopsmart.com" className="help-quick-card">
-          <div className="help-quick-icon">{'\u{1F4E7}'}</div>
-          <strong>Email Support</strong>
-          <span>support@shopsmart.com</span>
-        </a>
+      <div style={{ marginBottom: 40 }}>
+        <div className="section-header" style={{ marginBottom: 16 }}>
+          <h2 className="section-title">Quick Links</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <Link href="/orders" style={{ textDecoration: 'none' }}>
+            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E6}'}</div>
+              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Track Order</strong>
+              <span style={{ fontSize: 12, color: '#64748b' }}>See where your package is</span>
+            </div>
+          </Link>
+          <Link href="/orders" style={{ textDecoration: 'none' }}>
+            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F504}'}</div>
+              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Return Items</strong>
+              <span style={{ fontSize: 12, color: '#64748b' }}>Start a return or replacement</span>
+            </div>
+          </Link>
+          <Link href="/account" style={{ textDecoration: 'none' }}>
+            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4CB}'}</div>
+              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Manage Account</strong>
+              <span style={{ fontSize: 12, color: '#64748b' }}>Update profile and addresses</span>
+            </div>
+          </Link>
+          <a href="mailto:support@shopsmart.com" style={{ textDecoration: 'none' }}>
+            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E7}'}</div>
+              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Email Support</strong>
+              <span style={{ fontSize: 12, color: '#64748b' }}>support@shopsmart.com</span>
+            </div>
+          </a>
+        </div>
       </div>
 
       {/* Category Tabs */}
-      <div className="help-category-tabs">
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
         {CATEGORIES.map((cat) => (
-          <button key={cat} className={`help-category-tab ${activeCategory === cat ? 'active' : ''}`}
+          <button key={cat}
+            className={`btn ${activeCategory === cat ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}>
             {cat}
           </button>
@@ -131,47 +168,67 @@ const HelpPage: React.FC = () => {
       </div>
 
       {/* FAQ Accordion */}
-      <div className="help-faq-list">
-        {filtered.map((faq, idx) => {
-          const realIdx = FAQS.indexOf(faq);
-          return (
-            <div key={realIdx} className={`help-faq-item ${openIndex === realIdx ? 'open' : ''}`}>
-              <button className="help-faq-question" onClick={() => setOpenIndex(openIndex === realIdx ? null : realIdx)}>
-                <span>{faq.q}</span>
-                <span className="help-faq-arrow">{openIndex === realIdx ? '\u25B2' : '\u25BC'}</span>
-              </button>
-              {openIndex === realIdx && (
-                <div className="help-faq-answer">
-                  <p>{faq.a}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 48 }}>
+        {filtered.length === 0 ? (
+          <div className="empty-state" style={{ padding: 40 }}>
+            <p>No questions found matching your search.</p>
+          </div>
+        ) : (
+          filtered.map((faq, idx) => {
+            const realIdx = FAQS.indexOf(faq);
+            return (
+              <div key={realIdx} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <button
+                  onClick={() => setOpenIndex(openIndex === realIdx ? null : realIdx)}
+                  style={{
+                    width: '100%', padding: '16px 20px', border: 'none', background: 'transparent',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    cursor: 'pointer', textAlign: 'left', fontSize: 14, fontWeight: 600, color: '#0f172a',
+                  }}>
+                  <span>{faq.q}</span>
+                  <span style={{
+                    fontSize: 12, color: '#6366f1', transition: 'transform 0.2s ease',
+                    transform: openIndex === realIdx ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}>{'\u25BC'}</span>
+                </button>
+                <div style={{
+                  maxHeight: openIndex === realIdx ? '200px' : '0',
+                  overflow: 'hidden',
+                  transition: 'max-height 0.3s ease, padding 0.3s ease',
+                  padding: openIndex === realIdx ? '0 20px 16px' : '0 20px',
+                }}>
+                  <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6 }}>{faq.a}</p>
                 </div>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Contact */}
-      <div className="help-contact">
-        <h2>Still need help?</h2>
-        <p>Our support team is available 24/7 to assist you.</p>
-        <div className="help-contact-options">
-          <div className="help-contact-card">
-            <div className="help-contact-icon">{'\u{1F4DE}'}</div>
-            <strong>Call Us</strong>
-            <span>1-800-SHOP-SMART</span>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Mon-Sat, 8AM-8PM EST</span>
+      <div style={{ marginBottom: 32 }}>
+        <div className="section-header" style={{ marginBottom: 16 }}>
+          <h2 className="section-title">Still need help?</h2>
+        </div>
+        <p style={{ color: '#64748b', marginBottom: 24 }}>Our support team is available 24/7 to assist you.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4DE}'}</div>
+            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Call Us</strong>
+            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>1-800-SHOP-SMART</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Mon-Sat, 8AM-8PM EST</span>
           </div>
-          <div className="help-contact-card">
-            <div className="help-contact-icon">{'\u{1F4AC}'}</div>
-            <strong>Live Chat</strong>
-            <span>Chat with our team</span>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Average response: 2 min</span>
+          <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4AC}'}</div>
+            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Live Chat</strong>
+            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>Chat with our team</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Average response: 2 min</span>
           </div>
-          <div className="help-contact-card">
-            <div className="help-contact-icon">{'\u{1F4E7}'}</div>
-            <strong>Email</strong>
-            <span>support@shopsmart.com</span>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Response within 24 hrs</span>
+          <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E7}'}</div>
+            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Email</strong>
+            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>support@shopsmart.com</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Response within 24 hrs</span>
           </div>
         </div>
       </div>

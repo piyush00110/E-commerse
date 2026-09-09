@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -37,7 +39,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 const ShippingManagePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { showToast } = useToast();
   const [orders, setOrders] = useState<FullOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,12 +48,12 @@ const ShippingManagePage: React.FC = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
+    if (!stored) { router.push('/login'); return; }
     try {
       const u = JSON.parse(stored);
-      if (u.role !== 'admin') { navigate('/'); showToast('Admin access required', 'error'); return; }
+      if (u.role !== 'admin') { router.push('/'); showToast('Admin access required', 'error'); return; }
     } catch {
-      navigate('/login');
+      router.push('/login');
       return;
     }
     fetchAllOrders();
@@ -211,7 +213,7 @@ const ShippingManagePage: React.FC = () => {
                 </div>
 
                 <div className="shipping-order-actions">
-                  <button className="shipping-view-btn" onClick={() => navigate(`/orders/${order._id}`)}>
+                  <button className="shipping-view-btn" onClick={() => router.push(`/orders/${order._id}`)}>
                     View Details
                   </button>
                   {action && (

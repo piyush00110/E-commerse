@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface TrackingEvent {
   status: string;
@@ -152,10 +152,10 @@ const TrackingPage: React.FC = () => {
 
           {/* Actions */}
           <div className="tracking-actions">
-            <Link to="/orders" className="tracking-action-btn">
+            <Link href="/orders" className="tracking-action-btn">
               {'\u{1F4CB}'} My Orders
             </Link>
-            <Link to="/help" className="tracking-action-btn secondary">
+            <Link href="/help" className="tracking-action-btn secondary">
               {'\u2753'} Get Help
             </Link>
           </div>

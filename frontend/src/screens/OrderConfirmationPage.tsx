@@ -1,5 +1,9 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -16,23 +20,24 @@ interface OrderData {
 }
 
 const OrderConfirmationPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const { showToast } = useToast();
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
-    if (!id) { navigate('/orders'); return; }
+    if (!stored) { router.push('/login'); return; }
+    if (!id) { router.push('/orders'); return; }
     const fetchOrder = async () => {
       try {
         const res = await orderAPI.getById(id);
         setOrder(res.data.data);
       } catch {
         showToast('Failed to load order', 'error');
-        navigate('/orders');
+        router.push('/orders');
       } finally {
         setLoading(false);
       }
@@ -108,7 +113,7 @@ const OrderConfirmationPage: React.FC = () => {
           <div key={idx} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: idx < order.items.length - 1 ? '1px solid var(--outline-variant)' : 'none' }}>
             <img src={item.image} alt="" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'contain', background: 'var(--surface-dim)' }} />
             <div style={{ flex: 1 }}>
-              <Link to={`/products/${item.product}`} style={{ color: 'var(--tertiary)', fontSize: 14, fontWeight: 500 }}>{item.name}</Link>
+              <Link href={`/products/${item.product}`} style={{ color: 'var(--tertiary)', fontSize: 14, fontWeight: 500 }}>{item.name}</Link>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
             </div>
             <div style={{ fontWeight: 600 }}>${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
@@ -125,12 +130,12 @@ const OrderConfirmationPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <Link to="/orders" style={{
+        <Link href="/orders" style={{
           padding: '12px 32px', background: 'var(--tertiary-dim)', color: 'var(--surface)', borderRadius: 8, fontWeight: 600, fontSize: 15, textDecoration: 'none',
         }}>
           View All Orders
         </Link>
-        <Link to="/products" style={{
+        <Link href="/products" style={{
           padding: '12px 32px', background: 'var(--tertiary)', color: 'var(--text)', borderRadius: 8, fontWeight: 600, fontSize: 15, textDecoration: 'none',
         }}>
           Continue Shopping

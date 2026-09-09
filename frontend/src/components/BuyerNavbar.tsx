@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { cartAPI } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -23,8 +26,8 @@ const BuyerNavbar: React.FC = () => {
   const [showMiniCart, setShowMiniCart] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const miniCartRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -73,7 +76,7 @@ const BuyerNavbar: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    if (searchQuery.trim()) router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   const handleLogout = async () => {
@@ -81,7 +84,7 @@ const BuyerNavbar: React.FC = () => {
     await supabase.auth.signOut();
     localStorage.removeItem('user');
     setUser(null);
-    navigate('/');
+    router.push('/');
   };
 
   const selectCity = (city: string) => {
@@ -91,261 +94,311 @@ const BuyerNavbar: React.FC = () => {
   };
 
   return (
-    <nav style={{
-      position: 'sticky', top: 0, zIndex: 1000,
-      background: 'var(--bg-white)',
-      borderBottom: '1px solid var(--border-light)',
-      boxShadow: 'var(--shadow-sm)',
-    }}>
-      <div className="navbar-main" style={{
-        display: 'flex', alignItems: 'center', gap: 16,
-        padding: '10px 24px', maxWidth: 1440, margin: '0 auto',
-      }}>
-        <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={{
-          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text)', padding: 4,
-        }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-
-        <Link to="/" className="navbar-logo" style={{
-          fontSize: 22, fontWeight: 800, color: 'var(--tertiary)',
-          whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', textDecoration: 'none',
-          letterSpacing: '-0.5px',
-        }}>
-          Shop<span style={{ color: 'var(--secondary)', fontWeight: 300 }}>Smart</span>
-        </Link>
-
-        <div className="navbar-location navbar-deliver-city" onClick={() => setShowCityPicker(!showCityPicker)} style={{
-          position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
-          cursor: 'pointer', flexShrink: 0, padding: '4px 6px', borderRadius: 6,
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--text-secondary)">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-          </svg>
-          <div style={{ lineHeight: 1.2 }}>
-            <span style={{ fontSize: 10, color: 'var(--text-secondary)', display: 'block' }}>Deliver to</span>
-            <strong style={{ fontSize: 12, color: 'var(--text)' }}>{deliverCity}</strong>
-          </div>
-          {showCityPicker && (
-            <div style={{
-              position: 'absolute', top: '100%', left: 0, background: 'var(--bg-white)', color: 'var(--text)',
-              borderRadius: 8, boxShadow: 'var(--shadow-lg)', padding: 12, zIndex: 1001, minWidth: 200,
-              border: '1px solid var(--border)',
-            }}>
-              <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13, color: 'var(--text-secondary)' }}>Choose location</div>
-              {CITIES.map((city) => (
-                <div key={city} onClick={(e) => { e.stopPropagation(); selectCity(city); }}
-                  style={{
-                    padding: '4px 8px', borderRadius: 4, fontSize: 13, cursor: 'pointer',
-                    color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 6,
-                    background: city === deliverCity ? 'var(--primary-container)' : 'transparent',
-                  }}>
-                  {city === deliverCity && <span style={{ color: 'var(--tertiary)' }}>{'\u2713'}</span>}
-                  {city}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <form onSubmit={handleSearch} className="navbar-search" style={{
-          flex: 1, display: 'flex', maxWidth: 600, margin: '0 16px',
-        }}>
-          <input
-            type="text"
-            placeholder="Search ShopSmart"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              flex: 1, padding: '9px 14px', border: '1px solid var(--outline-variant)',
-              borderRadius: '8px 0 0 8px', fontSize: 14, outline: 'none',
-              background: 'var(--surface-container-low)', color: 'var(--text)',
-            }}
-          />
-          <button type="submit" aria-label="Search" style={{
-            padding: '9px 16px', background: 'var(--tertiary)', border: 'none',
-            borderRadius: '0 8px 8px 0', color: 'var(--text-white)', cursor: 'pointer',
-            display: 'flex', alignItems: 'center',
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    <>
+      <nav className="navbar">
+        <div className="navbar-main">
+          <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-        </form>
 
-        <div className="navbar-links" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {user ? (
-            <>
-              <Link to="/orders" className="navbar-link" style={{
-                display: 'flex', flexDirection: 'column', fontSize: 11,
-                color: 'var(--text-secondary)', textDecoration: 'none',
-              }}>
-                Returns
-                <strong style={{ fontSize: 13, color: 'var(--text)' }}>& Orders</strong>
-              </Link>
-              <div ref={accountRef} style={{ position: 'relative', cursor: 'pointer' }}
-                className="navbar-account-toggle navbar-link"
-                onMouseEnter={() => setShowAccountMenu(true)}
-                onMouseLeave={() => setShowAccountMenu(false)}>
-                <span style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.2 }}>
-                  Hello, {user.name.split(' ')[0]}
-                </span>
-                <strong style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.2 }}>Account</strong>
-                <div className="account-dropdown" style={{
-                  position: 'absolute', top: '100%', right: 0, background: 'var(--bg-white)',
-                  color: 'var(--text)', borderRadius: 8, boxShadow: 'var(--shadow-lg)',
-                  padding: 8, zIndex: 1001, minWidth: 200, display: showAccountMenu ? 'block' : 'none',
-                  border: '1px solid var(--border)',
-                }}>
-                  <Link to="/account" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Account</Link>
-                  <Link to="/orders" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Orders</Link>
-                  <Link to="/wishlist" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Your Wishlist</Link>
-                  <Link to="/help" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)' }}>Help Center</Link>
-                  <Link to="/buy" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>Quick Buy</Link>
-                  {user.role === 'admin' && (
-                    <>
-                      <hr style={{ margin: '4px 0', borderColor: 'var(--border)' }} />
-                      <Link to="/manage" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)', fontWeight: 600 }}>Manage Store</Link>
-                      <Link to="/shipping" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)', fontWeight: 600 }}>Shipping Mgmt</Link>
-                      <Link to="/shipping-dashboard" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)', fontWeight: 600 }}>Shipping Dashboard</Link>
-                      <Link to="/delivery" style={{ display: 'block', padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--text)', fontWeight: 600 }}>Delivery Portal</Link>
-                    </>
-                  )}
-                  <hr style={{ margin: '4px 0', borderColor: 'var(--border)' }} />
-                  <div onClick={handleLogout} style={{ padding: '6px 10px', borderRadius: 4, fontSize: 13, color: 'var(--error)', cursor: 'pointer' }}>Sign Out</div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <Link to="/login" className="navbar-link" style={{
-              display: 'flex', flexDirection: 'column', fontSize: 11,
-              color: 'var(--text-secondary)', textDecoration: 'none',
-            }}>
-              Hello, Sign in
-              <strong style={{ fontSize: 13, color: 'var(--text)' }}>Account</strong>
-            </Link>
-          )}
+          <Link href="/" className="navbar-logo">
+            <span className="logo-icon">S</span>
+            <span className="logo-text">Shop<span className="logo-accent">Smart</span></span>
+          </Link>
 
-          <button onClick={toggleTheme} aria-label="Toggle theme" style={{
-            background: 'none', border: '1px solid var(--border)', borderRadius: 8,
-            padding: '6px 8px', cursor: 'pointer', color: 'var(--text)', fontSize: 16,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            {theme === 'light' ? '\u{1F319}' : '\u2600\uFE0F'}
-          </button>
-
-          <div ref={miniCartRef} style={{ position: 'relative' }}
-            onMouseEnter={() => setShowMiniCart(true)}
-            onMouseLeave={() => setShowMiniCart(false)}>
-            <Link to="/cart" className="navbar-cart" style={{
-              position: 'relative', display: 'flex', alignItems: 'center', gap: 4,
-              color: 'var(--text)', textDecoration: 'none', padding: '4px 6px', borderRadius: 6,
-            }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text)">
-                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.17 14.75l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25z"/>
-              </svg>
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-              <span style={{ fontSize: 11, lineHeight: 1 }}>Cart</span>
-            </Link>
-            {showMiniCart && user && cartItems.length > 0 && (
-              <div className="mini-cart-dropdown">
-                <div className="mini-cart-header">
-                  <strong>Shopping Cart ({cartCount})</strong>
-                </div>
-                <div className="mini-cart-items">
-                  {cartItems.slice(0, 4).map((item: any, idx: number) => (
-                    <div key={idx} className="mini-cart-item" onClick={() => { setShowMiniCart(false); navigate('/cart'); }}>
-                      <img src={item.image || item.images?.[0]} alt={item.name} className="mini-cart-img" />
-                      <div className="mini-cart-info">
-                        <div className="mini-cart-name">{item.name}</div>
-                        <div className="mini-cart-qty">Qty: {item.quantity}</div>
-                      </div>
-                      <div className="mini-cart-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
-                    </div>
-                  ))}
-                </div>
-                {cartItems.length > 4 && (
-                  <div className="mini-cart-more">+{cartItems.length - 4} more items</div>
-                )}
-                <Link to="/cart" className="mini-cart-view" onClick={() => setShowMiniCart(false)}>
-                  View Cart & Checkout {'\u2192'}
-                </Link>
+          <div className="navbar-location navbar-deliver-city" onClick={() => setShowCityPicker(!showCityPicker)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary)">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <div>
+              <span className="location-label">Deliver to</span>
+              <strong className="location-city">{deliverCity}</strong>
+            </div>
+            {showCityPicker && (
+              <div className="dropdown city-dropdown">
+                <div className="dropdown-header">Choose location</div>
+                {CITIES.map((city) => (
+                  <div key={city} onClick={(e) => { e.stopPropagation(); selectCity(city); }}
+                    className={`dropdown-item ${city === deliverCity ? 'active' : ''}`}>
+                    {city === deliverCity && <span className="check-icon">{'\u2713'}</span>}
+                    {city}
+                  </div>
+                ))}
               </div>
             )}
-            {showMiniCart && (!user || cartItems.length === 0) && (
-              <div className="mini-cart-dropdown">
-                <div className="mini-cart-empty">
-                  <span style={{ fontSize: 32 }}>{'\u{1F6D2}'}</span>
-                  <p style={{ marginTop: 8, fontSize: 14 }}>Your cart is empty</p>
-                  <Link to="/products" className="mini-cart-view" onClick={() => setShowMiniCart(false)}>
-                    Shop Now {'\u2192'}
+          </div>
+
+          <form onSubmit={handleSearch} className="navbar-search">
+            <div className="search-input-wrapper">
+              <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search products, brands, categories..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <button type="submit" aria-label="Search" className="search-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          </form>
+
+          <div className="navbar-actions">
+            {user ? (
+              <>
+                <Link href="/orders" className="navbar-action-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span className="action-label">Returns</span>
+                  <span className="action-sublabel">& Orders</span>
+                </Link>
+
+                <div ref={accountRef} className="navbar-action-item account-toggle"
+                  onMouseEnter={() => setShowAccountMenu(true)}
+                  onMouseLeave={() => setShowAccountMenu(false)}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span className="action-label">Hello, {user.name.split(' ')[0]}</span>
+                  <span className="action-sublabel">Account</span>
+
+                  <div className={`account-dropdown ${showAccountMenu ? 'show' : ''}`}>
+                    <Link href="/account" className="dropdown-link">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Your Account
+                    </Link>
+                    <Link href="/orders" className="dropdown-link">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                      </svg>
+                      Your Orders
+                    </Link>
+                    <Link href="/wishlist" className="dropdown-link">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                      </svg>
+                      Your Wishlist
+                    </Link>
+                    <Link href="/help" className="dropdown-link">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
+                      </svg>
+                      Help Center
+                    </Link>
+                    <Link href="/buy" className="dropdown-link highlight">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                      </svg>
+                      Quick Buy
+                    </Link>
+                    {user.role === 'admin' && (
+                      <>
+                        <div className="dropdown-divider" />
+                        <Link href="/manage" className="dropdown-link admin">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="9" y1="21" x2="9" y2="9" />
+                          </svg>
+                          Manage Store
+                        </Link>
+                        <Link href="/shipping" className="dropdown-link admin">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="1" y="3" width="15" height="13" />
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                          </svg>
+                          Shipping Mgmt
+                        </Link>
+                        <Link href="/shipping-dashboard" className="dropdown-link admin">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="9" y1="21" x2="9" y2="9" />
+                          </svg>
+                          Shipping Dashboard
+                        </Link>
+                        <Link href="/delivery" className="dropdown-link admin">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                          </svg>
+                          Delivery Portal
+                        </Link>
+                      </>
+                    )}
+                    <div className="dropdown-divider" />
+                    <div onClick={handleLogout} className="dropdown-link logout">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      Sign Out
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Link href="/login" className="navbar-action-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="action-label">Hello, Sign in</span>
+                <span className="action-sublabel">Account</span>
+              </Link>
+            )}
+
+            <button onClick={toggleTheme} aria-label="Toggle theme" className="navbar-action-item theme-toggle">
+              {theme === 'light' ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
+            </button>
+
+            <div ref={miniCartRef} className="cart-wrapper"
+              onMouseEnter={() => setShowMiniCart(true)}
+              onMouseLeave={() => setShowMiniCart(false)}>
+              <Link href="/cart" className="navbar-action-item cart-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+                </svg>
+                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                <span className="action-sublabel">Cart</span>
+              </Link>
+
+              {showMiniCart && user && cartItems.length > 0 && (
+                <div className="mini-cart-dropdown">
+                  <div className="mini-cart-header">
+                    <span>Shopping Cart</span>
+                    <span className="mini-cart-count">{cartCount} items</span>
+                  </div>
+                  <div className="mini-cart-items">
+                    {cartItems.slice(0, 4).map((item: any, idx: number) => (
+                      <div key={idx} className="mini-cart-item" onClick={() => { setShowMiniCart(false); router.push('/cart'); }}>
+                        <img src={item.image || item.images?.[0]} alt={item.name} className="mini-cart-img" />
+                        <div className="mini-cart-info">
+                          <div className="mini-cart-name">{item.name}</div>
+                          <div className="mini-cart-qty">Qty: {item.quantity}</div>
+                        </div>
+                        <div className="mini-cart-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {cartItems.length > 4 && (
+                    <div className="mini-cart-more">+{cartItems.length - 4} more items</div>
+                  )}
+                  <Link href="/cart" className="mini-cart-view" onClick={() => setShowMiniCart(false)}>
+                    View Cart & Checkout {'\u2192'}
                   </Link>
                 </div>
-              </div>
-            )}
+              )}
+
+              {showMiniCart && (!user || cartItems.length === 0) && (
+                <div className="mini-cart-dropdown">
+                  <div className="mini-cart-empty">
+                    <div className="empty-cart-icon">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+                      </svg>
+                    </div>
+                    <p>Your cart is empty</p>
+                    <Link href="/products" className="mini-cart-view" onClick={() => setShowMiniCart(false)}>
+                      Shop Now {'\u2192'}
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {menuOpen && (
-        <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)}
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1999 }} />
-      )}
-      {menuOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, bottom: 0, width: 280,
-          background: 'var(--bg-white)', zIndex: 2000,
-          boxShadow: '4px 0 16px rgba(0,0,0,0.15)', overflowY: 'auto',
-        }}>
-          <div style={{
-            background: 'var(--surface-container)', color: 'var(--text)',
-            padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}>
-            <strong style={{ fontSize: 16 }}>Shop by Category</strong>
-            <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: 20, cursor: 'pointer' }}>{'\u2715'}</button>
+        {menuOpen && (
+          <div className="mobile-menu-overlay" onClick={() => setMenuOpen(false)} />
+        )}
+        <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+          <div className="mobile-menu-header">
+            <strong>Shop by Category</strong>
+            <button onClick={() => setMenuOpen(false)} className="close-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </div>
-          <div style={{ padding: 8 }}>
+          <div className="mobile-menu-content">
             {['Electronics', 'Fashion', 'Home & Kitchen', 'Books', 'Beauty', 'Sports & Outdoors', 'Toys & Games'].map((cat) => (
-              <Link key={cat} to={`/products?category=${cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`} onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', borderBottom: '1px solid var(--border)' }}>
+              <Link key={cat} href={`/products?category=${cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`}
+                className="mobile-menu-link" onClick={() => setMenuOpen(false)}>
                 {cat}
               </Link>
             ))}
-            <hr style={{ margin: '8px 0', borderColor: 'var(--border)' }} />
-            <div style={{ padding: '8px 12px', fontWeight: 600, fontSize: 14, color: 'var(--text-secondary)' }}>Your Account</div>
-            <Link to="/orders" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>My Orders</Link>
-            <Link to="/account" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Account</Link>
-            <Link to="/wishlist" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Wishlist</Link>
-            <Link to="/help" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)' }}>Help Center</Link>
+            <div className="mobile-menu-divider" />
+            <div className="mobile-menu-section">Your Account</div>
+            <Link href="/orders" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>My Orders</Link>
+            <Link href="/account" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Account</Link>
+            <Link href="/wishlist" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Wishlist</Link>
+            <Link href="/help" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Help Center</Link>
             {user?.role === 'admin' && (
               <>
-                <Link to="/manage" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>Manage Store</Link>
-                <Link to="/shipping" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>Shipping Mgmt</Link>
-                <Link to="/delivery" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 12px', borderRadius: 6, fontSize: 14, color: 'var(--text)', fontWeight: 600 }}>Delivery</Link>
+                <div className="mobile-menu-divider" />
+                <div className="mobile-menu-section">Admin</div>
+                <Link href="/manage" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Manage Store</Link>
+                <Link href="/shipping" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Shipping Mgmt</Link>
+                <Link href="/delivery" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Delivery</Link>
               </>
             )}
           </div>
         </div>
-      )}
 
-      <div className="navbar-sub">
-        <div className="navbar-sub-links">
-          <Link to="/products?category=electronics">Electronics</Link>
-          <Link to="/products?category=fashion">Fashion</Link>
-          <Link to="/products?category=home-kitchen">Home & Kitchen</Link>
-          <Link to="/products?category=books">Books</Link>
-          <Link to="/products?category=beauty">Beauty</Link>
-          <Link to="/products?category=sports-outdoors">Sports</Link>
-          <Link to="/products?category=toys-games">Toys & Games</Link>
-          <Link to="/help">Help</Link>
-          <Link to="/seller/products/add">{'\u{1F4E1}'} Sell</Link>
+        <div className="subnavbar">
+          <div className="subnavbar-links">
+            <Link href="/products?category=electronics" className={pathname === '/products?category=electronics' ? 'active' : ''}>Electronics</Link>
+            <Link href="/products?category=fashion" className={pathname === '/products?category=fashion' ? 'active' : ''}>Fashion</Link>
+            <Link href="/products?category=home-kitchen" className={pathname === '/products?category=home-kitchen' ? 'active' : ''}>Home & Kitchen</Link>
+            <Link href="/products?category=books" className={pathname === '/products?category=books' ? 'active' : ''}>Books</Link>
+            <Link href="/products?category=beauty" className={pathname === '/products?category=beauty' ? 'active' : ''}>Beauty</Link>
+            <Link href="/products?category=sports-outdoors" className={pathname === '/products?category=sports-outdoors' ? 'active' : ''}>Sports</Link>
+            <Link href="/products?category=toys-games" className={pathname === '/products?category=toys-games' ? 'active' : ''}>Toys & Games</Link>
+            <Link href="/help" className={pathname === '/help' ? 'active' : ''}>Help</Link>
+            <Link href="/seller/products/add" className="sell-link">{'\u{1F4E1}'} Sell</Link>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 

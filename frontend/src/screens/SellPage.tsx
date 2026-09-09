@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useToast } from '../context/ToastContext';
 import { categoryAPI } from '../services/api';
 import { Category } from '../types';
@@ -20,7 +21,7 @@ const SellPage: React.FC = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const { showToast } = useToast();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [form, setForm] = useState({
     name: '', email: '', phone: '', storeName: '', storeDescription: '', category: '',
     businessType: '', taxId: '', address: '', city: '', state: '', zipCode: '',
@@ -125,7 +126,7 @@ const SellPage: React.FC = () => {
               <div className="sell-success-icon">{'\u2705'}</div>
               <h2>Application Submitted!</h2>
               <p>Thank you for your interest! Our team will review your application and get back to you within 24-48 hours.</p>
-              <Link to="/" className="sell-return-link">Return to Home</Link>
+              <Link href="/" className="sell-return-link">Return to Home</Link>
             </div>
           ) : (
             <>
@@ -338,7 +339,7 @@ const SellPage: React.FC = () => {
                       padding: '12px 24px', background: 'var(--surface-container)', border: '1px solid var(--border)',
                       borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', color: 'var(--text)',
                       transition: 'var(--transition)',
-                    }}>← Back</button>
+                    }}>Back</button>
                   )}
                   <div style={{ flex: 1 }} />
                   {step < STEPS.length - 1 ? (
@@ -348,7 +349,7 @@ const SellPage: React.FC = () => {
                       border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: stepValid() ? 'pointer' : 'not-allowed',
                       boxShadow: stepValid() ? '0 4px 14px rgba(255,153,0,0.3)' : 'none',
                       transition: 'var(--transition)',
-                    }}>Continue →</button>
+                    }}>Continue</button>
                   ) : (
                     <button type="submit" style={{
                       padding: '12px 32px', background: 'linear-gradient(135deg, var(--success), #059669)',
