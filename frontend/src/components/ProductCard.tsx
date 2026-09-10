@@ -84,7 +84,8 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
     router.push(`/products/${product._id}`);
   }, [router, product._id]);
 
-  const imageUrl = product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image';
+  const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="#e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="#9ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>');
+  const imageUrl = product.images?.[0] || PLACEHOLDER_IMG;
 
   return (
     <Link
@@ -115,6 +116,7 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
         <img
           src={imageUrl}
           alt={product.name}
+          onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
           style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
         />
 

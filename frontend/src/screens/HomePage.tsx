@@ -421,8 +421,9 @@ const HomePage: React.FC = () => {
               boxShadow: '0 20px 48px rgba(0,0,0,0.25)',
             }}>
               <img
-                src={featured[0]?.images?.[0] || banner.icon}
+                src={featured[bannerIdx]?.images?.[0] || featured[0]?.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="%23f43f5e"><rect width="400" height="240" rx="0"/><text x="200" y="128" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48">' + banner.icon + '</text></svg>')}
                 alt={banner.title}
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 style={{
                   width: '100%',
                   height: 240,
@@ -684,8 +685,9 @@ const HomePage: React.FC = () => {
                   </span>
 
                   <img
-                    src={product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                    src={product.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="140" fill="%23e5e7eb"><rect width="400" height="140"/><text x="200" y="76" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
                     alt={product.name}
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="140" fill="%23e5e7eb"><rect width="400" height="140"/><text x="200" y="76" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>'); }}
                     style={{
                       width: '100%',
                       height: 140,
@@ -1006,7 +1008,7 @@ const HomePage: React.FC = () => {
                   boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
                 }}>
                   <img
-                    src={topDeal.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                    src={topDeal.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
                     alt={topDeal.name}
                     style={{
                       width: '100%',
@@ -1050,7 +1052,7 @@ const HomePage: React.FC = () => {
                 onClick={() => router.push(`/products/${p._id}`)}
               >
                 <img
-                  src={p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image'}
+                  src={p.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
                   alt={p.name}
                   style={{
                     width: '100%',

@@ -13,6 +13,8 @@ import CountdownTimer from '../components/CountdownTimer';
 
 type SortMode = 'newest' | 'highest' | 'lowest';
 
+const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="#e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="#9ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>');
+
 const ProductDetailPage: React.FC = () => {
   const params = useParams();
   const id = params?.id as string;
@@ -678,7 +680,7 @@ const ProductDetailPage: React.FC = () => {
         {/* Main Image */}
         <div className="pulse-gallery-main">
           <img
-            src={(product.images?.[selectedImage] || product.images?.[0] || 'https://via.placeholder.com/600?text=No+Image')}
+            src={(product.images?.[selectedImage] || product.images?.[0] || PLACEHOLDER_IMG)}
             alt={product.name}
             className="image-crossfade"
             style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: imageFade ? 1 : 0 }}
@@ -1106,7 +1108,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="carousel-scroll pulse-related-scroll">
             {related.map((p) => (
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
-                <img className="pulse-related-img" src={(p.images?.[0] || 'https://via.placeholder.com/200?text=No+Image')} alt={p.name} />
+                <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
                 <div style={{ padding: '8px 10px' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}
@@ -1133,7 +1135,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="carousel-scroll pulse-related-scroll">
             {alsoViewed.map((p) => (
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
-                <img className="pulse-related-img" src={(p.images?.[0] || 'https://via.placeholder.com/200?text=No+Image')} alt={p.name} />
+                <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
                 <div style={{ padding: '8px 10px' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}
