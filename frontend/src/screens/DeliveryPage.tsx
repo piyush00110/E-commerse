@@ -141,7 +141,7 @@ const DeliveryPage: React.FC = () => {
                     </div>
                     <div className="delivery-item-previews">
                       {order.items?.slice(0, 3).map((item, idx) => (
-                        <img key={idx} src={item.image} alt="" title={item.name} />
+                        <img key={idx} src={item.image || ''} alt="" title={item.name} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                       ))}
                     </div>
                     <div className="delivery-weight">
@@ -208,9 +208,9 @@ const DeliveryPage: React.FC = () => {
                       </div>
                       <div className="delivery-item-previews">
                         {order.items?.slice(0, 3).map((item, idx) => (
-                          <img key={idx} src={item.image} alt="" title={item.name} />
-                        ))}
-                      </div>
+                        <img key={idx} src={item.image || ''} alt="" title={item.name} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                      ))}
+                    </div>
                     </div>
                     <div className="delivery-card-actions">
                       <button className="delivery-view-btn" onClick={() => router.push(`/orders/${order._id}`)}>

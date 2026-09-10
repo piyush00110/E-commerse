@@ -634,7 +634,6 @@ const BuyerNavbar: React.FC = () => {
 
       {/* ── Floating Pill Bottom Nav ── */}
       <div className="bottom-nav" style={{
-        display: 'none',
         position: 'fixed',
         bottom: 16,
         left: '50%',
@@ -648,7 +647,7 @@ const BuyerNavbar: React.FC = () => {
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         border: '1px solid rgba(255,255,255,0.3)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
-        zIndex: 'var(--z-bottom-nav)',
+        zIndex: 1030,
         padding: '6px 8px',
       }}>
         <div className="bottom-nav-inner" style={{

@@ -76,16 +76,26 @@ const STORY_REELS = [
   { label: 'Fitness', emoji: '💪', gradient: 'linear-gradient(135deg, #b90041, #d63031)' },
 ];
 
-const CATEGORY_BADGES = [
-  { name: 'Electronics', emoji: '📱' },
-  { name: 'Fashion', emoji: '👗' },
-  { name: 'Home', emoji: '🏠' },
-  { name: 'Beauty', emoji: '💄' },
-  { name: 'Sports', emoji: '⚽' },
-  { name: 'Books', emoji: '📚' },
-  { name: 'Toys', emoji: '🧸' },
-  { name: 'Grocery', emoji: '🛒' },
-];
+const CATEGORY_EMOJI_MAP: Record<string, string> = {
+  electronics: '📱', fashion: '👗', clothing: '👗', apparel: '👗',
+  home: '🏠', kitchen: '🏠', 'home-kitchen': '🏠', furniture: '🏠',
+  beauty: '💄', health: '💄', personal: '💄',
+  sports: '⚽', outdoors: '⚽', fitness: '⚽',
+  books: '📚', education: '📚',
+  toys: '🧸', games: '🧸', 'toys-games': '🧸',
+  grocery: '🛒', food: '🛒', supermarket: '🛒',
+  automotive: '🚗', car: '🚗',
+  pets: '🐾', animal: '🐾',
+  baby: '👶', kids: '👶',
+  jewelry: '💎', accessories: '💎',
+};
+const getCategoryEmoji = (name: string) => {
+  const lower = name.toLowerCase();
+  for (const [key, emoji] of Object.entries(CATEGORY_EMOJI_MAP)) {
+    if (lower.includes(key)) return emoji;
+  }
+  return '📦';
+};
 
 const HomePage: React.FC = () => {
   const [featured, setFeatured] = useState<Product[]>([]);
@@ -538,10 +548,10 @@ const HomePage: React.FC = () => {
             scrollbarWidth: 'none',
           }}
         >
-          {CATEGORY_BADGES.map((cat, i) => (
+          {categories.slice(0, 12).map((cat) => (
             <div
-              key={i}
-              onClick={() => router.push(`/products?category=${cat.name.toLowerCase()}`)}
+              key={cat._id}
+              onClick={() => router.push(`/products?category=${cat.slug}`)}
               style={{
                 flexShrink: 0,
                 display: 'flex',
@@ -562,9 +572,14 @@ const HomePage: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 26,
+                overflow: 'hidden',
                 transition: 'transform 0.2s, border-color 0.2s',
               }}>
-                {cat.emoji}
+                {cat.image ? (
+                  <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.textContent = getCategoryEmoji(cat.name); }} />
+                ) : (
+                  getCategoryEmoji(cat.name)
+                )}
               </div>
               <span style={{
                 fontSize: 11,
@@ -572,6 +587,9 @@ const HomePage: React.FC = () => {
                 color: 'var(--text-secondary)',
                 textAlign: 'center',
                 whiteSpace: 'nowrap',
+                maxWidth: 70,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}>
                 {cat.name}
               </span>

@@ -265,7 +265,7 @@ const ShippingDashboard: React.FC = () => {
                       <div className="sd-detail-items">
                         {order.items?.map((item, idx) => (
                           <div key={idx} className="sd-detail-item">
-                            <img src={item.image} alt="" />
+                            <img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                             <div className="sd-detail-item-info">
                               <span>{item.name}</span>
                               <span>Qty: {item.quantity} x ${(item.price ?? 0).toFixed(2)}</span>

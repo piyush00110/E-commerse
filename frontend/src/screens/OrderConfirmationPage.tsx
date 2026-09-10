@@ -111,7 +111,7 @@ const OrderConfirmationPage: React.FC = () => {
         <h2 style={{ fontSize: 18, marginBottom: 16 }}>Items Ordered</h2>
         {order.items.map((item, idx) => (
           <div key={idx} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: idx < order.items.length - 1 ? '1px solid var(--outline-variant)' : 'none' }}>
-            <img src={item.image} alt="" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'contain', background: 'var(--surface-dim)' }} />
+            <img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'contain', background: 'var(--surface-dim)' }} />
             <div style={{ flex: 1 }}>
               <Link href={`/products/${item.product}`} style={{ color: 'var(--tertiary)', fontSize: 14, fontWeight: 500 }}>{item.name}</Link>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>

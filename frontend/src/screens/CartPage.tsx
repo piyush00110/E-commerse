@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { cartAPI } from '../services/api';
-import { Cart } from '../types';
+import { cartAPI, productAPI } from '../services/api';
+import { Cart, Product } from '../types';
 import { useToast } from '../context/ToastContext';
 import { CartSkeleton } from '../components/Skeleton';
 
@@ -14,6 +14,7 @@ const CartPage: React.FC = () => {
   const [bouncingIds, setBouncingIds] = useState<Set<string>>(new Set());
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
   const [hoveredRemoveId, setHoveredRemoveId] = useState<string | null>(null);
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -30,6 +31,13 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     fetchCart();
+    const fetchSuggested = async () => {
+      try {
+        const res = await productAPI.getAll({ limit: 8, sort: '-rating' });
+        setSuggestedProducts(res.data.data || []);
+      } catch { /* ignore */ }
+    };
+    fetchSuggested();
   }, []);
 
   const triggerBounce = (itemId: string) => {
@@ -113,14 +121,6 @@ const CartPage: React.FC = () => {
   const deliveryDate = new Date(today);
   deliveryDate.setDate(today.getDate() + 5);
   const deliveryDateStr = deliveryDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-
-  const suggestedProducts = [
-    { id: '1', name: 'Wireless Earbuds', image: '/images/earbuds.jpg', price: 29.99 },
-    { id: '2', name: 'Phone Case', image: '/images/case.jpg', price: 14.99 },
-    { id: '3', name: 'Screen Protector', image: '/images/protector.jpg', price: 9.99 },
-    { id: '4', name: 'USB-C Cable', image: '/images/cable.jpg', price: 12.99 },
-    { id: '5', name: 'Power Bank', image: '/images/powerbank.jpg', price: 34.99 },
-  ];
 
   return (
     <div className="cart-layout">
@@ -217,9 +217,12 @@ const CartPage: React.FC = () => {
                 style={{ flexShrink: 0 }}>
                 <div style={{ width: 110, height: 110, borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-container, #f8fafc)' }}>
                   <img
-                    src={item.image}
+                    src={item.image || ''}
                     alt={item.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                    }}
                   />
                 </div>
               </Link>
@@ -414,34 +417,41 @@ const CartPage: React.FC = () => {
         </Link>
       </div>
 
-      <div style={{ gridColumn: '1 / -1', marginTop: 32 }} className="reveal">
-        <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 className="section-title" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>You might also like</h2>
-          <Link href="/products" style={{ fontSize: 13, color: 'var(--color-primary, #6366f1)', textDecoration: 'none', fontWeight: 600 }}>
-            View All
-          </Link>
-        </div>
-        <div className="carousel-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {suggestedProducts.map((product) => (
-            <Link key={product.id} href={`/products/${product.id}`} className="product-card" style={{ flexShrink: 0, width: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--bg-container, #fff)', border: '1px solid var(--border-color, #e2e8f0)', textDecoration: 'none', scrollSnapAlign: 'start', transition: 'transform 0.2s, box-shadow 0.2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-            >
-              <div style={{ width: '100%', height: 140, background: 'var(--bg-container, #f8fafc)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 60, height: 60, borderRadius: 12, background: 'var(--border-color, #e2e8f0)' }} />
-              </div>
-              <div style={{ padding: '10px 12px' }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 4 }}>
-                  {product.name}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  ${product.price.toFixed(2)}
-                </div>
-              </div>
+        {suggestedProducts.length > 0 && (
+        <div style={{ gridColumn: '1 / -1', marginTop: 32 }} className="reveal">
+          <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <h2 className="section-title" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', margin: 0 }}>You might also like</h2>
+            <Link href="/products" style={{ fontSize: 13, color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+              View All
             </Link>
-          ))}
+          </div>
+          <div className="carousel-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {suggestedProducts.map((product) => (
+              <Link key={product._id} href={`/products/${product._id}`} className="product-card" style={{ flexShrink: 0, width: 160, borderRadius: 16, overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid var(--border)', textDecoration: 'none', scrollSnapAlign: 'start', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ width: '100%', height: 140, background: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  <img
+                    src={product.images?.[0] || ''}
+                    alt={product.name}
+                    style={{ width: '80%', height: '80%', objectFit: 'contain' }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                </div>
+                <div style={{ padding: '10px 12px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 4 }}>
+                    {product.name}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
+                    ${(product.price ?? 0).toFixed(2)}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+        )}
 
       <style>{`
         @keyframes cartBounce {

@@ -261,7 +261,7 @@ const ManagePage: React.FC = () => {
                           <>
                             <td>
                               <div className="mg-product-cell">
-                                <img src={p.images?.[0]} alt="" className="mg-product-thumb" />
+                                <img src={p.images?.[0] || ''} alt="" className="mg-product-thumb" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                                 <div><div className="mg-product-name">{p.name}</div><div className="mg-product-id">ID: {p._id.slice(-8)}</div></div>
                               </div>
                             </td>
@@ -321,7 +321,7 @@ const ManagePage: React.FC = () => {
                   </div>
                   <div className="mg-order-items">
                     {order.items?.slice(0, 3).map((item, idx) => (
-                      <div key={idx} className="mg-item-chip"><img src={item.image} alt="" /><span>{item.name.slice(0, 28)}</span><span className="mg-item-qty">x{item.quantity}</span></div>
+                        <div key={idx} className="mg-item-chip"><img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} /><span>{item.name.slice(0, 28)}</span><span className="mg-item-qty">x{item.quantity}</span></div>
                     ))}
                     {(order.items?.length || 0) > 3 && <div className="mg-more">+{(order.items?.length ?? 0) - 3} more</div>}
                   </div>
