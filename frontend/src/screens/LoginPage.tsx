@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authAPI } from '../services/api';
@@ -14,6 +14,30 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [parallaxY, setParallaxY] = useState(0);
+  const [errorShake, setErrorShake] = useState(false);
+  const brandingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (brandingRef.current) {
+        const scrollY = window.scrollY;
+        setParallaxY(scrollY * 0.3);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      setErrorShake(true);
+      const timer = setTimeout(() => setErrorShake(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,28 +64,95 @@ const LoginPage: React.FC = () => {
       display: 'flex',
       fontFamily: "'Inter', sans-serif",
     }}>
-      {/* Left Branding Panel */}
-      <div style={{
-        flex: 1,
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '48px',
-        color: '#ffffff',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <style jsx>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+          20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatUp {
+          from { transform: translateY(16px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideInForm {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .shake-error {
+          animation: shake 0.4s ease-in-out;
+        }
+        .float-label {
+          animation: floatUp 0.25s ease-out forwards;
+        }
+        .form-animate {
+          animation: slideInForm 0.4s ease-out forwards;
+        }
+        .guest-btn {
+          transition: all 0.2s ease;
+        }
+        .guest-btn:hover {
+          border-color: #6366f1;
+          color: #6366f1;
+          background: #f5f3ff;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+        }
+        .guest-btn:active {
+          transform: translateY(0);
+        }
+        .social-btn {
+          transition: all 0.2s ease;
+        }
+        .social-btn:hover {
+          transform: scale(1.03);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .social-btn:active {
+          transform: scale(0.98);
+        }
+        @media (max-width: 768px) {
+          .branding-panel {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      {/* Left Branding Panel with Parallax */}
+      <div
+        ref={brandingRef}
+        className="branding-panel"
+        style={{
+          flex: 1,
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '48px',
+          color: '#ffffff',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
         <div style={{
           position: 'absolute',
-          top: '-20%',
+          top: `-20%`,
           right: '-10%',
           width: '400px',
           height: '400px',
           borderRadius: '50%',
           background: 'rgba(99, 102, 241, 0.1)',
           filter: 'blur(60px)',
+          transform: `translateY(${parallaxY * 0.2}px)`,
+          transition: 'transform 0.1s linear',
         }} />
         <div style={{
           position: 'absolute',
@@ -72,8 +163,17 @@ const LoginPage: React.FC = () => {
           borderRadius: '50%',
           background: 'rgba(6, 182, 212, 0.08)',
           filter: 'blur(60px)',
+          transform: `translateY(${-parallaxY * 0.15}px)`,
+          transition: 'transform 0.1s linear',
         }} />
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '380px' }}>
+        <div style={{
+          position: 'relative',
+          zIndex: 1,
+          textAlign: 'center',
+          maxWidth: '380px',
+          transform: `translateY(${parallaxY * 0.1}px)`,
+          transition: 'transform 0.1s linear',
+        }}>
           <div style={{
             width: '72px',
             height: '72px',
@@ -134,7 +234,7 @@ const LoginPage: React.FC = () => {
         background: '#f8fafc',
       }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
-          <div className="card" style={{
+          <div className="card form-animate" style={{
             padding: '40px',
             borderRadius: '16px',
             boxShadow: '0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)',
@@ -155,18 +255,22 @@ const LoginPage: React.FC = () => {
             </div>
 
             {error && (
-              <div style={{
-                padding: '12px 16px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '8px',
-                color: '#dc2626',
-                fontSize: '13px',
-                marginBottom: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}>
+              <div
+                className={errorShake ? 'shake-error' : ''}
+                style={{
+                  padding: '12px 16px',
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  color: '#dc2626',
+                  fontSize: '13px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  animation: 'fadeIn 0.3s ease-out',
+                }}
+              >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 1C4.1 1 1 4.1 1 8s3.1 7 7 7 7-3.1 7-7S11.9 1 8 1zm3.5 10.5L10.5 12.5 8 10 5.5 12.5 4.5 11.5 7 9l-2.5-2.5L5.5 5.5 8 8l2.5-2.5L11.5 7 9 9.5l2.5 2z"/>
                 </svg>
@@ -176,97 +280,132 @@ const LoginPage: React.FC = () => {
 
             <form onSubmit={handleSubmit}>
               <div className="form-group" style={{ marginBottom: '20px' }}>
-                <label className="form-label" style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: '#374151',
-                  marginBottom: '6px',
-                }}>
-                  Email Address
-                </label>
-                <input
-                  className="form-input"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
-                    transition: 'all 0.2s',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-
-              <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label className="form-label" style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: '#374151',
-                  marginBottom: '6px',
-                }}>
-                  Password
-                </label>
                 <div style={{ position: 'relative' }}>
+                  <label
+                    className={`form-label ${emailFocused || email ? 'float-label' : ''}`}
+                    style={{
+                      display: 'block',
+                      fontSize: emailFocused || email ? '11px' : '13px',
+                      fontWeight: 600,
+                      color: emailFocused ? '#6366f1' : '#374151',
+                      marginBottom: '6px',
+                      position: emailFocused || email ? 'absolute' : 'relative',
+                      top: emailFocused || email ? '-2px' : '0',
+                      left: '16px',
+                      zIndex: emailFocused || email ? 1 : 0,
+                      background: emailFocused || email ? '#f8fafc' : 'transparent',
+                      padding: emailFocused || email ? '0 4px' : '0',
+                      transition: 'all 0.2s ease',
+                      transformOrigin: 'left',
+                    }}
+                  >
+                    Email Address
+                  </label>
                   <input
                     className="form-input"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setEmailFocused(true)}
+                    onBlur={() => setEmailFocused(false)}
+                    placeholder={emailFocused ? 'you@example.com' : ''}
                     required
                     style={{
                       width: '100%',
-                      padding: '12px 48px 12px 16px',
-                      border: '1px solid #e2e8f0',
+                      padding: '12px 16px',
+                      border: `1px solid ${emailFocused ? '#6366f1' : '#e2e8f0'}`,
                       borderRadius: '8px',
                       fontSize: '14px',
                       background: '#ffffff',
                       color: '#0f172a',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.2s ease',
                       outline: 'none',
                       boxSizing: 'border-box',
+                      boxShadow: emailFocused ? '0 0 0 3px rgba(99, 102, 241, 0.1)' : 'none',
                     }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <div style={{ position: 'relative' }}>
+                  <label
+                    className={`form-label ${passwordFocused || password ? 'float-label' : ''}`}
                     style={{
-                      position: 'absolute',
-                      right: '12px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      color: '#94a3b8',
-                      display: 'flex',
-                      alignItems: 'center',
+                      display: 'block',
+                      fontSize: passwordFocused || password ? '11px' : '13px',
+                      fontWeight: 600,
+                      color: passwordFocused ? '#6366f1' : '#374151',
+                      marginBottom: '6px',
+                      position: passwordFocused || password ? 'absolute' : 'relative',
+                      top: passwordFocused || password ? '-2px' : '0',
+                      left: '16px',
+                      zIndex: passwordFocused || password ? 1 : 0,
+                      background: passwordFocused || password ? '#f8fafc' : 'transparent',
+                      padding: passwordFocused || password ? '0 4px' : '0',
+                      transition: 'all 0.2s ease',
+                      transformOrigin: 'left',
                     }}
                   >
-                    {showPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                        <line x1="1" y1="1" x2="23" y2="23"/>
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    )}
-                  </button>
+                    Password
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      className="form-input"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onFocus={() => setPasswordFocused(true)}
+                      onBlur={() => setPasswordFocused(false)}
+                      placeholder={passwordFocused ? 'Enter your password' : ''}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: '12px 48px 12px 16px',
+                        border: `1px solid ${passwordFocused ? '#6366f1' : '#e2e8f0'}`,
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        background: '#ffffff',
+                        color: '#0f172a',
+                        transition: 'all 0.2s ease',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        boxShadow: passwordFocused ? '0 0 0 3px rgba(99, 102, 241, 0.1)' : 'none',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        color: '#94a3b8',
+                        display: 'flex',
+                        alignItems: 'center',
+                        transition: 'color 0.2s',
+                      }}
+                      onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#6366f1'; }}
+                      onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#94a3b8'; }}
+                    >
+                      {showPassword ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                          <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -284,9 +423,23 @@ const LoginPage: React.FC = () => {
                   fontSize: '15px',
                   fontWeight: 600,
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s ease',
                   boxShadow: loading ? 'none' : '0 4px 12px rgba(99, 102, 241, 0.3)',
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading) {
+                    (e.target as HTMLElement).style.transform = 'translateY(-1px)';
+                    (e.target as HTMLElement).style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading) {
+                    (e.target as HTMLElement).style.transform = 'translateY(0)';
+                    (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                  }
                 }}
               >
                 {loading ? (
@@ -313,7 +466,7 @@ const LoginPage: React.FC = () => {
 
             <button
               type="button"
-              className="btn btn-ghost"
+              className="btn btn-ghost guest-btn"
               onClick={() => router.push('/')}
               style={{
                 width: '100%',
@@ -325,7 +478,7 @@ const LoginPage: React.FC = () => {
                 fontWeight: 500,
                 cursor: 'pointer',
                 color: '#64748b',
-                transition: 'all 0.2s',
+                transition: 'all 0.2s ease',
                 fontFamily: "'Inter', sans-serif",
               }}
             >
@@ -351,18 +504,6 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @media (max-width: 768px) {
-          div[style*="flex: 1"][style*="background: linear-gradient"] {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

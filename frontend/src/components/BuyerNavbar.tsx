@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { cartAPI } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
+import { useScrollProgress } from '../hooks/useScrollProgress';
 
 interface User {
   name: string;
@@ -24,11 +25,15 @@ const BuyerNavbar: React.FC = () => {
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMiniCart, setShowMiniCart] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const miniCartRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const scrollProgress = useScrollProgress();
 
   useEffect(() => {
     try {
@@ -38,6 +43,30 @@ const BuyerNavbar: React.FC = () => {
     const savedCity = localStorage.getItem('deliverCity');
     if (savedCity) setDeliverCity(savedCity);
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (showMobileSearch && mobileSearchInputRef.current) {
+      mobileSearchInputRef.current.focus();
+    }
+  }, [showMobileSearch]);
+
+  useEffect(() => {
+    if (showMobileSearch) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showMobileSearch]);
 
   const fetchCart = async () => {
     try {
@@ -76,7 +105,19 @@ const BuyerNavbar: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setShowMobileSearch(false);
+    }
+  };
+
+  const handleMobileSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setShowMobileSearch(false);
+      setSearchQuery('');
+    }
   };
 
   const handleLogout = async () => {
@@ -95,7 +136,18 @@ const BuyerNavbar: React.FC = () => {
 
   return (
     <>
-      <nav className="navbar">
+      <div className="scroll-progress-bar" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: `${scrollProgress}%`,
+        height: '3px',
+        background: 'linear-gradient(90deg, var(--primary), var(--accent, #ff6b35))',
+        zIndex: 10001,
+        transition: 'width 0.1s ease-out'
+      }} />
+
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-main">
           <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -398,6 +450,107 @@ const BuyerNavbar: React.FC = () => {
           </div>
         </div>
       </nav>
+
+      {showMobileSearch && (
+        <div className="mobile-search-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'var(--bg-primary, #fff)',
+          zIndex: 10002,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '12px 16px',
+          gap: '12px'
+        }}>
+          <form onSubmit={handleMobileSearch} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button type="button" onClick={() => { setShowMobileSearch(false); setSearchQuery(''); }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-primary)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <div className="search-input-wrapper" style={{ flex: 1 }}>
+              <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                ref={mobileSearchInputRef}
+                type="text"
+                placeholder="Search products, brands, categories..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <button type="submit" aria-label="Search" className="search-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
+
+      <div className="bottom-nav">
+        <div className="bottom-nav-inner">
+          <Link href="/" className="bottom-nav-item">
+            <span className="bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
+            <span>Home</span>
+          </Link>
+
+          <button className="bottom-nav-item" onClick={() => setMenuOpen(true)}>
+            <span className="bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </span>
+            <span>Categories</span>
+          </button>
+
+          <Link href="/cart" className="bottom-nav-item">
+            <span className="bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+              </svg>
+              {cartCount > 0 && <span className="bottom-nav-badge">{cartCount}</span>}
+            </span>
+            <span>Cart</span>
+          </Link>
+
+          <Link href={user ? '/account' : '/login'} className="bottom-nav-item">
+            <span className="bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
+            <span>Account</span>
+          </Link>
+
+          <Link href="/wishlist" className="bottom-nav-item">
+            <span className="bottom-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              </svg>
+            </span>
+            <span>Wishlist</span>
+          </Link>
+        </div>
+      </div>
     </>
   );
 };

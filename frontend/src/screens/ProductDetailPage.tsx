@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { productAPI, cartAPI, wishlistAPI } from '../services/api';
 import { Product, Review } from '../types';
@@ -17,6 +17,7 @@ const ProductDetailPage: React.FC = () => {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,8 @@ const ProductDetailPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [related, setRelated] = useState<Product[]>([]);
   const [alsoViewed, setAlsoViewed] = useState<Product[]>([]);
+  const [prevSelectedImage, setPrevSelectedImage] = useState(0);
+  const [imageFade, setImageFade] = useState(true);
 
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewTitle, setReviewTitle] = useState('');
@@ -31,12 +34,24 @@ const ProductDetailPage: React.FC = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [sortReviews, setSortReviews] = useState<SortMode>('newest');
   const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistAnimating, setWishlistAnimating] = useState(false);
 
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
+  const [colorAnimating, setColorAnimating] = useState<string>('');
+  const [sizeAnimating, setSizeAnimating] = useState<string>('');
   const [reviewImages, setReviewImages] = useState<string[]>([]);
   const [reviewImageUrl, setReviewImageUrl] = useState('');
   const lightningDealEnd = useMemo(() => new Date(Date.now() + 4 * 3600000 + 30 * 60000), []);
+
+  const [cartSuccess, setCartSuccess] = useState(false);
+  const [cartBounce, setCartBounce] = useState(false);
+  const [showCartToast, setShowCartToast] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const [breadcrumbVisible, setBreadcrumbVisible] = useState(false);
+  const [reviewsVisible, setReviewsVisible] = useState(false);
+  const reviewCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mainButtonsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!id) { router.push('/products'); return; }
@@ -46,6 +61,7 @@ const ProductDetailPage: React.FC = () => {
         const prod = res.data.data;
         setProduct(prod);
         setSelectedImage(0);
+        setPrevSelectedImage(0);
         trackRecentlyViewed(prod);
         if (prod.category) {
           const catId = typeof prod.category === 'object' ? (prod.category as { _id: string })._id : prod.category;
@@ -65,6 +81,48 @@ const ProductDetailPage: React.FC = () => {
     fetchProduct();
     checkWishlisted();
   }, [id]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBreadcrumbVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setReviewsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    const el = document.getElementById('reviews-section');
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mainButtonsRef.current) {
+        const rect = mainButtonsRef.current.getBoundingClientRect();
+        setShowStickyBar(rect.bottom < 0);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleImageSwitch = useCallback((idx: number) => {
+    if (idx === selectedImage) return;
+    setImageFade(false);
+    setTimeout(() => {
+      setPrevSelectedImage(idx);
+      setSelectedImage(idx);
+      setImageFade(true);
+    }, 200);
+  }, [selectedImage]);
 
   const checkWishlisted = async () => {
     try {
@@ -94,7 +152,7 @@ const ProductDetailPage: React.FC = () => {
   const renderInteractiveStars = (current: number, onChange: (v: number) => void) => {
     return [1, 2, 3, 4, 5].map((s) => (
       <span key={s} onClick={() => onChange(s)}
-        style={{ cursor: 'pointer', fontSize: 24, color: s <= current ? '#f59e0b' : '#d1d5db', transition: 'color 0.15s' }}>
+        style={{ cursor: 'pointer', fontSize: 24, color: s <= current ? '#f59e0b' : '#d1d5db', transition: 'color 0.15s', transform: s <= current ? 'scale(1.1)' : 'scale(1)', display: 'inline-block' }}>
         {'\u2605'}
       </span>
     ));
@@ -105,7 +163,13 @@ const ProductDetailPage: React.FC = () => {
       const stored = localStorage.getItem('user');
       if (!stored) { router.push('/login'); return; }
       await cartAPI.add(product?._id ?? '', quantity);
+      setCartBounce(true);
+      setCartSuccess(true);
+      setShowCartToast(true);
       showToast(`${product?.name} added to cart!`, 'success');
+      setTimeout(() => setCartBounce(false), 600);
+      setTimeout(() => setCartSuccess(false), 2000);
+      setTimeout(() => setShowCartToast(false), 2500);
       router.push('/cart');
     } catch {
       showToast('Failed to add to cart', 'error');
@@ -127,6 +191,8 @@ const ProductDetailPage: React.FC = () => {
     try {
       const stored = localStorage.getItem('user');
       if (!stored) { router.push('/login'); return; }
+      setWishlistAnimating(true);
+      setTimeout(() => setWishlistAnimating(false), 800);
       if (wishlisted) {
         await wishlistAPI.remove(product?._id ?? '');
         setWishlisted(false);
@@ -139,6 +205,18 @@ const ProductDetailPage: React.FC = () => {
     } catch {
       showToast('Failed to update wishlist', 'error');
     }
+  };
+
+  const handleColorSelect = (colorName: string) => {
+    setSelectedColor(colorName);
+    setColorAnimating(colorName);
+    setTimeout(() => setColorAnimating(''), 400);
+  };
+
+  const handleSizeSelect = (size: string) => {
+    setSelectedSize(size);
+    setSizeAnimating(size);
+    setTimeout(() => setSizeAnimating(''), 400);
   };
 
   const handleAddReviewImage = () => {
@@ -244,8 +322,89 @@ const ProductDetailPage: React.FC = () => {
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px', fontFamily: "'Inter', sans-serif" }}>
+      <style jsx>{`
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-24px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleBounce {
+          0% { transform: scale(1); }
+          40% { transform: scale(1.25); }
+          70% { transform: scale(0.95); }
+          100% { transform: scale(1); }
+        }
+        @keyframes cartBounce {
+          0% { transform: scale(1); }
+          20% { transform: scale(0.9); }
+          40% { transform: scale(1.15); }
+          60% { transform: scale(0.95); }
+          80% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        @keyframes heartBeat {
+          0% { transform: scale(1); }
+          14% { transform: scale(1.3); }
+          28% { transform: scale(1); }
+          42% { transform: scale(1.3); }
+          70% { transform: scale(1); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes toastSlideIn {
+          from { opacity: 0; transform: translateY(100%); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes toastSlideOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(100%); }
+        }
+        @keyframes stickyBarSlideIn {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
+        .image-crossfade {
+          transition: opacity 0.2s ease-in-out;
+        }
+        .breadcrumb-animate {
+          animation: slideInLeft 0.5s ease-out forwards;
+        }
+        .cart-bounce {
+          animation: cartBounce 0.5s ease-in-out;
+        }
+        .wishlist-heart {
+          animation: heartBeat 0.8s ease-in-out;
+        }
+        .review-card-animate {
+          animation: fadeInUp 0.5s ease-out forwards;
+          opacity: 0;
+        }
+        .toast-enter {
+          animation: toastSlideIn 0.3s ease-out forwards;
+        }
+        .toast-exit {
+          animation: toastSlideOut 0.3s ease-in forwards;
+        }
+        .sticky-bar-animate {
+          animation: stickyBarSlideIn 0.3s ease-out forwards;
+        }
+        .thumbnail-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .thumbnail-scroll::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+
       {/* Breadcrumb */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, fontSize: 13, color: '#64748b', flexWrap: 'wrap' }}>
+      <nav style={{
+        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, fontSize: 13, color: '#64748b', flexWrap: 'wrap',
+        opacity: breadcrumbVisible ? 1 : 0,
+        transform: breadcrumbVisible ? 'translateX(0)' : 'translateX(-24px)',
+        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+      }}>
         <Link href="/" style={{ color: '#6366f1', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
         <span style={{ color: '#cbd5e1' }}>{'/'}</span>
         {typeof product.category === 'object' && (
@@ -272,20 +431,27 @@ const ProductDetailPage: React.FC = () => {
             <img
               src={(product.images?.[selectedImage] || product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')}
               alt={product.name}
-              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12 }}
+              className="image-crossfade"
+              style={{
+                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12,
+                opacity: imageFade ? 1 : 0,
+                transition: 'opacity 0.2s ease-in-out',
+              }}
             />
           </div>
           {/* Thumbnails */}
           {product.images && product.images.length > 1 && (
-            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+            <div className="thumbnail-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollBehavior: 'smooth' }}>
               {product.images.map((img, idx) => (
-                <button key={idx} onClick={() => setSelectedImage(idx)} style={{
+                <button key={idx} onClick={() => handleImageSwitch(idx)} style={{
                   width: 72, height: 72, borderRadius: 12, overflow: 'hidden',
                   border: idx === selectedImage ? '2px solid #6366f1' : '2px solid #e2e8f0',
-                  padding: 4, cursor: 'pointer', background: '#f8fafc', flexShrink: 0,
-                  transition: 'border-color 0.2s',
+                  padding: 4, cursor: 'pointer', background: idx === selectedImage ? '#eef2ff' : '#f8fafc', flexShrink: 0,
+                  transition: 'all 0.25s ease',
+                  transform: idx === selectedImage ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: idx === selectedImage ? '0 0 0 2px rgba(99, 102, 241, 0.2)' : 'none',
                 }}>
-                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8 }} />
+                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8, opacity: idx === selectedImage ? 1 : 0.7, transition: 'opacity 0.2s' }} />
                 </button>
               ))}
             </div>
@@ -401,9 +567,11 @@ const ProductDetailPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {colors.map((c) => (
-                <button key={c.name} onClick={() => setSelectedColor(c.name)} style={{
+                <button key={c.name} onClick={() => handleColorSelect(c.name)} style={{
                   width: 40, height: 40, borderRadius: 9999, border: selectedColor === c.name ? '3px solid #6366f1' : '2px solid #e2e8f0',
-                  background: c.hex, cursor: 'pointer', transition: 'all 0.2s',
+                  background: c.hex, cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  transform: colorAnimating === c.name ? 'scale(1.2)' : selectedColor === c.name ? 'scale(1.1)' : 'scale(1)',
                   boxShadow: selectedColor === c.name ? '0 0 0 2px #fff, 0 0 0 4px #6366f1' : 'none',
                 }} title={c.name} />
               ))}
@@ -417,12 +585,14 @@ const ProductDetailPage: React.FC = () => {
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {sizes.map((s) => (
-                <button key={s} onClick={() => setSelectedSize(s)} style={{
+                <button key={s} onClick={() => handleSizeSelect(s)} style={{
                   padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600,
                   border: selectedSize === s ? '2px solid #6366f1' : '2px solid #e2e8f0',
                   background: selectedSize === s ? '#eef2ff' : '#fff',
                   color: selectedSize === s ? '#6366f1' : '#475569',
-                  cursor: 'pointer', transition: 'all 0.2s',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  transform: sizeAnimating === s ? 'scale(1.1)' : selectedSize === s ? 'scale(1.05)' : 'scale(1)',
                 }}>
                   {s}
                 </button>
@@ -442,7 +612,7 @@ const ProductDetailPage: React.FC = () => {
 
           {/* Quantity + Actions */}
           {product.countInStock > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+            <div ref={mainButtonsRef} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', border: '2px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
                   style={{ width: 40, height: 40, fontSize: 18, fontWeight: 600, border: 'none', background: '#f8fafc', cursor: quantity <= 1 ? 'not-allowed' : 'pointer', color: '#475569' }}>
@@ -454,9 +624,24 @@ const ProductDetailPage: React.FC = () => {
                   +
                 </button>
               </div>
-              <button className="btn btn-primary" onClick={handleAddToCart} disabled={product.countInStock === 0}
-                style={{ flex: 1, height: 44, fontSize: 14 }}>
-                Add to Cart
+              <button
+                className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`}
+                onClick={handleAddToCart}
+                disabled={product.countInStock === 0}
+                style={{
+                  flex: 1, height: 44, fontSize: 14,
+                  background: cartSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : undefined,
+                  transition: 'background 0.3s ease, transform 0.2s ease',
+                }}
+              >
+                {cartSuccess ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Added!
+                  </span>
+                ) : 'Add to Cart'}
               </button>
               <button className="btn btn-secondary" onClick={handleBuyNow} disabled={product.countInStock === 0}
                 style={{ flex: 1, height: 44, fontSize: 14 }}>
@@ -471,9 +656,15 @@ const ProductDetailPage: React.FC = () => {
             border: wishlisted ? '2px solid #ef4444' : '2px solid #e2e8f0',
             background: wishlisted ? '#fef2f2' : '#fff', color: wishlisted ? '#ef4444' : '#64748b',
             cursor: 'pointer', fontWeight: 600, fontSize: 14, width: '100%', justifyContent: 'center',
-            transition: 'all 0.2s',
+            transition: 'all 0.3s ease',
+            transform: wishlistAnimating ? 'scale(1.02)' : 'scale(1)',
           }}>
-            <span style={{ fontSize: 18 }}>{wishlisted ? '\u2665' : '\u2661'}</span>
+            <span style={{
+              fontSize: 18,
+              display: 'inline-block',
+              animation: wishlistAnimating ? 'heartBeat 0.8s ease-in-out' : 'none',
+              transition: 'color 0.3s',
+            }}>{wishlisted ? '\u2665' : '\u2661'}</span>
             {wishlisted ? 'Added to Wishlist' : 'Add to Wishlist'}
           </button>
 
@@ -499,7 +690,7 @@ const ProductDetailPage: React.FC = () => {
       )}
 
       {/* Reviews Section */}
-      <div style={{ marginBottom: 48 }}>
+      <div id="reviews-section" style={{ marginBottom: 48 }}>
         <div className="section-header" style={{ marginBottom: 24 }}>
           <h2 className="section-title">Customer Reviews</h2>
           {product.reviews && product.reviews.length > 0 && (
@@ -542,10 +733,21 @@ const ProductDetailPage: React.FC = () => {
 
             {/* Review Cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {sortedReviews.map((review) => {
+              {sortedReviews.map((review, index) => {
                 const imgs = reviewImagesMap[`product_${id}`] || [];
                 return (
-                  <div key={review._id} className="card" style={{ padding: 20 }}>
+                  <div
+                    key={review._id}
+                    ref={(el) => { reviewCardRefs.current[index] = el; }}
+                    className="card review-card-animate"
+                    style={{
+                      padding: 20,
+                      animationDelay: reviewsVisible ? `${index * 0.1}s` : '0s',
+                      opacity: reviewsVisible ? undefined : 0,
+                      transform: reviewsVisible ? undefined : 'translateY(24px)',
+                      transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                       <div style={{ width: 40, height: 40, borderRadius: 9999, background: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>
                         {review.name.charAt(0).toUpperCase()}
@@ -695,13 +897,39 @@ const ProductDetailPage: React.FC = () => {
         </section>
       )}
 
+      {/* Added to Cart Toast */}
+      {showCartToast && (
+        <div
+          className={showCartToast ? 'toast-enter' : 'toast-exit'}
+          style={{
+            position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            color: '#fff', padding: '12px 24px', borderRadius: 12,
+            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+            fontWeight: 600, fontSize: 14, zIndex: 200,
+            display: 'flex', alignItems: 'center', gap: 8,
+            animation: showCartToast ? 'toastSlideIn 0.3s ease-out' : 'toastSlideOut 0.3s ease-in',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Added to cart!
+        </div>
+      )}
+
       {/* Sticky Mobile Bottom Bar */}
       {product.countInStock > 0 && (
-        <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff',
-          borderTop: '1px solid #e2e8f0', padding: '12px 16px', zIndex: 50,
-          boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
-        }}>
+        <div
+          className={showStickyBar ? 'sticky-bar-animate' : ''}
+          style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff',
+            borderTop: '1px solid #e2e8f0', padding: '12px 16px', zIndex: 50,
+            boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
+            transform: showStickyBar ? 'translateY(0)' : 'translateY(100%)',
+            transition: 'transform 0.3s ease-out',
+          }}
+        >
           <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{ flexShrink: 0 }}>
               <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a' }}>${(product.price ?? 0).toFixed(2)}</div>
@@ -719,9 +947,12 @@ const ProductDetailPage: React.FC = () => {
                 style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: 16, cursor: 'pointer' }}>
                 +
               </button>
-              <button className="btn btn-primary" onClick={handleAddToCart}
-                style={{ flex: 1, height: 40, fontSize: 13 }}>
-                Add to Cart
+              <button className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`} onClick={handleAddToCart}
+                style={{
+                  flex: 1, height: 40, fontSize: 13,
+                  background: cartSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : undefined,
+                }}>
+                {cartSuccess ? '\u2713 Added' : 'Add to Cart'}
               </button>
               <button className="btn btn-ghost" onClick={handleBuyNow}
                 style={{ flex: 1, height: 40, fontSize: 13, border: '2px solid #6366f1', color: '#6366f1' }}>

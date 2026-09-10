@@ -11,106 +11,141 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--navbar-height) + var(--subnavbar-height) + 16px);
 }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
 body {
   font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
+  font-size: 14px;
   line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  width: 100%;
   min-height: 100vh;
 }
 
-a { text-decoration: none; color: inherit; }
-img { max-width: 100%; height: auto; display: block; }
-button { cursor: pointer; font-family: var(--font); border: none; background: none; }
-input, select, textarea { font-family: var(--font); }
-ul, ol { list-style: none; }
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text);
-}
-
-h1 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; }
-h2 { font-size: clamp(22px, 3vw, 28px); letter-spacing: -0.01em; }
-h3 { font-size: clamp(18px, 2.5vw, 22px); }
-h4 { font-size: clamp(16px, 2vw, 18px); }
-h5 { font-size: 15px; }
-h6 { font-size: 13px; }
-
-p { line-height: 1.7; color: var(--text-secondary); }
-
-/* === Focus Ring === */
-:focus-visible {
-  outline: 2px solid var(--border-focus);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
+body.menu-open {
+  overflow: hidden;
 }
 
 /* === Selection === */
 ::selection {
-  background: var(--secondary);
-  color: var(--text-white);
+  background-color: var(--secondary);
+  color: white;
 }
 
-/* === Spinner === */
-.spinner {
+/* === Scrollbar === */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+/* === Focus Visible === */
+:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+/* === Links === */
+a { color: inherit; text-decoration: none; }
+
+/* === Images === */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* === Lists === */
+ul, ol { list-style: none; }
+
+/* === Buttons Reset === */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* === Headings === */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+/* === Page Wrapper === */
+.page-wrapper {
+  min-height: 100vh;
+  padding-top: var(--navbar-height);
+}
+
+.page-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* === Section Spacing === */
+.section {
+  padding: 48px 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.section-lg {
+  padding: 64px 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* === Container === */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* === Page Title === */
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* === Breadcrumb === */
+.breadcrumb {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 40vh;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
-.spinner::after {
-  content: '';
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--border);
-  border-top-color: var(--secondary);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+.breadcrumb a {
+  color: var(--secondary);
+  font-weight: 500;
+  transition: color var(--duration) var(--ease);
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+.breadcrumb a:hover { color: var(--secondary-dark); }
 
-/* === Animations === */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+.breadcrumb-sep { color: var(--text-light); }
 
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.breadcrumb-current { color: var(--text-secondary); font-weight: 500; }
 
-@keyframes fadeSlideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+/* === Skeleton Loading === */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-container) 25%, var(--bg-container-low) 50%, var(--bg-container) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
 }
 
 @keyframes shimmer {
@@ -118,55 +153,150 @@ p { line-height: 1.7; color: var(--text-secondary); }
   100% { background-position: 200% 0; }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+/* === Page Transition === */
+.page-enter {
+  opacity: 0;
+  transform: translateY(12px);
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
 }
 
-/* === Skeleton Loading === */
-.skeleton {
-  background: linear-gradient(90deg, var(--bg-container) 25%, var(--border-light) 50%, var(--bg-container) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: var(--radius);
+/* === Scroll Reveal === */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
 }
 
-.skeleton-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-xl);
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* === Brand Marquee === */
+.brand-marquee {
   overflow: hidden;
-  box-shadow: var(--shadow-card);
-}
-
-.skeleton-image {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 0;
-}
-
-.skeleton-text {
-  height: 14px;
-  border-radius: var(--radius-xs);
-}
-
-/* === Utility === */
-.container {
-  max-width: var(--max-width);
+  padding: 20px 0;
+  position: relative;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 var(--space-6);
 }
 
-.container-lg {
-  max-width: var(--max-width-lg);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
+.brand-marquee::before,
+.brand-marquee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 
+.brand-marquee::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-primary, #fff), transparent);
+}
+
+.brand-marquee::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-primary, #fff), transparent);
+}
+
+.brand-marquee-track {
+  display: flex;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+
+.brand-marquee-item {
+  flex-shrink: 0;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+  filter: grayscale(30%);
+}
+
+.brand-marquee-item:hover {
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* === Category Scroll === */
+.category-scroll {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 16px 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-scroll-item {
+  flex-shrink: 0;
+  text-align: center;
+  scroll-snap-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.category-scroll-item:hover {
+  transform: translateY(-4px);
+}
+
+.category-scroll-img-wrapper {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--border, #e2e8f0);
+  background: var(--bg-secondary, #f8fafc);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-scroll-item:hover .category-scroll-img-wrapper {
+  border-color: var(--primary, #6366f1);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.category-scroll-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.category-scroll-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #1e293b);
+  white-space: nowrap;
+}
+
+/* === Utility Classes === */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -174,7 +304,151 @@ p { line-height: 1.7; color: var(--text-secondary); }
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* === Tooltip === */
+.tooltip-wrapper {
+  position: relative;
+}
+
+.tooltip-wrapper::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--primary);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s var(--ease);
+  z-index: var(--z-tooltip);
+}
+
+.tooltip-wrapper:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* === Price Tag === */
+.price-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.price-tag-current {
+  font-weight: 800;
+  font-size: inherit;
+  color: var(--text);
+}
+
+.price-tag-original {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.price-tag-discount {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+/* === Rating Stars === */
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rating-star { color: var(--rating-star); font-size: 14px; }
+.rating-star-empty { color: var(--border); font-size: 14px; }
+.rating-count { color: var(--text-tertiary); font-size: 12px; margin-left: 4px; }
+
+/* === Divider === */
+.divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 16px 0;
+}
+
+/* === Badge Pulse === */
+.badge-pulse {
+  position: relative;
+}
+
+.badge-pulse::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--error);
+  border-radius: 50%;
+  border: 2px solid var(--bg-card);
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* === Ripple Effect === */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.5s var(--ease), opacity 0.5s var(--ease);
+}
+
+.ripple:active::after {
+  opacity: 1;
+  transform: scale(2.5);
+  transition: 0s;
 }

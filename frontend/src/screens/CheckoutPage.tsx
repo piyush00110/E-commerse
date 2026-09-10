@@ -39,6 +39,8 @@ const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
+  const [stepDirection, setStepDirection] = useState<'forward' | 'backward'>('forward');
+  const [hoveredPayment, setHoveredPayment] = useState<string | null>(null);
 
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [selectedAddrId, setSelectedAddrId] = useState<string>('');
@@ -136,7 +138,15 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (validateStep()) setStep(step + 1);
+    if (validateStep()) {
+      setStepDirection('forward');
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = (targetStep: number) => {
+    setStepDirection('backward');
+    setStep(targetStep);
   };
 
   const handleSaveNewAddress = () => {
@@ -208,6 +218,8 @@ const CheckoutPage: React.FC = () => {
   const totalPrice = Math.max(0, subtotalAfterDiscount + taxPrice + shippingPrice + giftWrapPrice - walletApplied);
   const activeAddr = getActiveAddress();
 
+  const completionPercent = Math.round((step / 3) * 100);
+
   const steps = [
     { num: 1, label: 'Shipping', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg> },
     { num: 2, label: 'Payment', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg> },
@@ -217,6 +229,17 @@ const CheckoutPage: React.FC = () => {
   return (
     <div className="checkout-layout">
       <div className="checkout-form">
+        {/* Progress Bar */}
+        <div style={{ width: '100%', height: 4, background: 'var(--border-color, #e2e8f0)', borderRadius: 2, marginBottom: 28, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            width: `${completionPercent}%`,
+            background: 'linear-gradient(90deg, var(--color-secondary), var(--color-success, #10b981))',
+            borderRadius: 2,
+            transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+          }} />
+        </div>
+
         {/* Step Indicator */}
         <div className="checkout-steps" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginBottom: 40, padding: '0 20px' }}>
           {steps.map((s, i) => (
@@ -226,8 +249,9 @@ const CheckoutPage: React.FC = () => {
                   width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: step > s.num ? 'var(--color-success)' : step === s.num ? 'var(--color-secondary)' : 'var(--bg-container, #f1f5f9)',
                   color: step >= s.num ? '#fff' : 'var(--text-tertiary)',
-                  transition: 'all 0.3s ease',
-                  boxShadow: step === s.num ? '0 0 0 4px rgba(99,102,241,0.15)' : 'none'
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: step === s.num ? '0 0 0 4px rgba(99,102,241,0.15), 0 4px 12px rgba(99,102,241,0.2)' : step > s.num ? '0 2px 8px rgba(16,185,129,0.3)' : 'none',
+                  transform: step === s.num ? 'scale(1.1)' : 'scale(1)'
                 }}>
                   {step > s.num ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -235,7 +259,8 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 <span style={{
                   fontSize: 13, fontWeight: step === s.num ? 600 : 500,
-                  color: step === s.num ? 'var(--color-secondary)' : step > s.num ? 'var(--color-success)' : 'var(--text-tertiary)'
+                  color: step === s.num ? 'var(--color-secondary)' : step > s.num ? 'var(--color-success)' : 'var(--text-tertiary)',
+                  transition: 'color 0.3s ease'
                 }}>
                   {s.label}
                 </span>
@@ -244,7 +269,7 @@ const CheckoutPage: React.FC = () => {
                 <div style={{
                   flex: 1, height: 2, margin: '0 12px', marginBottom: 24,
                   background: step > s.num ? 'var(--color-success)' : 'var(--border-color, #e2e8f0)',
-                  transition: 'background 0.3s ease', maxWidth: 120
+                  transition: 'background 0.5s ease', maxWidth: 120
                 }} />
               )}
             </React.Fragment>
@@ -253,7 +278,7 @@ const CheckoutPage: React.FC = () => {
 
         {/* Step 1: Shipping */}
         {step === 1 && (
-          <div className="checkout-step-content">
+          <div className="checkout-step-content fade-slide-up">
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Shipping Address</h3>
 
             {savedAddresses.length > 0 && !showNewAddr && (
@@ -401,18 +426,26 @@ const CheckoutPage: React.FC = () => {
 
         {/* Step 2: Payment */}
         {step === 2 && (
-          <div className="checkout-step-content">
+          <div className="checkout-step-content fade-slide-up">
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Payment Method</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
               {PAYMENT_METHODS.map((pm) => (
                 <div key={pm.id}
-                  className="card"
+                  className="card payment-glow-card"
                   style={{
                     display: 'flex', alignItems: 'center', gap: 14, padding: 16, cursor: 'pointer',
                     border: paymentMethod === pm.id ? '2px solid var(--color-secondary)' : '2px solid var(--border-color, #e2e8f0)',
-                    transition: 'border-color 0.2s'
+                    transition: 'all 0.25s ease',
+                    boxShadow: hoveredPayment === pm.id
+                      ? '0 0 20px rgba(99,102,241,0.15), 0 4px 16px rgba(99,102,241,0.1)'
+                      : paymentMethod === pm.id
+                        ? '0 0 0 3px rgba(99,102,241,0.1)'
+                        : 'none',
+                    transform: hoveredPayment === pm.id ? 'translateY(-1px)' : 'translateY(0)'
                   }}
-                  onClick={() => setPaymentMethod(pm.id)}>
+                  onClick={() => setPaymentMethod(pm.id)}
+                  onMouseEnter={() => setHoveredPayment(pm.id)}
+                  onMouseLeave={() => setHoveredPayment(null)}>
                   <div style={{
                     width: 20, height: 20, borderRadius: '50%', border: `2px solid ${paymentMethod === pm.id ? 'var(--color-secondary)' : 'var(--text-tertiary)'}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'border-color 0.2s'
@@ -482,7 +515,7 @@ const CheckoutPage: React.FC = () => {
 
             <div className="step-actions" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
               <button
-                onClick={() => setStep(1)}
+                onClick={() => handleBack(1)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
                   border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
@@ -502,13 +535,13 @@ const CheckoutPage: React.FC = () => {
 
         {/* Step 3: Review */}
         {step === 3 && (
-          <div className="checkout-step-content">
+          <div className="checkout-step-content fade-slide-up">
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Review Your Order</h3>
 
-            <div className="card" style={{ padding: 20, marginBottom: 16 }}>
+            <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Shipping Address</span>
-                <button onClick={() => setStep(1)} style={{
+                <button onClick={() => handleBack(1)} style={{
                   background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
                   color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
                 }}>
@@ -525,10 +558,10 @@ const CheckoutPage: React.FC = () => {
               )}
             </div>
 
-            <div className="card" style={{ padding: 20, marginBottom: 16 }}>
+            <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16, animationDelay: '0.1s' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Payment Method</span>
-                <button onClick={() => setStep(2)} style={{
+                <button onClick={() => handleBack(2)} style={{
                   background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
                   color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
                 }}>
@@ -544,10 +577,10 @@ const CheckoutPage: React.FC = () => {
             </div>
 
             {giftWrap && (
-              <div className="card" style={{ padding: 20, marginBottom: 16 }}>
+              <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16, animationDelay: '0.2s' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Gift Options</span>
-                  <button onClick={() => setStep(1)} style={{
+                  <button onClick={() => handleBack(1)} style={{
                     background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
                     color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
                   }}>
@@ -565,7 +598,7 @@ const CheckoutPage: React.FC = () => {
               </div>
             )}
 
-            <div className="card" style={{ padding: 20, marginBottom: 24 }}>
+            <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 24, animationDelay: '0.3s' }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Items ({cart.items.length})</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {cart.items.map((item) => (
@@ -590,7 +623,7 @@ const CheckoutPage: React.FC = () => {
 
             <div className="step-actions" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <button
-                onClick={() => setStep(2)}
+                onClick={() => handleBack(2)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
                   border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
@@ -606,17 +639,29 @@ const CheckoutPage: React.FC = () => {
                 disabled={submitting}
                 style={{
                   padding: '14px 36px', fontSize: 15, fontWeight: 700, borderRadius: 12,
-                  opacity: submitting ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: 8
+                  opacity: submitting ? 0.8 : 1, display: 'flex', alignItems: 'center', gap: 10,
+                  transition: 'all 0.3s ease',
+                  position: 'relative', overflow: 'hidden',
+                  minWidth: submitting ? 180 : 'auto'
                 }}
               >
+                {submitting && (
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                    animation: 'shimmer 1.5s infinite'
+                  }} />
+                )}
                 {submitting ? (
                   <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}><circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="32" /></svg>
-                    Placing Order...
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
+                      <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="32" strokeLinecap="round" />
+                    </svg>
+                    <span style={{ position: 'relative' }}>Placing Order...</span>
                   </>
                 ) : (
                   <>
-                    Place Order &mdash; ${totalPrice.toFixed(2)}
+                    <span>Place Order &mdash; ${totalPrice.toFixed(2)}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </>
                 )}
@@ -765,6 +810,31 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes shimmer {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(100%); }
+        }
+        .fade-slide-up { animation: fadeSlideUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        .slide-in-right-card { animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        .slide-in-right-card:nth-child(1) { animation-delay: 0s; }
+        .slide-in-right-card:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in-right-card:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in-right-card:nth-child(4) { animation-delay: 0.3s; }
+      `}</style>
     </div>
   );
 };

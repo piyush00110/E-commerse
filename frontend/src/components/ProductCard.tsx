@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Product } from '../types';
@@ -15,6 +15,17 @@ interface Props {
 const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
   const router = useRouter();
   const { showToast } = useToast();
+
+  const [isWishlisted, setIsWishlisted] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      const stored = localStorage.getItem('wishlist');
+      const list: string[] = stored ? JSON.parse(stored) : [];
+      return list.includes(product._id);
+    } catch {
+      return false;
+    }
+  });
 
   const renderStars = (rating: number) => {
     const stars: React.ReactNode[] = [];
@@ -46,6 +57,32 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
       showToast('Failed to add to cart', 'error');
     }
   };
+
+  const handleWishlistToggle = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsWishlisted(prev => {
+      const next = !prev;
+      try {
+        const stored = localStorage.getItem('wishlist');
+        const list: string[] = stored ? JSON.parse(stored) : [];
+        if (next) {
+          if (!list.includes(product._id)) list.push(product._id);
+        } else {
+          const idx = list.indexOf(product._id);
+          if (idx !== -1) list.splice(idx, 1);
+        }
+        localStorage.setItem('wishlist', JSON.stringify(list));
+      } catch { /* ignore */ }
+      return next;
+    });
+  }, [product._id]);
+
+  const handleQuickView = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/products/${product._id}`);
+  }, [router, product._id]);
 
   const imageUrl = product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image';
 
@@ -97,16 +134,98 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
         </div>
       )}
 
-      <div className="product-card-image">
+      <div className="product-card-image" style={{ position: 'relative', overflow: 'hidden' }}>
         <img
           src={imageUrl}
           alt={product.name}
-          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'transform 0.35s ease' }}
+          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         />
+
+        <div className="product-card-overlay" style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 10,
+          padding: '10px 0',
+          transform: 'translateY(100%)',
+          transition: 'transform 0.3s ease',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.pointerEvents = 'auto';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(100%)';
+            e.currentTarget.style.pointerEvents = 'none';
+          }}
+        >
+          <button
+            className="product-card-overlay-btn"
+            onClick={handleWishlistToggle}
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              border: 'none',
+              background: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              transition: 'transform 0.2s ease, background 0.2s ease',
+              color: isWishlisted ? '#e74c3c' : '#333',
+              animation: isWishlisted ? 'heartPulse 0.4s ease' : 'none',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          >
+            {isWishlisted ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            )}
+          </button>
+
+          <button
+            className="product-card-overlay-btn"
+            onClick={handleQuickView}
+            aria-label="Quick view"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              border: 'none',
+              background: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              transition: 'transform 0.2s ease',
+              color: '#333',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
 
       <div className="product-card-body">
-        <h3 className="product-card-name">{product.name}</h3>
+        <h3 className="product-card-name" style={{ transition: 'color 0.2s ease' }}
+          onMouseOver={(e) => (e.currentTarget.style.color = 'var(--primary, #e74c3c)')}
+          onMouseOut={(e) => (e.currentTarget.style.color = '')}
+        >{product.name}</h3>
 
         <div className="product-card-rating">
           {renderStars(product.rating)}

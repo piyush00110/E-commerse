@@ -9,6 +9,7 @@ import { productAPI, categoryAPI } from '../services/api';
 import { Product, Category } from '../types';
 import { GridSkeleton } from '../components/Skeleton';
 import { useToast } from '../context/ToastContext';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const BANNERS = [
   {
@@ -47,6 +48,21 @@ const TRUST_ITEMS = [
   { icon: '📞', title: '24/7 Support', desc: 'Dedicated help center' },
 ];
 
+const BRANDS = [
+  { name: 'Nike', logo: 'https://cdn.worldvectorlogo.com/logos/nike-4.svg' },
+  { name: 'Samsung', logo: 'https://cdn.worldvectorlogo.com/logos/samsung-2.svg' },
+  { name: 'Apple', logo: 'https://cdn.worldvectorlogo.com/logos/apple-14.svg' },
+  { name: 'Adidas', logo: 'https://cdn.worldvectorlogo.com/logos/adidas-6.svg' },
+  { name: 'Sony', logo: 'https://cdn.worldvectorlogo.com/logos/sony-1.svg' },
+  { name: 'Puma', logo: 'https://cdn.worldvectorlogo.com/logos/puma.svg' },
+  { name: 'LG', logo: 'https://cdn.worldvectorlogo.com/logos/lg-2.svg' },
+  { name: 'HP', logo: 'https://cdn.worldvectorlogo.com/logos/hp-2.svg' },
+  { name: 'Canon', logo: 'https://cdn.worldvectorlogo.com/logos/canon-1.svg' },
+  { name: 'Dell', logo: 'https://cdn.worldvectorlogo.com/logos/dell-1.svg' },
+  { name: 'Lenovo', logo: 'https://cdn.worldvectorlogo.com/logos/lenovo-2.svg' },
+  { name: 'OnePlus', logo: 'https://cdn.worldvectorlogo.com/logos/oneplus-3.svg' },
+];
+
 const HomePage: React.FC = () => {
   const [featured, setFeatured] = useState<Product[]>([]);
   const [deals, setDeals] = useState<Product[]>([]);
@@ -57,8 +73,10 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [parallaxY, setParallaxY] = useState(0);
   const router = useRouter();
   const { showToast } = useToast();
+  const containerRef = useScrollReveal({ stagger: 80 });
 
   useEffect(() => {
     const savedCity = localStorage.getItem('deliverCity');
@@ -76,6 +94,21 @@ const HomePage: React.FC = () => {
       setBannerIdx((prev) => (prev + 1) % BANNERS.length);
     }, 6000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setParallaxY(window.scrollY * 0.35);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -131,13 +164,22 @@ const HomePage: React.FC = () => {
   const banner = BANNERS[bannerIdx];
 
   return (
-    <div>
+    <div ref={containerRef}>
       {/* Hero Section */}
-      <section className="hero" style={{ background: banner.gradient }}>
+      <section className="hero" style={{ background: banner.gradient, overflow: 'hidden' }}>
         <div className="hero-bg-shapes">
-          <div className="hero-shape hero-shape-1" />
-          <div className="hero-shape hero-shape-2" />
-          <div className="hero-shape hero-shape-3" />
+          <div
+            className="hero-shape hero-shape-1"
+            style={{ transform: `translateY(${parallaxY * 0.2}px)` }}
+          />
+          <div
+            className="hero-shape hero-shape-2"
+            style={{ transform: `translateY(${parallaxY * 0.4}px)` }}
+          />
+          <div
+            className="hero-shape hero-shape-3"
+            style={{ transform: `translateY(${parallaxY * 0.15}px)` }}
+          />
         </div>
         <div className="hero-content hero-animate" key={bannerIdx}>
           <span className="hero-badge">
@@ -204,9 +246,31 @@ const HomePage: React.FC = () => {
         ))}
       </section>
 
+      {/* Brand Marquee */}
+      <section className="brand-marquee">
+        <div className="brand-marquee-track">
+          {[...BRANDS, ...BRANDS].map((brand, i) => (
+            <div key={i} className="brand-marquee-item">
+              <img
+                src={brand.logo}
+                alt={brand.name}
+                style={{ height: 28, width: 'auto', filter: 'brightness(0) invert(0.5)' }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).nextElementSibling!.textContent = brand.name;
+                }}
+              />
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                {brand.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Recently Viewed */}
       {recent.length > 0 && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="0" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
             <div className="section-title">
               <span style={{ fontSize: 24 }}>👀</span>
@@ -269,7 +333,7 @@ const HomePage: React.FC = () => {
 
       {/* Flash Deals */}
       {deals.length >= 3 && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="100" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
             <div className="section-title">
               <span style={{ fontSize: 24 }}>⚡</span>
@@ -370,56 +434,33 @@ const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* Categories */}
-      <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+      {/* Top Categories - Horizontal Scroll */}
+      <section className="reveal" data-reveal-delay="200" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
         <div className="section-header">
           <div className="section-title">
             <span style={{ fontSize: 24 }}>✨</span>
-            <h2>Shop by Category</h2>
+            <h2>Top Categories</h2>
           </div>
           <Link href="/products" className="section-link">
             Explore all →
           </Link>
         </div>
-        <div className="category-grid">
-          {categories.slice(0, 8).map((cat) => (
+        <div className="category-scroll">
+          {categories.slice(0, 12).map((cat) => (
             <div
               key={cat._id}
-              className="category-card"
+              className="category-scroll-item"
               onClick={() => router.push(`/products?category=${cat.slug}`)}
               style={{ cursor: 'pointer' }}
             >
-              <div style={{
-                width: 48,
-                height: 48,
-                borderRadius: 12,
-                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 12,
-              }}>
+              <div className="category-scroll-img-wrapper">
                 <img
-                  src={cat.image || `https://via.placeholder.com/48?text=${cat.name.charAt(0)}`}
+                  src={cat.image || `https://via.placeholder.com/80?text=${cat.name.charAt(0)}`}
                   alt={cat.name}
-                  style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }}
+                  className="category-scroll-img"
                 />
               </div>
-              <h3 style={{
-                fontSize: 16,
-                fontWeight: 600,
-                margin: 0,
-                color: 'var(--text)',
-              }}>
-                {cat.name}
-              </h3>
-              <p style={{
-                fontSize: 12,
-                color: 'var(--text-secondary)',
-                margin: '4px 0 0',
-              }}>
-                View all
-              </p>
+              <span className="category-scroll-name">{cat.name}</span>
             </div>
           ))}
         </div>
@@ -427,7 +468,7 @@ const HomePage: React.FC = () => {
 
       {/* Trending Products */}
       {featured.length > 0 && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="300" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
             <div className="section-title">
               <span style={{ fontSize: 24 }}>🔥</span>
@@ -439,11 +480,12 @@ const HomePage: React.FC = () => {
           </div>
           <div className="product-grid">
             {featured.slice(0, 8).map((product, idx) => (
-              <ProductCard
-                key={product._id}
-                product={product}
-                badge={idx === 0 ? 'bestseller' : idx === 1 ? 'amazons_choice' : null}
-              />
+              <div key={product._id} className={`reveal reveal-delay-${idx * 60}`}>
+                <ProductCard
+                  product={product}
+                  badge={idx === 0 ? 'bestseller' : idx === 1 ? 'amazons_choice' : null}
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -451,7 +493,7 @@ const HomePage: React.FC = () => {
 
       {/* Deal of the Day */}
       {topDeal && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="400" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div style={{
             background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
             borderRadius: 16,
@@ -565,7 +607,7 @@ const HomePage: React.FC = () => {
 
       {/* New Arrivals */}
       {allProducts.length > 0 && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="500" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div className="section-header">
             <div className="section-title">
               <span style={{ fontSize: 24 }}>📊</span>
@@ -584,7 +626,7 @@ const HomePage: React.FC = () => {
       )}
 
       {/* Newsletter */}
-      <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+      <section className="reveal" data-reveal-delay="600" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
         <div style={{
           background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
           borderRadius: 16,
@@ -657,7 +699,7 @@ const HomePage: React.FC = () => {
 
       {/* Sell Banner */}
       {categories.length > 0 && (
-        <section style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
+        <section className="reveal" data-reveal-delay="700" style={{ padding: '48px 24px', maxWidth: 1440, margin: '0 auto' }}>
           <div style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',

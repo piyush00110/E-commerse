@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 import { productAPI, categoryAPI } from '../services/api';
 import { Product, Category } from '../types';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const SORT_OPTIONS = [
   { value: '-created_at', label: 'Newest' },
@@ -33,6 +34,10 @@ const ProductListPage: React.FC = () => {
   const [debouncedPriceMin, setDebouncedPriceMin] = useState('');
   const [debouncedPriceMax, setDebouncedPriceMax] = useState('');
   const priceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sortSelectRef = useRef<HTMLSelectElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const resultsCountRef = useRef<HTMLSpanElement>(null);
+  const revealContainerRef = useScrollReveal({ stagger: 80 });
 
   const category = searchParams.get('category') || '';
   const search = searchParams.get('search') || '';
@@ -86,6 +91,8 @@ const ProductListPage: React.FC = () => {
 
   const hasFilters = priceMin || priceMax || ratingFilter;
 
+  const activeFilterCount = [priceMin, priceMax, ratingFilter].filter(Boolean).length;
+
   const activeCategory = categories.find((c) => c.slug === category);
   const title = search
     ? `Results for "${search}"`
@@ -94,57 +101,215 @@ const ProductListPage: React.FC = () => {
     : 'All Products';
 
   return (
-    <div style={{ maxWidth: 1440, margin: '0 auto', padding: '24px' }}>
-      {/* Category Chips Bar */}
-      <div style={{
-        display: 'flex',
-        gap: 8,
-        marginBottom: 24,
-        overflowX: 'auto',
-        paddingBottom: 8,
-        scrollbarWidth: 'none',
-      }}>
-        <button
-          onClick={() => router.push('/products')}
-          style={{
-            padding: '8px 20px',
-            borderRadius: 20,
-            border: 'none',
-            background: !category ? 'var(--primary)' : 'var(--bg-card)',
-            color: !category ? '#fff' : 'var(--text)',
-            fontWeight: !category ? 600 : 400,
-            fontSize: 13,
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            transition: 'all 0.2s',
-            boxShadow: !category ? 'var(--shadow-sm)' : 'none',
-          }}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+    <div ref={revealContainerRef} style={{ maxWidth: 1440, margin: '0 auto', padding: '24px' }}>
+      <style>{`
+        @keyframes slideInLeft {
+          from { transform: translateX(-40px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from { transform: scale(0.8); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeSlideUp {
+          from { transform: translateY(24px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes floatBounce {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }
+        @keyframes countPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        @keyframes revealUp {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+          50% { box-shadow: 0 0 0 6px rgba(99,102,241,0.12); }
+        }
+
+        .filter-sidebar {
+          animation: slideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .product-card-wrapper {
+          animation: fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .filter-chip-enter {
+          animation: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .empty-icon-float {
+          animation: floatBounce 3s ease-in-out infinite;
+        }
+        .results-count-animate {
+          animation: countPulse 0.4s ease-in-out;
+        }
+        .reveal {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .sort-glow:focus {
+          outline: none;
+          animation: glowPulse 2s ease-in-out infinite;
+          border-color: var(--primary) !important;
+        }
+        .grid-loading-overlay {
+          transition: opacity 0.3s ease, pointer-events 0.3s ease;
+        }
+        .grid-loading-overlay.is-loading {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+
+        .mobile-sticky-bar {
+          display: none;
+        }
+        @media (max-width: 768px) {
+          .mobile-sticky-bar {
+            display: block;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+          }
+        }
+      `}</style>
+
+      {/* Category Chips Bar - Reveal Section */}
+      <div className="reveal" data-reveal>
+        <div style={{
+          display: 'flex',
+          gap: 8,
+          marginBottom: 24,
+          overflowX: 'auto',
+          paddingBottom: 8,
+          scrollbarWidth: 'none',
+        }}>
           <button
-            key={cat._id}
-            onClick={() => router.push(`/products?category=${cat.slug}`)}
+            onClick={() => router.push('/products')}
             style={{
               padding: '8px 20px',
               borderRadius: 20,
               border: 'none',
-              background: category === cat.slug ? 'var(--primary)' : 'var(--bg-card)',
-              color: category === cat.slug ? '#fff' : 'var(--text)',
-              fontWeight: category === cat.slug ? 600 : 400,
+              background: !category ? 'var(--primary)' : 'var(--bg-card)',
+              color: !category ? '#fff' : 'var(--text)',
+              fontWeight: !category ? 600 : 400,
               fontSize: 13,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               flexShrink: 0,
               transition: 'all 0.2s',
-              boxShadow: category === cat.slug ? 'var(--shadow-sm)' : 'none',
+              boxShadow: !category ? 'var(--shadow-sm)' : 'none',
             }}
           >
-            {cat.name}
+            All
           </button>
-        ))}
+          {categories.map((cat) => (
+            <button
+              key={cat._id}
+              onClick={() => router.push(`/products?category=${cat.slug}`)}
+              style={{
+                padding: '8px 20px',
+                borderRadius: 20,
+                border: 'none',
+                background: category === cat.slug ? 'var(--primary)' : 'var(--bg-card)',
+                color: category === cat.slug ? '#fff' : 'var(--text)',
+                fontWeight: category === cat.slug ? 600 : 400,
+                fontSize: 13,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                transition: 'all 0.2s',
+                boxShadow: category === cat.slug ? 'var(--shadow-sm)' : 'none',
+              }}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile Sticky Filter/Sort Bar */}
+      <div className="mobile-sticky-bar">
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="btn filter-toggle-mobile"
+            style={{
+              padding: '10px 16px',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              fontSize: 13,
+              cursor: 'pointer',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              position: 'relative',
+              flex: 1,
+            }}
+          >
+            ☰ Filters
+            {activeFilterCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: -6,
+                right: -6,
+                background: 'var(--primary)',
+                color: '#fff',
+                borderRadius: '50%',
+                width: 20,
+                height: 20,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 700,
+                animation: 'scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+              }}>
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+          <select
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value);
+              setPage(1);
+            }}
+            className="form-select sort-glow"
+            style={{
+              padding: '10px 14px',
+              borderRadius: 8,
+              fontSize: 13,
+              cursor: 'pointer',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              flex: 1,
+              transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+            }}
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: 24, position: 'relative' }}>
@@ -367,7 +532,7 @@ const ProductListPage: React.FC = () => {
         {/* Main Content */}
         <main style={{ flex: 1, minWidth: 0 }}>
           {/* Search/Results Header */}
-          <div className="section-header" style={{ marginBottom: 24 }}>
+          <div className="section-header reveal" data-reveal style={{ marginBottom: 24 }}>
             <div className="section-title">
               <h2 style={{
                 fontFamily: 'var(--font-display)',
@@ -377,11 +542,18 @@ const ProductListPage: React.FC = () => {
               }}>
                 {title}
               </h2>
-              <span style={{
-                fontSize: 14,
-                color: 'var(--text-secondary)',
-                marginTop: 4,
-              }}>
+              <span
+                ref={resultsCountRef}
+                style={{
+                  fontSize: 14,
+                  color: 'var(--text-secondary)',
+                  marginTop: 4,
+                  display: 'inline-block',
+                  transition: 'opacity 0.3s ease',
+                  opacity: loading ? 0.5 : 1,
+                }}
+                className={!loading ? 'results-count-animate' : ''}
+              >
                 {total} products found
               </span>
             </div>
@@ -400,17 +572,39 @@ const ProductListPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,
+                  position: 'relative',
                 }}
               >
-                ☰ Filters
+                <span className="filter-toggle-mobile">☰ Filters</span>
+                {activeFilterCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: -6,
+                    right: -6,
+                    background: 'var(--primary)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: 20,
+                    height: 20,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    animation: 'scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+                  }}>
+                    {activeFilterCount}
+                  </span>
+                )}
               </button>
               <select
+                ref={sortSelectRef}
                 value={sort}
                 onChange={(e) => {
                   setSort(e.target.value);
                   setPage(1);
                 }}
-                className="form-select"
+                className="form-select sort-glow"
                 style={{
                   padding: '10px 14px',
                   borderRadius: 8,
@@ -419,6 +613,7 @@ const ProductListPage: React.FC = () => {
                   background: 'var(--bg-card)',
                   border: '1px solid var(--border)',
                   minWidth: 180,
+                  transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
                 }}
               >
                 {SORT_OPTIONS.map((opt) => (
@@ -439,17 +634,20 @@ const ProductListPage: React.FC = () => {
               marginBottom: 16,
             }}>
               {priceMin && (
-                <span className="badge" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '6px 12px',
-                  borderRadius: 20,
-                  background: 'var(--primary-light, rgba(99,102,241,0.1))',
-                  color: 'var(--primary)',
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}>
+                <span
+                  className="badge filter-chip-enter"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 20,
+                    background: 'var(--primary-light, rgba(99,102,241,0.1))',
+                    color: 'var(--primary)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
                   Min: ${priceMin}
                   <button
                     onClick={() => {
@@ -472,17 +670,20 @@ const ProductListPage: React.FC = () => {
                 </span>
               )}
               {priceMax && (
-                <span className="badge" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '6px 12px',
-                  borderRadius: 20,
-                  background: 'var(--primary-light, rgba(99,102,241,0.1))',
-                  color: 'var(--primary)',
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}>
+                <span
+                  className="badge filter-chip-enter"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 20,
+                    background: 'var(--primary-light, rgba(99,102,241,0.1))',
+                    color: 'var(--primary)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
                   Max: ${priceMax}
                   <button
                     onClick={() => {
@@ -505,17 +706,20 @@ const ProductListPage: React.FC = () => {
                 </span>
               )}
               {ratingFilter && (
-                <span className="badge" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '6px 12px',
-                  borderRadius: 20,
-                  background: 'var(--primary-light, rgba(99,102,241,0.1))',
-                  color: 'var(--primary)',
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}>
+                <span
+                  className="badge filter-chip-enter"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 20,
+                    background: 'var(--primary-light, rgba(99,102,241,0.1))',
+                    color: 'var(--primary)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
                   {'★'.repeat(Number(ratingFilter))} & up
                   <button
                     onClick={() => {
@@ -564,53 +768,72 @@ const ProductListPage: React.FC = () => {
               background: 'var(--bg-card)',
               borderRadius: 16,
               border: '1px solid var(--border)',
+              animation: 'fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
             }}>
-              <div style={{ fontSize: 64, marginBottom: 16 }}>🔍</div>
-              <h2 style={{
-                fontSize: 20,
-                fontWeight: 700,
-                marginBottom: 8,
-                color: 'var(--text)',
-              }}>
-                No products found
-              </h2>
-              <p style={{
-                color: 'var(--text-secondary)',
-                marginBottom: 24,
-                fontSize: 16,
-              }}>
-                Try adjusting your filters or search.
-              </p>
-              {hasFilters && (
-                <button
-                  onClick={handleClearFilters}
-                  className="btn"
-                  style={{
-                    padding: '12px 24px',
-                    background: 'var(--primary)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: 14,
-                  }}
-                >
-                  Clear All Filters
-                </button>
-              )}
+              <div className="empty-state">
+                <div className="empty-icon-float" style={{ fontSize: 64, marginBottom: 16, display: 'inline-block' }}>
+                  🔍
+                </div>
+                <h2 style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  marginBottom: 8,
+                  color: 'var(--text)',
+                }}>
+                  No products found
+                </h2>
+                <p style={{
+                  color: 'var(--text-secondary)',
+                  marginBottom: 24,
+                  fontSize: 16,
+                }}>
+                  Try adjusting your filters or search.
+                </p>
+                {hasFilters && (
+                  <button
+                    onClick={handleClearFilters}
+                    className="btn"
+                    style={{
+                      padding: '12px 24px',
+                      background: 'var(--primary)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontSize: 14,
+                    }}
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
             <>
-              <div className="product-grid">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
+              <div
+                ref={gridRef}
+                className={`product-grid grid-loading-overlay ${loading ? 'is-loading' : ''}`}
+                style={{
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                {products.map((product, idx) => (
+                  <div
+                    key={product._id}
+                    className={`product-card-wrapper animate-in-delay-${Math.min(idx, 7)}`}
+                    style={{
+                      animation: `fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(idx, 7) * 0.06}s both`,
+                    }}
+                  >
+                    <ProductCard product={product} />
+                  </div>
                 ))}
               </div>
 
               {/* Pagination */}
               {pages > 1 && (
-                <div className="pagination" style={{
+                <div className="pagination reveal" data-reveal style={{
                   display: 'flex',
                   justifyContent: 'center',
                   gap: 8,
