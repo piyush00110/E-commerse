@@ -1,21 +1,18 @@
-/* ============================================
-   ShopSmart Premium - Layout Systems
-   Amazon Navbar + Flipkart Bottom Nav + Mobile
-   ============================================ */
+/* Pulse Retail - Layout Systems */
 
-/* ===========================
-   NAVBAR - Amazon-style
-   =========================== */
 .navbar {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: var(--primary);
+  background: var(--bg-glass-thick);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
   transition: all var(--duration-slow) var(--ease-out-expo);
 }
 
 .navbar.scrolled {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .navbar-main {
@@ -33,7 +30,6 @@
   height: var(--navbar-height-scrolled);
 }
 
-/* Logo */
 .navbar-logo {
   display: flex;
   align-items: center;
@@ -49,7 +45,7 @@
   color: white;
   font-weight: 800;
   font-size: 18px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,33 +60,32 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
-  color: white;
+  color: var(--text);
   letter-spacing: -0.02em;
 }
 
 .logo-accent {
-  color: var(--secondary-light);
+  color: var(--primary);
 }
 
-/* Location */
 .navbar-location {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: white;
+  color: var(--text);
   cursor: pointer;
   padding: 6px 12px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   transition: background var(--duration) var(--ease);
   position: relative;
   flex-shrink: 0;
 }
 
-.navbar-location:hover { background: rgba(255,255,255,0.1); }
+.navbar-location:hover { background: var(--bg-container-low); }
 
 .location-label {
   font-size: 11px;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-tertiary);
   display: block;
   line-height: 1.2;
 }
@@ -102,7 +97,6 @@
   line-height: 1.2;
 }
 
-/* Search */
 .navbar-search {
   flex: 1;
   max-width: 640px;
@@ -112,16 +106,17 @@
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  background: white;
-  border-radius: var(--radius-lg);
+  background: var(--bg-container-low);
+  border-radius: var(--radius-full);
   overflow: hidden;
   border: 2px solid transparent;
-  transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+  transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), background var(--duration) var(--ease);
 }
 
 .search-input-wrapper:focus-within {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(185, 0, 65, 0.1);
+  background: var(--bg-white);
 }
 
 .search-icon {
@@ -145,7 +140,7 @@
 
 .search-btn {
   padding: 12px 18px;
-  background: var(--secondary);
+  background: var(--primary);
   color: white;
   border: none;
   cursor: pointer;
@@ -155,9 +150,8 @@
   justify-content: center;
 }
 
-.search-btn:hover { background: var(--secondary-dark); }
+.search-btn:hover { background: var(--primary-dark); }
 
-/* Search Autocomplete */
 .search-dropdown {
   position: absolute;
   top: calc(100% + 4px);
@@ -210,11 +204,10 @@
 }
 
 .search-trending-tag:hover {
-  background: var(--secondary);
+  background: var(--primary);
   color: white;
 }
 
-/* Navbar Actions */
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -227,19 +220,19 @@
   flex-direction: column;
   align-items: center;
   padding: 6px 12px;
-  color: white;
-  border-radius: var(--radius-md);
+  color: var(--text);
+  border-radius: var(--radius);
   transition: background var(--duration) var(--ease);
   text-decoration: none;
   cursor: pointer;
   position: relative;
 }
 
-.navbar-action-item:hover { background: rgba(255,255,255,0.1); }
+.navbar-action-item:hover { background: var(--bg-container-low); }
 
 .action-label {
   font-size: 11px;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-tertiary);
   line-height: 1.2;
 }
 
@@ -250,7 +243,6 @@
   white-space: nowrap;
 }
 
-/* Cart */
 .cart-wrapper { position: relative; }
 
 .cart-badge {
@@ -259,7 +251,7 @@
   right: 4px;
   min-width: 18px;
   height: 18px;
-  background: var(--secondary);
+  background: var(--primary);
   color: white;
   border-radius: var(--radius-full);
   font-size: 11px;
@@ -269,10 +261,9 @@
   justify-content: center;
   padding: 0 4px;
   animation: badgePop 0.3s var(--ease-spring);
-  border: 2px solid var(--primary);
+  border: 2px solid var(--bg-card);
 }
 
-/* Mini Cart Dropdown */
 .mini-cart-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -315,7 +306,7 @@
 .mini-cart-img {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   object-fit: contain;
   background: var(--bg-container);
 }
@@ -339,7 +330,7 @@
   text-align: center;
   font-weight: 600;
   font-size: 14px;
-  color: var(--secondary);
+  color: var(--primary);
   border-top: 1px solid var(--border-light);
   transition: background var(--duration) var(--ease);
 }
@@ -358,7 +349,6 @@
 
 .mini-cart-empty p { color: var(--text-secondary); margin-bottom: 16px; }
 
-/* Account Dropdown */
 .account-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -389,7 +379,7 @@
   gap: 10px;
   padding: 10px 14px;
   font-size: 14px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   transition: background var(--duration) var(--ease);
   color: var(--text);
   text-decoration: none;
@@ -397,7 +387,7 @@
 
 .dropdown-link:hover { background: var(--bg-container); }
 
-.dropdown-link.highlight { color: var(--secondary); font-weight: 600; }
+.dropdown-link.highlight { color: var(--primary); font-weight: 600; }
 .dropdown-link.admin { color: var(--warning); }
 .dropdown-link.logout { color: var(--error); }
 
@@ -407,9 +397,8 @@
   margin: 4px 0;
 }
 
-.check-icon { color: var(--secondary); font-weight: 700; margin-right: 4px; }
+.check-icon { color: var(--primary); font-weight: 700; margin-right: 4px; }
 
-/* City Dropdown */
 .city-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -438,15 +427,14 @@
   align-items: center;
   padding: 10px 14px;
   font-size: 14px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   cursor: pointer;
   transition: background var(--duration) var(--ease);
 }
 
 .dropdown-item:hover { background: var(--bg-container); }
-.dropdown-item.active { background: rgba(99,102,241,0.08); color: var(--secondary); font-weight: 600; }
+.dropdown-item.active { background: rgba(185, 0, 65, 0.08); color: var(--primary); font-weight: 600; }
 
-/* Subnavbar */
 .subnavbar {
   background: var(--bg-card);
   border-top: 1px solid var(--border-light);
@@ -473,7 +461,7 @@
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   transition: all var(--duration) var(--ease);
   text-decoration: none;
   position: relative;
@@ -485,7 +473,7 @@
 }
 
 .subnavbar-links a.active {
-  color: var(--secondary);
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -496,7 +484,7 @@
   left: 14px;
   right: 14px;
   height: 2px;
-  background: var(--secondary);
+  background: var(--primary);
   border-radius: 2px;
 }
 
@@ -509,21 +497,19 @@
   margin-left: 8px;
 }
 
-/* Hamburger */
 .hamburger-btn {
   display: none;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  color: white;
-  border-radius: var(--radius-md);
+  color: var(--text);
+  border-radius: var(--radius);
   transition: background var(--duration) var(--ease);
 }
 
-.hamburger-btn:hover { background: rgba(255,255,255,0.1); }
+.hamburger-btn:hover { background: var(--bg-container-low); }
 
-/* Close button */
 .close-btn {
   display: flex;
   align-items: center;
@@ -537,9 +523,6 @@
 
 .close-btn:hover { background: var(--bg-container); }
 
-/* ===========================
-   MOBILE MENU - Flipkart-style slide
-   =========================== */
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
@@ -592,7 +575,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   font-size: 15px;
   font-weight: 500;
   color: var(--text);
@@ -617,11 +600,8 @@
   letter-spacing: 0.5px;
 }
 
-/* ===========================
-   FOOTER
-   =========================== */
 .footer {
-  background: var(--primary);
+  background: var(--gradient-dark);
   color: rgba(255,255,255,0.8);
   padding: 48px 24px 24px;
   margin-top: 64px;
@@ -671,19 +651,19 @@
   color: rgba(255,255,255,0.5);
 }
 
-/* ===========================
-   MOBILE BOTTOM NAV - Flipkart/Myntra style
-   =========================== */
 .bottom-nav {
   display: none;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
   height: var(--bottom-nav-height);
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  background: var(--bg-glass-thick);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-xl);
   z-index: var(--z-bottom-nav);
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -695,6 +675,7 @@
   height: 100%;
   max-width: 500px;
   margin: 0 auto;
+  padding: 0 8px;
 }
 
 .bottom-nav-item {
@@ -713,19 +694,19 @@
 }
 
 .bottom-nav-item.active {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .bottom-nav-item.active::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: -2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 24px;
-  height: 2px;
-  background: var(--secondary);
-  border-radius: 0 0 2px 2px;
+  width: 20px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: var(--radius-full);
 }
 
 .bottom-nav-icon {
@@ -747,7 +728,7 @@
   right: 6px;
   min-width: 16px;
   height: 16px;
-  background: var(--error);
+  background: var(--primary);
   color: white;
   border-radius: var(--radius-full);
   font-size: 9px;
@@ -758,9 +739,6 @@
   padding: 0 3px;
 }
 
-/* ===========================
-   ADMIN LAYOUT
-   =========================== */
 .admin-layout {
   display: flex;
   min-height: 100vh;
@@ -792,9 +770,6 @@
 
 .admin-content { padding: 24px; }
 
-/* ===========================
-   CART / CHECKOUT LAYOUTS
-   =========================== */
 .cart-layout {
   display: grid;
   grid-template-columns: 1fr 380px;
@@ -824,7 +799,6 @@
   padding: 24px;
 }
 
-/* Two column layout */
 .two-col-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -837,12 +811,9 @@
 
 .filter-sidebar {
   position: sticky;
-  top: calc(var(--navbar-height) + var(--subnavbar-height) + 24px);
+  top: calc(var(--navbar-height) + 24px);
 }
 
-/* ===========================
-   ACCOUNT LAYOUT
-   =========================== */
 .account-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -858,9 +829,6 @@
   top: calc(var(--navbar-height) + 24px);
 }
 
-/* ===========================
-   PRODUCT DETAIL LAYOUT
-   =========================== */
 .product-detail-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -871,9 +839,6 @@
   align-items: start;
 }
 
-/* ===========================
-   HELP LAYOUT
-   =========================== */
 .help-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -884,9 +849,6 @@
   align-items: start;
 }
 
-/* ===========================
-   SCROLL PROGRESS BAR
-   =========================== */
 .scroll-progress {
   position: fixed;
   top: 0;

@@ -42,6 +42,7 @@ const ProductDetailPage: React.FC = () => {
   const [sizeAnimating, setSizeAnimating] = useState<string>('');
   const [reviewImages, setReviewImages] = useState<string[]>([]);
   const [reviewImageUrl, setReviewImageUrl] = useState('');
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
   const lightningDealEnd = useMemo(() => new Date(Date.now() + 4 * 3600000 + 30 * 60000), []);
 
   const [cartSuccess, setCartSuccess] = useState(false);
@@ -320,18 +321,19 @@ const ProductDetailPage: React.FC = () => {
   ];
   const sizes = ['Small', 'Medium', 'Large', 'XL'];
 
+  const toggleAccordion = (key: string) => {
+    setActiveAccordion(prev => prev === key ? null : key);
+  };
+
+  const primaryColor = '#6366f1';
+  const bgColor = '#f8fafc';
+
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px', fontFamily: "'Inter', sans-serif" }}>
-      <style jsx>{`
+    <div style={{ minHeight: '100vh', background: '#fff', fontFamily: "'Inter', sans-serif", paddingBottom: product.countInStock > 0 ? 80 : 0 }}>
+      <style jsx global>{`
         @keyframes slideInLeft {
           from { opacity: 0; transform: translateX(-24px); }
           to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes scaleBounce {
-          0% { transform: scale(1); }
-          40% { transform: scale(1.25); }
-          70% { transform: scale(0.95); }
-          100% { transform: scale(1); }
         }
         @keyframes cartBounce {
           0% { transform: scale(1); }
@@ -365,10 +367,7 @@ const ProductDetailPage: React.FC = () => {
           to { transform: translateY(0); }
         }
         .image-crossfade {
-          transition: opacity 0.2s ease-in-out;
-        }
-        .breadcrumb-animate {
-          animation: slideInLeft 0.5s ease-out forwards;
+          transition: opacity 0.25s ease-in-out;
         }
         .cart-bounce {
           animation: cartBounce 0.5s ease-in-out;
@@ -396,500 +395,728 @@ const ProductDetailPage: React.FC = () => {
         .thumbnail-scroll::-webkit-scrollbar {
           display: none;
         }
+        .pulse-gallery {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .pulse-gallery-main {
+          width: 100%;
+          aspect-ratio: 1/1;
+          background: #f1f5f9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border-radius: 0;
+          position: relative;
+        }
+        .pulse-thumbnails {
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+          padding: 12px 16px;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          background: #fff;
+        }
+        .pulse-thumbnails::-webkit-scrollbar {
+          display: none;
+        }
+        .pulse-thumb {
+          width: 60px;
+          height: 60px;
+          border-radius: 8px;
+          overflow: hidden;
+          border: 2px solid #e2e8f0;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: all 0.2s ease;
+          background: #f8fafc;
+        }
+        .pulse-thumb.active {
+          border-color: ${primaryColor};
+          box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+        }
+        .pulse-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 6px;
+        }
+        .pulse-info {
+          padding: 16px;
+        }
+        .pulse-rating-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: #f1f5f9;
+          border-radius: 9999px;
+          padding: 4px 10px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #0f172a;
+        }
+        .pulse-price-row {
+          display: flex;
+          align-items: baseline;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .pulse-badge {
+          display: inline-block;
+          padding: 3px 10px;
+          border-radius: 9999px;
+          font-size: 12px;
+          font-weight: 700;
+        }
+        .pulse-badge-success {
+          background: #dcfce7;
+          color: #10b981;
+        }
+        .pulse-badge-error {
+          background: #fef2f2;
+          color: #ef4444;
+        }
+        .pulse-color-swatch {
+          width: 44px;
+          height: 44px;
+          border-radius: 9999px;
+          border: 3px solid transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .pulse-color-swatch.active {
+          border-color: ${primaryColor};
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .pulse-size-chip {
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          border: 2px solid #e2e8f0;
+          background: #fff;
+          color: #475569;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: center;
+        }
+        .pulse-size-chip.active {
+          background: ${primaryColor};
+          border-color: ${primaryColor};
+          color: #fff;
+        }
+        .pulse-qty-btn {
+          width: 44px;
+          height: 44px;
+          border-radius: 8px;
+          border: 1.5px solid #e2e8f0;
+          background: #fff;
+          fontSize: 18px;
+          fontWeight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: '#475569',
+          transition: 'background 0.15s',
+        }
+        .pulse-qty-btn:hover {
+          background: #f1f5f9;
+        }
+        .pulse-qty-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+        .pulse-action-row {
+          display: flex;
+          gap: 10px;
+          padding: 0 16px 16px;
+        }
+        .pulse-bento-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          padding: 16px;
+        }
+        .pulse-bento-card {
+          background: #f8fafc;
+          border-radius: 12px;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 8px;
+          border: 1px solid #f1f5f9;
+        }
+        .pulse-bento-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          background: ${primaryColor};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-size: 18px;
+        }
+        .pulse-accordion {
+          border-top: 1px solid #f1f5f9;
+        }
+        .pulse-accordion-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px;
+          cursor: pointer;
+          font-size: 15px;
+          font-weight: 600;
+          color: #0f172a;
+          background: none;
+          border: none;
+          width: 100%;
+          text-align: left;
+        }
+        .pulse-accordion-body {
+          padding: 0 16px 16px;
+          font-size: 14px;
+          color: #475569;
+          line-height: 1.7;
+          animation: fadeInUp 0.25s ease-out;
+        }
+        .pulse-related-scroll {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          padding: 0 16px 16px;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .pulse-related-scroll::-webkit-scrollbar {
+          display: none;
+        }
+        .pulse-related-card {
+          flex-shrink: 0;
+          width: 150px;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #fff;
+          border: 1px solid #f1f5f9;
+          text-decoration: none;
+          transition: transform 0.2s;
+        }
+        .pulse-related-card:hover {
+          transform: translateY(-2px);
+        }
+        .pulse-related-img {
+          width: 100%;
+          aspect-ratio: 1/1;
+          object-fit: cover;
+          background: #f8fafc;
+        }
+        .pulse-sticky-bar {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #fff;
+          border-top: 1px solid #e2e8f0;
+          padding: 12px 16px;
+          z-index: 50;
+          box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+          transform: translateY(100%);
+          transition: transform 0.3s ease-out;
+        }
+        .pulse-sticky-bar.visible {
+          transform: translateY(0);
+        }
+        @media (min-width: 768px) {
+          .pulse-gallery {
+            grid-template-columns: 1fr 1fr;
+          }
+          .pulse-gallery-main {
+            border-radius: 16px;
+            margin: 16px 0 0 16px;
+          }
+          .pulse-thumbnails {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            padding: 8px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            width: auto;
+            max-width: 320px;
+          }
+          .pulse-info {
+            padding: 24px 32px 24px 40px;
+          }
+          .pulse-action-row {
+            padding: 0 32px 24px 40px;
+          }
+          .pulse-bento-grid {
+            padding: 24px 32px;
+          }
+          .pulse-related-scroll {
+            padding: 0 32px 24px;
+          }
+          .pulse-sticky-bar {
+            display: none;
+          }
+        }
       `}</style>
 
-      {/* Breadcrumb */}
-      <nav style={{
-        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, fontSize: 13, color: '#64748b', flexWrap: 'wrap',
-        opacity: breadcrumbVisible ? 1 : 0,
-        transform: breadcrumbVisible ? 'translateX(0)' : 'translateX(-24px)',
-        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-      }}>
-        <Link href="/" style={{ color: '#6366f1', textDecoration: 'none', fontWeight: 500 }}>Home</Link>
-        <span style={{ color: '#cbd5e1' }}>{'/'}</span>
-        {typeof product.category === 'object' && (
-          <>
-            <Link href={`/products?category=${(product.category as { slug: string }).slug}`} style={{ color: '#6366f1', textDecoration: 'none', fontWeight: 500 }}>
-              {(product.category as { name: string }).name}
-            </Link>
-            <span style={{ color: '#cbd5e1' }}>{'/'}</span>
-          </>
-        )}
-        <span style={{ color: '#0f172a', fontWeight: 600 }}>{product.name}</span>
-      </nav>
-
-      {/* Main Two-Column Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 48 }}>
-        {/* Left: Image Gallery */}
-        <div>
-          {/* Main Image */}
-          <div style={{
-            background: '#f8fafc', borderRadius: 16, border: '1px solid #e2e8f0',
-            padding: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            aspectRatio: '1/1', overflow: 'hidden', marginBottom: 12,
-          }}>
-            <img
-              src={(product.images?.[selectedImage] || product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')}
-              alt={product.name}
-              className="image-crossfade"
-              style={{
-                maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 12,
-                opacity: imageFade ? 1 : 0,
-                transition: 'opacity 0.2s ease-in-out',
-              }}
-            />
+      <div className="pulse-gallery">
+        {/* Main Image */}
+        <div className="pulse-gallery-main">
+          <img
+            src={(product.images?.[selectedImage] || product.images?.[0] || 'https://via.placeholder.com/600?text=No+Image')}
+            alt={product.name}
+            className="image-crossfade"
+            style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: imageFade ? 1 : 0 }}
+          />
+        </div>
+        {/* Thumbnails */}
+        {product.images && product.images.length > 1 && (
+          <div className="pulse-thumbnails thumbnail-scroll" style={{ position: 'relative' }}>
+            {product.images.map((img, idx) => (
+              <button key={idx} onClick={() => handleImageSwitch(idx)}
+                className={`pulse-thumb ${idx === selectedImage ? 'active' : ''}`}>
+                <img src={img} alt="" style={{ opacity: idx === selectedImage ? 1 : 0.6 }} />
+              </button>
+            ))}
           </div>
-          {/* Thumbnails */}
-          {product.images && product.images.length > 1 && (
-            <div className="thumbnail-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollBehavior: 'smooth' }}>
-              {product.images.map((img, idx) => (
-                <button key={idx} onClick={() => handleImageSwitch(idx)} style={{
-                  width: 72, height: 72, borderRadius: 12, overflow: 'hidden',
-                  border: idx === selectedImage ? '2px solid #6366f1' : '2px solid #e2e8f0',
-                  padding: 4, cursor: 'pointer', background: idx === selectedImage ? '#eef2ff' : '#f8fafc', flexShrink: 0,
-                  transition: 'all 0.25s ease',
-                  transform: idx === selectedImage ? 'scale(1.05)' : 'scale(1)',
-                  boxShadow: idx === selectedImage ? '0 0 0 2px rgba(99, 102, 241, 0.2)' : 'none',
-                }}>
-                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8, opacity: idx === selectedImage ? 1 : 0.7, transition: 'opacity 0.2s' }} />
-                </button>
-              ))}
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="pulse-info">
+        {/* Breadcrumb */}
+        <nav className="breadcrumb" style={{
+          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14, fontSize: 12, color: '#94a3b8', flexWrap: 'wrap',
+          opacity: breadcrumbVisible ? 1 : 0,
+          transform: breadcrumbVisible ? 'translateX(0)' : 'translateX(-16px)',
+          transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+        }}>
+          <Link href="/" style={{ color: primaryColor, textDecoration: 'none' }}>Home</Link>
+          <span>/</span>
+          {typeof product.category === 'object' && (
+            <>
+              <Link href={`/products?category=${(product.category as { slug: string }).slug}`} style={{ color: primaryColor, textDecoration: 'none' }}>
+                {(product.category as { name: string }).name}
+              </Link>
+              <span>/</span>
+            </>
+          )}
+          <span style={{ color: '#64748b', fontWeight: 500 }}>{product.name}</span>
+        </nav>
+
+        {/* Title */}
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', marginBottom: 10, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
+          {product.name}
+        </h1>
+
+        {/* Rating */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+          <div className="pulse-rating-pill">
+            <span style={{ color: '#f59e0b', fontSize: 14 }}>{'\u2605'}</span>
+            <span>{product.rating.toFixed(1)}</span>
+          </div>
+          <span style={{ fontSize: 13, color: '#94a3b8' }}>
+            ({product.numReviews.toLocaleString()} {product.numReviews === 1 ? 'review' : 'reviews'})
+          </span>
+        </div>
+
+        {/* Price */}
+        <div style={{ marginBottom: 14 }}>
+          <div className="pulse-price-row">
+            <span style={{ fontSize: 28, fontWeight: 800, color: '#0f172a' }}>
+              ${(product.price ?? 0).toFixed(2)}
+            </span>
+            {product.comparePrice && product.comparePrice > product.price && (
+              <>
+                <span style={{ fontSize: 16, color: '#94a3b8', textDecoration: 'line-through' }}>
+                  ${(product.comparePrice ?? 0).toFixed(2)}
+                </span>
+                <span className="pulse-badge pulse-badge-success">-{discount}%</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Stock Badge */}
+        <div style={{ marginBottom: 14 }}>
+          {product.countInStock > 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <span className="pulse-badge pulse-badge-success">In stock</span>
+              {product.countInStock <= 10 && (
+                <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 500 }}>
+                  Only {product.countInStock} left!
+                </span>
+              )}
             </div>
+          ) : (
+            <span className="pulse-badge pulse-badge-error">Out of stock</span>
           )}
         </div>
 
-        {/* Right: Product Info */}
-        <div>
-          {product.isFeatured && (
-            <span style={{
-              display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 11, fontWeight: 700,
-              background: '#6366f1', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em',
-              marginBottom: 12,
-            }}>
-              ShopSmart&apos;s Choice
-            </span>
-          )}
-
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 28, fontWeight: 800, color: '#0f172a', marginBottom: 12, lineHeight: 1.3 }}>
-            {product.name}
-          </h1>
-
-          {/* Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-            <div style={{ display: 'flex', gap: 2 }}>
-              {[1, 2, 3, 4, 5].map((s) => (
-                <span key={s} style={{ fontSize: 16, color: s <= Math.round(product.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
-              ))}
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{product.rating.toFixed(1)}</span>
-            <span style={{ fontSize: 13, color: '#64748b' }}>({product.numReviews.toLocaleString()} {product.numReviews === 1 ? 'rating' : 'ratings'})</span>
-            <span style={{ color: '#cbd5e1' }}>|</span>
-            <span style={{ fontSize: 13, color: '#64748b' }}>
-              {product.numReviews > 0 ? `${(product.numReviews * 37).toLocaleString()}+ bought in past month` : ''}
-            </span>
-          </div>
-
-          {/* Price */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-              <span style={{ fontSize: 32, fontWeight: 800, color: '#0f172a' }}>${(product.price ?? 0).toFixed(2)}</span>
-              {product.comparePrice && product.comparePrice > product.price && (
-                <>
-                  <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</span>
-                  <span style={{
-                    display: 'inline-block', padding: '3px 10px', borderRadius: 9999, fontSize: 12, fontWeight: 700,
-                    background: '#dcfce7', color: '#10b981',
-                  }}>
-                    Save {discount}%
-                  </span>
-                </>
-              )}
-            </div>
-            {product.comparePrice && (
-              <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>No Import Fees & Free Shipping Included</div>
-            )}
-          </div>
-
-          {/* Lightning Deal */}
-          {isLightningDeal && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12,
-              background: 'linear-gradient(135deg, #fef3c7, #fde68a)', border: '1px solid #f59e0b', marginBottom: 16,
-            }}>
-              <span style={{ fontSize: 24 }}>{'\u26A1'}</span>
-              <div>
-                <strong style={{ fontSize: 14, color: '#92400e' }}>Lightning Deal</strong>
-                <CountdownTimer endDate={lightningDealEnd} size="small" />
-              </div>
-            </div>
-          )}
-
-          {/* Delivery Estimate */}
-          <div style={{
-            padding: 16, borderRadius: 12, background: '#f0fdf4', border: '1px solid #bbf7d0', marginBottom: 16,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: 16 }}>{'\u{1F69A}'}</span>
-              <span style={{ fontWeight: 600, fontSize: 14, color: '#065f46' }}>FREE Delivery</span>
-            </div>
-            <div style={{ fontSize: 13, color: '#065f46', marginBottom: 4 }}>
-              <strong>{primeDelivery}</strong> - <strong>{primeDeliveryMax}</strong>
-            </div>
-            <div style={{ fontSize: 12, color: '#059669' }}>
-              Or fastest <strong>Tomorrow</strong>, {new Date(Date.now() + 86400000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-            </div>
-          </div>
-
-          {/* Stock Status */}
-          <div style={{ marginBottom: 16 }}>
-            {product.countInStock > 0 ? (
-              <>
-                <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 13, fontWeight: 600, background: '#dcfce7', color: '#10b981' }}>
-                  {'\u2713'} In Stock
-                </span>
-                {product.countInStock <= 10 && (
-                  <span style={{ fontSize: 13, color: '#ef4444', marginLeft: 8, fontWeight: 500 }}>
-                    Only {product.countInStock} left - order soon
-                  </span>
-                )}
-              </>
-            ) : (
-              <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 9999, fontSize: 13, fontWeight: 600, background: '#fef2f2', color: '#ef4444' }}>
-                Currently unavailable
-              </span>
-            )}
-          </div>
-
-          {/* Color Variant */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>
-              Color: <span style={{ color: '#6366f1' }}>{selectedColor || 'Select'}</span>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {colors.map((c) => (
-                <button key={c.name} onClick={() => handleColorSelect(c.name)} style={{
-                  width: 40, height: 40, borderRadius: 9999, border: selectedColor === c.name ? '3px solid #6366f1' : '2px solid #e2e8f0',
-                  background: c.hex, cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  transform: colorAnimating === c.name ? 'scale(1.2)' : selectedColor === c.name ? 'scale(1.1)' : 'scale(1)',
-                  boxShadow: selectedColor === c.name ? '0 0 0 2px #fff, 0 0 0 4px #6366f1' : 'none',
-                }} title={c.name} />
-              ))}
-            </div>
-          </div>
-
-          {/* Size Variant */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>
-              Size: <span style={{ color: '#6366f1' }}>{selectedSize || 'Select'}</span>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {sizes.map((s) => (
-                <button key={s} onClick={() => handleSizeSelect(s)} style={{
-                  padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                  border: selectedSize === s ? '2px solid #6366f1' : '2px solid #e2e8f0',
-                  background: selectedSize === s ? '#eef2ff' : '#fff',
-                  color: selectedSize === s ? '#6366f1' : '#475569',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  transform: sizeAnimating === s ? 'scale(1.1)' : selectedSize === s ? 'scale(1.05)' : 'scale(1)',
-                }}>
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Features */}
-          {product.features && product.features.length > 0 && (
-            <div style={{ marginBottom: 20, padding: 16, background: '#f8fafc', borderRadius: 12 }}>
-              <h4 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>About this item</h4>
-              <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#475569', lineHeight: 1.8 }}>
-                {product.features.map((f, i) => <li key={i}>{f}</li>)}
-              </ul>
-            </div>
-          )}
-
-          {/* Quantity + Actions */}
-          {product.countInStock > 0 && (
-            <div ref={mainButtonsRef} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', border: '2px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
-                  style={{ width: 40, height: 40, fontSize: 18, fontWeight: 600, border: 'none', background: '#f8fafc', cursor: quantity <= 1 ? 'not-allowed' : 'pointer', color: '#475569' }}>
-                  {'\u2212'}
-                </button>
-                <span style={{ width: 48, textAlign: 'center', fontWeight: 700, fontSize: 15, color: '#0f172a' }}>{quantity}</span>
-                <button onClick={() => setQuantity(Math.min(product.countInStock, quantity + 1))}
-                  style={{ width: 40, height: 40, fontSize: 18, fontWeight: 600, border: 'none', background: '#f8fafc', cursor: 'pointer', color: '#475569' }}>
-                  +
-                </button>
-              </div>
-              <button
-                className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`}
-                onClick={handleAddToCart}
-                disabled={product.countInStock === 0}
-                style={{
-                  flex: 1, height: 44, fontSize: 14,
-                  background: cartSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : undefined,
-                  transition: 'background 0.3s ease, transform 0.2s ease',
-                }}
-              >
-                {cartSuccess ? (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    Added!
-                  </span>
-                ) : 'Add to Cart'}
-              </button>
-              <button className="btn btn-secondary" onClick={handleBuyNow} disabled={product.countInStock === 0}
-                style={{ flex: 1, height: 44, fontSize: 14 }}>
-                Buy Now
-              </button>
-            </div>
-          )}
-
-          {/* Wishlist Toggle */}
-          <button onClick={handleToggleWishlist} style={{
-            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 8,
-            border: wishlisted ? '2px solid #ef4444' : '2px solid #e2e8f0',
-            background: wishlisted ? '#fef2f2' : '#fff', color: wishlisted ? '#ef4444' : '#64748b',
-            cursor: 'pointer', fontWeight: 600, fontSize: 14, width: '100%', justifyContent: 'center',
-            transition: 'all 0.3s ease',
-            transform: wishlistAnimating ? 'scale(1.02)' : 'scale(1)',
-          }}>
-            <span style={{
-              fontSize: 18,
-              display: 'inline-block',
-              animation: wishlistAnimating ? 'heartBeat 0.8s ease-in-out' : 'none',
-              transition: 'color 0.3s',
-            }}>{wishlisted ? '\u2665' : '\u2661'}</span>
-            {wishlisted ? 'Added to Wishlist' : 'Add to Wishlist'}
-          </button>
-
-          <div style={{ marginTop: 16 }}>
-            <CouponClip productPrice={product.price} productName={product.name} />
-          </div>
+        {/* Free Delivery */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: '#f0fdf4', borderRadius: 10, marginBottom: 20, fontSize: 13, color: '#065f46' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+          <span><strong>FREE delivery</strong> {primeDelivery}</span>
         </div>
       </div>
 
-      {/* Frequently Bought */}
-      <FrequentlyBought product={product} relatedProducts={related} />
+      {/* Color Selector */}
+      <div style={{ padding: '0 16px 20px' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+          Color: <span style={{ color: primaryColor, fontWeight: 700 }}>{selectedColor || 'Select'}</span>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {colors.map((c) => (
+            <button key={c.name} onClick={() => handleColorSelect(c.name)}
+              className={`pulse-color-swatch ${selectedColor === c.name ? 'active' : ''}`}
+              style={{
+                background: c.hex,
+                transform: colorAnimating === c.name ? 'scale(1.15)' : 'scale(1)',
+              }}
+              title={c.name} />
+          ))}
+        </div>
+      </div>
 
-      {/* Product Description */}
-      {product.description && (
-        <div style={{ marginBottom: 48 }}>
-          <div className="section-header">
-            <h2 className="section-title">Product Description</h2>
-          </div>
-          <div className="card" style={{ padding: 24, fontSize: 14, color: '#475569', lineHeight: 1.8 }}>
-            <p>{product.description}</p>
+      {/* Size Selector */}
+      <div style={{ padding: '0 16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+            Size: <span style={{ color: primaryColor, fontWeight: 700 }}>{selectedSize || 'Select'}</span>
+          </span>
+          <button style={{ fontSize: 13, color: primaryColor, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+            Size Guide
+          </button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+          {sizes.map((s) => (
+            <button key={s} onClick={() => handleSizeSelect(s)}
+              className={`pulse-size-chip ${selectedSize === s ? 'active' : ''}`}
+              style={{ transform: sizeAnimating === s ? 'scale(1.05)' : 'scale(1)' }}>
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Quantity Selector */}
+      {product.countInStock > 0 && (
+        <div style={{ padding: '0 16px 20px' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>Quantity</div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 0, border: '1.5px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+            <button className="pulse-qty-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
+              style={{ borderRadius: 0, border: 'none' }}>
+              {'\u2212'}
+            </button>
+            <span style={{ width: 48, textAlign: 'center', fontWeight: 700, fontSize: 16, color: '#0f172a' }}>{quantity}</span>
+            <button className="pulse-qty-btn" onClick={() => setQuantity(Math.min(product.countInStock, quantity + 1))}
+              style={{ borderRadius: 0, border: 'none' }}>
+              +
+            </button>
           </div>
         </div>
       )}
 
-      {/* Reviews Section */}
-      <div id="reviews-section" style={{ marginBottom: 48 }}>
-        <div className="section-header" style={{ marginBottom: 24 }}>
-          <h2 className="section-title">Customer Reviews</h2>
-          {product.reviews && product.reviews.length > 0 && (
-            <select value={sortReviews} onChange={(e) => setSortReviews(e.target.value as SortMode)}
-              style={{ padding: '8px 12px', borderRadius: 8, border: '2px solid #e2e8f0', fontSize: 13, background: '#fff', color: '#475569', fontWeight: 500 }}>
-              <option value="newest">Most recent</option>
-              <option value="highest">Highest rated</option>
-              <option value="lowest">Lowest rated</option>
-            </select>
+      {/* Action Buttons */}
+      {product.countInStock > 0 && (
+        <div ref={mainButtonsRef} className="pulse-action-row">
+          <button
+            className={`btn btn-primary btn-lg ${cartBounce ? 'cart-bounce' : ''}`}
+            onClick={handleAddToCart}
+            style={{
+              flex: 2, height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12,
+              background: cartSuccess ? '#10b981' : primaryColor,
+              transition: 'background 0.3s, transform 0.2s',
+            }}
+          >
+            {cartSuccess ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Added!
+              </span>
+            ) : 'Add to Cart'}
+          </button>
+          <button
+            className="btn btn-lg"
+            onClick={handleBuyNow}
+            style={{
+              flex: 1, height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12,
+              background: '#fff', border: `2px solid ${primaryColor}`, color: primaryColor,
+            }}
+          >
+            Buy Now
+          </button>
+        </div>
+      )}
+
+      {/* Bento Feature Deck */}
+      <div style={{ borderTop: '8px solid #f8fafc' }}>
+        <div className="pulse-bento-grid">
+          {[
+            { icon: '\u{1F69A}', label: 'Free Shipping', desc: 'On orders over $50' },
+            { icon: '\u{1F512}', label: 'Secure Payment', desc: '100% protected' },
+            { icon: '\u{1F504}', label: 'Easy Returns', desc: '30-day policy' },
+            { icon: '\u{2753}', label: '24/7 Support', desc: 'We\'re here to help' },
+          ].map((f) => (
+            <div key={f.label} className="pulse-bento-card">
+              <div className="pulse-bento-icon">{f.icon}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{f.label}</div>
+              <div style={{ fontSize: 11, color: '#94a3b8' }}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Collapsible Accordions */}
+      <div style={{ borderTop: '1px solid #f1f5f9' }}>
+        {/* Product Details */}
+        <div className="pulse-accordion">
+          <button className="pulse-accordion-header" onClick={() => toggleAccordion('details')}>
+            <span>Product Details</span>
+            <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: activeAccordion === 'details' ? 'rotate(45deg)' : 'rotate(0)' }}>+</span>
+          </button>
+          {activeAccordion === 'details' && (
+            <div className="pulse-accordion-body">
+              {product.description && <p style={{ margin: 0 }}>{product.description}</p>}
+              {product.features && product.features.length > 0 && (
+                <ul style={{ margin: '10px 0 0', paddingLeft: 18 }}>
+                  {product.features.map((f, i) => <li key={i} style={{ marginBottom: 4 }}>{f}</li>)}
+                </ul>
+              )}
+              {!product.description && (!product.features || product.features.length === 0) && (
+                <p style={{ margin: 0, color: '#94a3b8' }}>No additional details available.</p>
+              )}
+            </div>
           )}
         </div>
 
-        {product.reviews && product.reviews.length > 0 ? (
-          <>
-            {/* Review Summary */}
-            <div className="card" style={{ padding: 24, display: 'flex', gap: 40, marginBottom: 24, flexWrap: 'wrap' }}>
-              <div style={{ textAlign: 'center', minWidth: 120 }}>
-                <div style={{ fontSize: 48, fontWeight: 800, color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                  {product.rating.toFixed(1)}
-                </div>
-                <div style={{ display: 'flex', gap: 2, justifyContent: 'center', marginBottom: 4 }}>
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <span key={s} style={{ fontSize: 16, color: s <= Math.round(product.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
-                  ))}
-                </div>
-                <div style={{ fontSize: 13, color: '#64748b' }}>{product.numReviews} total ratings</div>
-              </div>
-              <div style={{ flex: 1, minWidth: 200 }}>
-                {getStarDistribution().map(({ star, count, pct }) => (
-                  <div key={star} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#475569', width: 40 }}>{star} star</span>
-                    <div style={{ flex: 1, height: 8, background: '#e2e8f0', borderRadius: 9999, overflow: 'hidden' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: '#f59e0b', borderRadius: 9999, transition: 'width 0.3s' }} />
-                    </div>
-                    <span style={{ fontSize: 12, color: '#94a3b8', width: 24, textAlign: 'right' }}>{count}</span>
-                  </div>
-                ))}
+        {/* Specifications */}
+        <div className="pulse-accordion">
+          <button className="pulse-accordion-header" onClick={() => toggleAccordion('specs')}>
+            <span>Specifications</span>
+            <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: activeAccordion === 'specs' ? 'rotate(45deg)' : 'rotate(0)' }}>+</span>
+          </button>
+          {activeAccordion === 'specs' && (
+            <div className="pulse-accordion-body">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                {product.brand && <><div style={{ color: '#94a3b8', fontSize: 13 }}>Brand</div><div style={{ fontWeight: 600 }}>{product.brand}</div></>}
+                {typeof product.category === 'object' && <><div style={{ color: '#94a3b8', fontSize: 13 }}>Category</div><div style={{ fontWeight: 600 }}>{(product.category as { name: string }).name}</div></>}
+                {typeof product === 'object' && 'sku' in product && (product as any).sku && <><div style={{ color: '#94a3b8', fontSize: 13 }}>SKU</div><div style={{ fontWeight: 600 }}>{(product as any).sku}</div></>}
+                <div style={{ color: '#94a3b8', fontSize: 13 }}>Weight</div>
+                <div style={{ fontWeight: 600 }}>{typeof product === 'object' && 'weight' in product && (product as any).weight ? `${(product as any).weight}kg` : 'N/A'}</div>
               </div>
             </div>
+          )}
+        </div>
 
-            {/* Review Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {sortedReviews.map((review, index) => {
-                const imgs = reviewImagesMap[`product_${id}`] || [];
-                return (
-                  <div
-                    key={review._id}
-                    ref={(el) => { reviewCardRefs.current[index] = el; }}
-                    className="card review-card-animate"
-                    style={{
-                      padding: 20,
-                      animationDelay: reviewsVisible ? `${index * 0.1}s` : '0s',
-                      opacity: reviewsVisible ? undefined : 0,
-                      transform: reviewsVisible ? undefined : 'translateY(24px)',
-                      transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 9999, background: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>
-                        {review.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <strong style={{ fontSize: 14, color: '#0f172a' }}>{review.name}</strong>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                          <span className="badge badge-success" style={{ fontSize: 10, padding: '2px 6px' }}>{'\u2713'} Verified</span>
+        {/* Shipping & Returns */}
+        <div className="pulse-accordion">
+          <button className="pulse-accordion-header" onClick={() => toggleAccordion('shipping')}>
+            <span>Shipping & Returns</span>
+            <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: activeAccordion === 'shipping' ? 'rotate(45deg)' : 'rotate(0)' }}>+</span>
+          </button>
+          {activeAccordion === 'shipping' && (
+            <div className="pulse-accordion-body">
+              <p style={{ margin: 0, marginBottom: 8 }}><strong>Shipping:</strong> Free standard delivery on orders over $50. Express and overnight options available at checkout.</p>
+              <p style={{ margin: 0, marginBottom: 8 }}><strong>Returns:</strong> Hassle-free 30-day return policy. Items must be unused and in original packaging.</p>
+              <p style={{ margin: 0 }}><strong>Estimated delivery:</strong> {primeDelivery} - {primeDeliveryMax}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Reviews */}
+        <div className="pulse-accordion">
+          <button className="pulse-accordion-header" onClick={() => toggleAccordion('reviews')}>
+            <span>Reviews ({product.numReviews})</span>
+            <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: activeAccordion === 'reviews' ? 'rotate(45deg)' : 'rotate(0)' }}>+</span>
+          </button>
+          {activeAccordion === 'reviews' && (
+            <div className="pulse-accordion-body" style={{ padding: '0 16px 16px' }}>
+              <div id="reviews-section">
+                {product.reviews && product.reviews.length > 0 ? (
+                  <>
+                    {/* Review Summary */}
+                    <div className="card" style={{ padding: 16, marginBottom: 16, borderRadius: 12 }}>
+                      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+                        <div style={{ textAlign: 'center', minWidth: 80 }}>
+                          <div style={{ fontSize: 36, fontWeight: 800, color: '#0f172a' }}>{product.rating.toFixed(1)}</div>
+                          <div style={{ display: 'flex', gap: 1, justifyContent: 'center', marginBottom: 4 }}>
+                            {[1, 2, 3, 4, 5].map((s) => (
+                              <span key={s} style={{ fontSize: 14, color: s <= Math.round(product.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
+                            ))}
+                          </div>
+                          <div style={{ fontSize: 12, color: '#94a3b8' }}>{product.numReviews} ratings</div>
+                        </div>
+                        <div style={{ flex: 1, minWidth: 160 }}>
+                          {getStarDistribution().map(({ star, count, pct }) => (
+                            <div key={star} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                              <span style={{ fontSize: 12, color: '#475569', width: 32 }}>{star} star</span>
+                              <div style={{ flex: 1, height: 6, background: '#e2e8f0', borderRadius: 9999, overflow: 'hidden' }}>
+                                <div style={{ width: `${pct}%`, height: '100%', background: '#f59e0b', borderRadius: 9999 }} />
+                              </div>
+                              <span style={{ fontSize: 11, color: '#94a3b8', width: 20, textAlign: 'right' }}>{count}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 2, marginBottom: 6 }}>
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <span key={s} style={{ fontSize: 14, color: s <= review.rating ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
-                      ))}
-                    </div>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a', marginBottom: 4 }}>{review.title}</div>
-                    <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.7, marginBottom: 8 }}>{review.comment}</div>
-                    {imgs.length > 0 && (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-                        {imgs.map((url: string, i: number) => (
-                          <img key={i} src={url} alt="Review" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
-                        ))}
-                      </div>
-                    )}
-                    <div style={{ fontSize: 12, color: '#94a3b8' }}>
-                      Reviewed on {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          <div className="card empty-state" style={{ padding: 48, textAlign: 'center' }}>
-            <p style={{ color: '#64748b', marginBottom: 16 }}>No reviews yet. Be the first to review this product!</p>
-          </div>
-        )}
 
-        {/* Write Review Form */}
-        <div className="card" style={{ padding: 24, marginTop: 24 }}>
-          <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 700, color: '#0f172a', marginBottom: 16 }}>Write a Review</h3>
-          <form onSubmit={handleSubmitReview}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 14, color: '#0f172a' }}>Overall rating</label>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {renderInteractiveStars(reviewRating, setReviewRating)}
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Title</label>
-              <input className="form-input" type="text" placeholder="What's most important to know?" value={reviewTitle}
-                onChange={(e) => setReviewTitle(e.target.value)} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Review</label>
-              <textarea className="form-input" placeholder="What did you like or dislike?" value={reviewComment}
-                onChange={(e) => setReviewComment(e.target.value)} rows={4}
-                style={{ resize: 'vertical' }} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Add Images (optional)</label>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input className="form-input" type="text" placeholder="Paste image URL..." value={reviewImageUrl}
-                  onChange={(e) => setReviewImageUrl(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddReviewImage(); } }}
-                  style={{ flex: 1 }} />
-                <button type="button" className="btn btn-secondary" onClick={handleAddReviewImage}
-                  style={{ padding: '10px 16px', flexShrink: 0 }}>Add</button>
-              </div>
-              {reviewImages.length > 0 && (
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
-                  {reviewImages.map((url, idx) => (
-                    <div key={idx} style={{ position: 'relative' }}>
-                      <img src={url} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
-                      <button type="button" onClick={() => handleRemoveReviewImage(idx)} style={{
-                        position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: 9999,
-                        background: '#ef4444', color: '#fff', border: 'none', fontSize: 12, cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>{'\u2717'}</button>
+                    {/* Sort */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>All Reviews</span>
+                      <select value={sortReviews} onChange={(e) => setSortReviews(e.target.value as SortMode)}
+                        className="form-select" style={{ padding: '6px 10px', borderRadius: 6, border: '1.5px solid #e2e8f0', fontSize: 12, background: '#fff' }}>
+                        <option value="newest">Most recent</option>
+                        <option value="highest">Highest rated</option>
+                        <option value="lowest">Lowest rated</option>
+                      </select>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    {/* Review Cards */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {sortedReviews.map((review, index) => {
+                        const imgs = reviewImagesMap[`product_${id}`] || [];
+                        return (
+                          <div key={review._id} ref={(el) => { reviewCardRefs.current[index] = el; }}
+                            className="card review-card-animate"
+                            style={{ padding: 14, borderRadius: 12, animationDelay: reviewsVisible ? `${index * 0.1}s` : '0s' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                              <div style={{ width: 32, height: 32, borderRadius: 9999, background: primaryColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12 }}>
+                                {review.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <strong style={{ fontSize: 13, color: '#0f172a' }}>{review.name}</strong>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 1 }}>
+                                  <span className="badge badge-success" style={{ fontSize: 9, padding: '1px 5px' }}>{'\u2713'} Verified</span>
+                                </div>
+                              </div>
+                              <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                                {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', gap: 1, marginBottom: 4 }}>
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <span key={s} style={{ fontSize: 12, color: s <= review.rating ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
+                              ))}
+                            </div>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: '#0f172a', marginBottom: 3 }}>{review.title}</div>
+                            <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6, marginBottom: 6 }}>{review.comment}</div>
+                            {imgs.length > 0 && (
+                              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+                                {imgs.map((url: string, i: number) => (
+                                  <img key={i} src={url} alt="Review" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Write Review */}
+                    <div className="card" style={{ padding: 16, marginTop: 16, borderRadius: 12 }}>
+                      <h4 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>Write a Review</h4>
+                      <form onSubmit={handleSubmitReview}>
+                        <div style={{ marginBottom: 12 }}>
+                          <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13, color: '#0f172a' }}>Rating</label>
+                          <div style={{ display: 'flex', gap: 2 }}>
+                            {renderInteractiveStars(reviewRating, setReviewRating)}
+                          </div>
+                        </div>
+                        <div className="form-group" style={{ marginBottom: 12 }}>
+                          <label className="form-label" style={{ fontSize: 13 }}>Title</label>
+                          <input className="form-input" type="text" placeholder="Review title" value={reviewTitle}
+                            onChange={(e) => setReviewTitle(e.target.value)} style={{ fontSize: 13 }} />
+                        </div>
+                        <div className="form-group" style={{ marginBottom: 12 }}>
+                          <label className="form-label" style={{ fontSize: 13 }}>Review</label>
+                          <textarea className="form-input" placeholder="Your review..." value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)} rows={3} style={{ resize: 'vertical', fontSize: 13 }} />
+                        </div>
+                        <div className="form-group" style={{ marginBottom: 12 }}>
+                          <label className="form-label" style={{ fontSize: 13 }}>Images (optional)</label>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <input className="form-input" type="text" placeholder="Paste image URL" value={reviewImageUrl}
+                              onChange={(e) => setReviewImageUrl(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddReviewImage(); } }}
+                              style={{ flex: 1, fontSize: 13 }} />
+                            <button type="button" className="btn btn-secondary" onClick={handleAddReviewImage}
+                              style={{ padding: '8px 12px', fontSize: 13 }}>Add</button>
+                          </div>
+                          {reviewImages.length > 0 && (
+                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+                              {reviewImages.map((url, idx) => (
+                                <div key={idx} style={{ position: 'relative' }}>
+                                  <img src={url} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
+                                  <button type="button" onClick={() => handleRemoveReviewImage(idx)} style={{
+                                    position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: 9999,
+                                    background: '#ef4444', color: '#fff', border: 'none', fontSize: 10, cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  }}>{'\u2717'}</button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <button type="submit" className="btn btn-primary btn-full" disabled={submittingReview}
+                          style={{ height: 42, fontSize: 14, borderRadius: 10 }}>
+                          {submittingReview ? 'Submitting...' : 'Submit Review'}
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                ) : (
+                  <div className="card" style={{ padding: 32, textAlign: 'center', borderRadius: 12 }}>
+                    <p style={{ color: '#94a3b8', marginBottom: 12, fontSize: 14 }}>No reviews yet</p>
+                    <p style={{ color: '#94a3b8', fontSize: 13 }}>Be the first to review this product!</p>
+                  </div>
+                )}
+              </div>
             </div>
-            <button type="submit" className="btn btn-primary" disabled={submittingReview}
-              style={{ maxWidth: 240, height: 44 }}>
-              {submittingReview ? 'Submitting...' : 'Submit Review'}
-            </button>
-          </form>
+          )}
         </div>
       </div>
 
-      {/* Also Viewed */}
-      {alsoViewed.length > 0 && (
-        <section style={{ marginBottom: 48 }}>
-          <div className="section-header">
-            <h2 className="section-title">Customers who viewed this also viewed</h2>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-            {alsoViewed.map((p) => (
-              <Link key={p._id} href={`/products/${p._id}`} className="card" style={{ padding: 12, textDecoration: 'none', transition: 'transform 0.2s, box-shadow 0.2s' }}>
-                <div style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', marginBottom: 8, background: '#f8fafc' }}>
-                  <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 4, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</div>
-                <div style={{ display: 'flex', gap: 1, marginBottom: 4 }}>
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <span key={s} style={{ fontSize: 11, color: s <= Math.round(p.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
-                  ))}
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>${(p.price ?? 0).toFixed(2)}</div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Related Products */}
       {related.length > 0 && (
-        <section style={{ marginBottom: 48 }}>
-          <div className="section-header">
-            <h2 className="section-title">Related products</h2>
-            <Link href="/products" className="section-link" style={{ color: '#6366f1', textDecoration: 'none', fontWeight: 600, fontSize: 14 }}>See all results {'\u2192'}</Link>
+        <section style={{ marginTop: 8, borderTop: '8px solid #f8fafc' }}>
+          <div style={{ padding: '16px 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', margin: 0 }}>Related Products</h2>
+            <Link href="/products" style={{ fontSize: 13, color: primaryColor, textDecoration: 'none', fontWeight: 600 }}>See all</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+          <div className="carousel-scroll pulse-related-scroll">
             {related.map((p) => (
-              <Link key={p._id} href={`/products/${p._id}`} className="card" style={{ padding: 12, textDecoration: 'none', transition: 'transform 0.2s, box-shadow 0.2s' }}>
-                <div style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', marginBottom: 8, background: '#f8fafc' }}>
-                  <img src={(p.images?.[0] || 'https://via.placeholder.com/400?text=No+Image')} alt={p.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 4, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</div>
-                <div style={{ display: 'flex', gap: 1, marginBottom: 4 }}>
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <span key={s} style={{ fontSize: 11, color: s <= Math.round(p.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
-                  ))}
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>
-                  ${(p.price ?? 0).toFixed(2)}
-                  {p.comparePrice && <span style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'line-through', marginLeft: 4 }}>${(p.comparePrice ?? 0).toFixed(2)}</span>}
+              <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
+                <img className="pulse-related-img" src={(p.images?.[0] || 'https://via.placeholder.com/200?text=No+Image')} alt={p.name} />
+                <div style={{ padding: '8px 10px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {p.name}
+                  </div>
+                  <div style={{ display: 'flex', gap: 1, marginBottom: 3 }}>
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <span key={s} style={{ fontSize: 10, color: s <= Math.round(p.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>${(p.price ?? 0).toFixed(2)}</div>
                 </div>
               </Link>
             ))}
@@ -897,10 +1124,32 @@ const ProductDetailPage: React.FC = () => {
         </section>
       )}
 
-      {/* Added to Cart Toast */}
+      {/* Also Viewed */}
+      {alsoViewed.length > 0 && (
+        <section style={{ borderTop: '1px solid #f1f5f9' }}>
+          <div style={{ padding: '16px 16px 12px' }}>
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', margin: 0 }}>You May Also Like</h2>
+          </div>
+          <div className="carousel-scroll pulse-related-scroll">
+            {alsoViewed.map((p) => (
+              <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
+                <img className="pulse-related-img" src={(p.images?.[0] || 'https://via.placeholder.com/200?text=No+Image')} alt={p.name} />
+                <div style={{ padding: '8px 10px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {p.name}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>${(p.price ?? 0).toFixed(2)}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Cart Toast */}
       {showCartToast && (
         <div
-          className={showCartToast ? 'toast-enter' : 'toast-exit'}
+          className="toast-enter"
           style={{
             position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
             background: 'linear-gradient(135deg, #10b981, #059669)',
@@ -908,7 +1157,6 @@ const ProductDetailPage: React.FC = () => {
             boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
             fontWeight: 600, fontSize: 14, zIndex: 200,
             display: 'flex', alignItems: 'center', gap: 8,
-            animation: showCartToast ? 'toastSlideIn 0.3s ease-out' : 'toastSlideOut 0.3s ease-in',
           }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -918,47 +1166,26 @@ const ProductDetailPage: React.FC = () => {
         </div>
       )}
 
-      {/* Sticky Mobile Bottom Bar */}
+      {/* Sticky Bottom Bar (mobile) */}
       {product.countInStock > 0 && (
-        <div
-          className={showStickyBar ? 'sticky-bar-animate' : ''}
-          style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff',
-            borderTop: '1px solid #e2e8f0', padding: '12px 16px', zIndex: 50,
-            boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
-            transform: showStickyBar ? 'translateY(0)' : 'translateY(100%)',
-            transition: 'transform 0.3s ease-out',
-          }}
-        >
-          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className={`pulse-sticky-bar ${showStickyBar ? 'visible' : ''}`}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ flexShrink: 0 }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a' }}>${(product.price ?? 0).toFixed(2)}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>${(product.price ?? 0).toFixed(2)}</div>
               {product.comparePrice && (
-                <div style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</div>
+                <div style={{ fontSize: 11, color: '#94a3b8', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</div>
               )}
             </div>
-            <div style={{ display: 'flex', gap: 8, flex: 1 }}>
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
-                style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: 16, cursor: quantity <= 1 ? 'not-allowed' : 'pointer' }}>
-                {'\u2212'}
-              </button>
-              <span style={{ width: 32, textAlign: 'center', fontWeight: 700, lineHeight: '36px', fontSize: 14 }}>{quantity}</span>
-              <button onClick={() => setQuantity(Math.min(product.countInStock, quantity + 1))}
-                style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: 16, cursor: 'pointer' }}>
-                +
-              </button>
-              <button className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`} onClick={handleAddToCart}
-                style={{
-                  flex: 1, height: 40, fontSize: 13,
-                  background: cartSuccess ? 'linear-gradient(135deg, #10b981, #059669)' : undefined,
-                }}>
-                {cartSuccess ? '\u2713 Added' : 'Add to Cart'}
-              </button>
-              <button className="btn btn-ghost" onClick={handleBuyNow}
-                style={{ flex: 1, height: 40, fontSize: 13, border: '2px solid #6366f1', color: '#6366f1' }}>
-                Buy Now
-              </button>
-            </div>
+            <button
+              className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`}
+              onClick={handleAddToCart}
+              style={{
+                flex: 1, height: 44, fontSize: 14, fontWeight: 700, borderRadius: 10,
+                background: cartSuccess ? '#10b981' : primaryColor,
+              }}
+            >
+              {cartSuccess ? '\u2713 Added' : 'Add to Cart'}
+            </button>
           </div>
         </div>
       )}

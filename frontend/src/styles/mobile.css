@@ -1,16 +1,9 @@
-/* ============================================
-   ShopSmart Premium - Responsive / Mobile CSS
-   Flipkart + Myntra Mobile Experience
-   ============================================ */
+/* Pulse Retail - Responsive / Mobile CSS */
 
-/* === UTILITY CLASSES === */
 .mobile-only { display: none; }
 .desktop-only { display: block; }
 .mobile-full-width { width: auto; }
 
-/* ===========================
-   TABLET (max-width: 1024px)
-   =========================== */
 @media (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -26,15 +19,11 @@
   .product-detail-layout { gap: 24px; }
 }
 
-/* ===========================
-   MOBILE (max-width: 768px)
-   =========================== */
 @media (max-width: 768px) {
   .mobile-only { display: block; }
   .desktop-only { display: none; }
   .mobile-full-width { width: 100%; }
 
-  /* === NAVBAR MOBILE === */
   .navbar-search { display: none; }
   .navbar-location { display: none; }
   .navbar-main { padding: 0 16px; gap: 8px; height: 56px; }
@@ -48,17 +37,13 @@
 
   .navbar.scrolled .navbar-main { height: 52px; }
 
-  /* Subnavbar mobile */
   .subnavbar-links { padding: 0 12px; gap: 2px; }
   .subnavbar-links a { padding: 8px 10px; font-size: 12px; }
 
-  /* === BOTTOM NAV - Flipkart/Myntra Style === */
   .bottom-nav { display: block; }
 
-  /* Add bottom padding to page content on mobile */
-  body { padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(var(--bottom-nav-height) + 32px + env(safe-area-inset-bottom)); }
 
-  /* === PRODUCT GRID MOBILE === */
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -76,7 +61,6 @@
   .product-card-actions { margin-top: 8px; }
   .product-card-overlay { display: none; }
 
-  /* === CART LAYOUT MOBILE === */
   .cart-layout {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -85,7 +69,6 @@
 
   .cart-layout .order-summary { position: static; order: -1; }
 
-  /* === CHECKOUT LAYOUT MOBILE === */
   .checkout-layout {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -94,14 +77,12 @@
 
   .checkout-layout .order-summary { position: static; order: -1; }
 
-  /* === FOOTER MOBILE === */
-  .footer { padding: 32px 16px 80px; margin-top: 32px; }
+  .footer { padding: 32px 16px 120px; margin-top: 32px; }
   .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   .footer-col-title { font-size: 13px; margin-bottom: 12px; }
   .footer-link { font-size: 12px; padding: 3px 0; }
   .footer-bottom { margin-top: 20px; padding-top: 16px; font-size: 11px; flex-direction: column; gap: 8px; text-align: center; }
 
-  /* === ADMIN LAYOUT MOBILE === */
   .admin-layout { flex-direction: column; }
   .admin-sidebar {
     position: fixed;
@@ -126,24 +107,23 @@
   .admin-sidebar-overlay.visible { opacity: 1; visibility: visible; }
   .admin-main { width: 100%; }
   .admin-topbar { padding: 12px 16px; position: sticky; top: 56px; z-index: 50; background: var(--bg-card); }
-  .admin-hamburger { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-md); color: var(--text); margin-right: 8px; }
+  .admin-hamburger { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius); color: var(--text); margin-right: 8px; }
   .admin-content { padding: 12px; }
 
-  /* === PRODUCT DETAIL MOBILE === */
   .product-detail-layout {
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 12px;
   }
 
-  .product-detail-info { padding-bottom: 80px; }
+  .product-detail-info { padding-bottom: 120px; }
 
   .product-detail-sticky-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: fixed;
-    bottom: var(--bottom-nav-height);
+    bottom: calc(var(--bottom-nav-height) + 32px + env(safe-area-inset-bottom));
     left: 0;
     right: 0;
     padding: 12px 16px;
@@ -157,7 +137,6 @@
   .product-detail-sticky-price { font-weight: 800; font-size: 18px; color: var(--text); }
   .product-detail-sticky-btn { flex: 1; max-width: 200px; }
 
-  /* === ACCOUNT PAGE MOBILE === */
   .account-layout {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -174,22 +153,19 @@
     -ms-overflow-style: none;
   }
   .account-sidebar-links::-webkit-scrollbar { display: none; }
-  .account-sidebar-link { white-space: nowrap; padding: 8px 14px; font-size: 13px; border-radius: var(--radius-md); flex-shrink: 0; }
+  .account-sidebar-link { white-space: nowrap; padding: 8px 14px; font-size: 13px; border-radius: var(--radius); flex-shrink: 0; }
 
-  /* === ORDERS PAGE MOBILE === */
   .orders-list { display: flex; flex-direction: column; gap: 10px; }
   .order-card { border-radius: var(--radius-lg); padding: 14px; background: var(--bg-card); border: 1px solid var(--border); }
   .order-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
   .order-card-items { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
   .order-card-items::-webkit-scrollbar { display: none; }
-  .order-card-item-img { width: 52px; height: 52px; border-radius: var(--radius-md); object-fit: cover; flex-shrink: 0; background: var(--bg-container-low); }
+  .order-card-item-img { width: 52px; height: 52px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; background: var(--bg-container-low); }
 
-  /* === HELP PAGE MOBILE === */
   .help-layout { grid-template-columns: 1fr; gap: 12px; padding: 12px; }
   .help-contact-cards { display: flex; flex-direction: column; gap: 10px; }
   .help-contact-card { padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-card); text-align: center; }
 
-  /* === TABLES MOBILE (Card conversion) === */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-mobile-cards { display: flex; flex-direction: column; gap: 10px; }
   .table-mobile-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
@@ -207,7 +183,6 @@
   .table-mobile td { border-bottom: none; }
   .table-mobile tr:last-child td { border-bottom: none; }
 
-  /* === FILTER SIDEBAR MOBILE (Bottom sheet) === */
   .filter-sidebar-mobile {
     position: fixed;
     bottom: 0;
@@ -247,7 +222,7 @@
     gap: 8px;
     padding: 10px 16px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius);
     background: var(--bg-card);
     font-size: 14px;
     font-weight: 500;
@@ -262,15 +237,14 @@
   .two-col-layout { grid-template-columns: 1fr; gap: 12px; padding: 12px; }
   .two-col-layout .filter-sidebar { display: none; }
 
-  /* === BACK TO TOP MOBILE === */
   .back-to-top {
     position: fixed;
-    bottom: calc(var(--bottom-nav-height) + 16px);
+    bottom: calc(var(--bottom-nav-height) + 32px + env(safe-area-inset-bottom));
     right: 16px;
     width: 44px;
     height: 44px;
     border-radius: var(--radius-full);
-    background: var(--secondary);
+    background: var(--primary);
     color: white;
     display: flex;
     align-items: center;
@@ -288,20 +262,16 @@
   .back-to-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
   .back-to-top:active { transform: scale(0.92); }
 
-  /* === TOAST MOBILE === */
-  .toast-container { bottom: calc(var(--bottom-nav-height) + 16px); right: 12px; left: 12px; }
+  .toast-container { bottom: calc(var(--bottom-nav-height) + 32px + env(safe-area-inset-bottom)); right: 12px; left: 12px; }
   .toast { min-width: auto; max-width: none; width: 100%; font-size: 13px; padding: 10px 14px; }
 
-  /* === PAGINATION MOBILE === */
   .pagination { gap: 4px; margin-top: 24px; }
   .page-btn { width: 32px; height: 32px; font-size: 13px; }
 
-  /* === COUPON MOBILE === */
   .coupon-card { flex-direction: column; border-style: solid; }
   .coupon-card-left { padding: 12px 16px; border-bottom: 1px dashed var(--border); }
   .coupon-btn { padding: 14px 20px; text-align: center; }
 
-  /* === SECTION HEADER MOBILE === */
   .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
   .section { padding: 32px 12px; }
   .section-lg { padding: 40px 12px; }
@@ -309,15 +279,12 @@
   .page-title { font-size: 20px; }
   .page-content { padding: 12px; }
 
-  /* === ORDER SUMMARY MOBILE === */
   .order-summary { position: static; border-radius: var(--radius-lg); }
 
-  /* === EMPTY STATE MOBILE === */
   .empty-state { padding: 48px 16px; }
   .empty-state-icon { font-size: 56px; }
   .empty-state-title { font-size: 18px; }
 
-  /* === GENERAL MOBILE ADJUSTMENTS === */
   .card { padding: 14px; border-radius: var(--radius-lg); }
   .btn-lg { padding: 12px 20px; font-size: 15px; }
   .btn-xl { padding: 14px 24px; font-size: 15px; }
@@ -332,9 +299,6 @@
   .hero-cta-secondary { padding: 12px 24px; font-size: 14px; }
 }
 
-/* ===========================
-   SMALL MOBILE (max-width: 480px)
-   =========================== */
 @media (max-width: 480px) {
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .product-card-image { padding: 8px; }
@@ -356,9 +320,6 @@
   .hero h1 { font-size: 24px; }
 }
 
-/* ===========================
-   DESKTOP (min-width: 1025px)
-   =========================== */
 @media (min-width: 1025px) {
   .mobile-only { display: none; }
   .desktop-only { display: block; }
@@ -373,4 +334,11 @@
   .mobile-menu { display: none; }
   .mobile-menu-overlay { display: none; }
   .hamburger-btn { display: none; }
+}
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+
+.bottom-nav-spacer {
+  height: calc(var(--bottom-nav-height) + 32px + env(safe-area-inset-bottom));
 }

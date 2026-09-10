@@ -87,171 +87,191 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
   const imageUrl = product.images?.[0] || 'https://via.placeholder.com/400?text=No+Image';
 
   return (
-    <Link href={`/products/${product._id}`} className="product-card" style={{ display: 'block', textDecoration: 'none' }}>
-      {badge === 'bestseller' && (
-        <div style={{
-          position: 'absolute',
-          top: 12,
-          left: 12,
-          zIndex: 2,
-          background: 'var(--secondary)',
-          color: '#fff',
-          fontSize: 11,
-          fontWeight: 700,
-          padding: '4px 10px',
-          borderRadius: 'var(--radius-full)',
-          letterSpacing: 0.3,
-        }}>
-          #1 Best Seller
-        </div>
-      )}
-      {badge === 'amazons_choice' && (
-        <div style={{
-          position: 'absolute',
-          top: 12,
-          left: 12,
-          zIndex: 2,
-          background: 'var(--primary)',
-          color: '#fff',
-          fontSize: 11,
-          fontWeight: 700,
-          padding: '4px 10px',
-          borderRadius: 'var(--radius-full)',
-          letterSpacing: 0.3,
-        }}>
-          ShopSmart&apos;s Choice
-        </div>
-      )}
-
-      {discount >= 5 && (
-        <div className="badge badge-success" style={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          zIndex: 2,
-        }}>
-          -{discount}%
-        </div>
-      )}
-
-      <div className="product-card-image" style={{ position: 'relative', overflow: 'hidden' }}>
+    <Link
+      href={`/products/${product._id}`}
+      className="product-card"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        textDecoration: 'none',
+        background: '#fff',
+        border: '1px solid #e5e7eb',
+        borderRadius: 12,
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        position: 'relative',
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.transform = 'scale(1.02)';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.10)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+      }}
+    >
+      <div className="product-card-image" style={{ position: 'relative', overflow: 'hidden', aspectRatio: '1 / 1', background: '#f8f8f8' }}>
         <img
           src={imageUrl}
           alt={product.name}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'transform 0.35s ease' }}
-          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
         />
 
-        <div className="product-card-overlay" style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 10,
-          padding: '10px 0',
-          transform: 'translateY(100%)',
-          transition: 'transform 0.3s ease',
-          pointerEvents: 'none',
-          zIndex: 3,
-        }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.pointerEvents = 'auto';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'translateY(100%)';
-            e.currentTarget.style.pointerEvents = 'none';
-          }}
-        >
-          <button
-            className="product-card-overlay-btn"
-            onClick={handleWishlistToggle}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              border: 'none',
-              background: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              transition: 'transform 0.2s ease, background 0.2s ease',
-              color: isWishlisted ? '#e74c3c' : '#333',
-              animation: isWishlisted ? 'heartPulse 0.4s ease' : 'none',
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            {isWishlisted ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        {(badge === 'bestseller' || badge === 'amazons_choice' || (discount >= 5)) && (
+          <div style={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            zIndex: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            alignItems: 'flex-start',
+          }}>
+            {discount >= 5 && (
+              <div className="badge badge-success" style={{
+                background: '#e74c3c',
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: 6,
+                letterSpacing: 0.2,
+              }}>
+                -{discount}%
+              </div>
             )}
-          </button>
+            {badge === 'bestseller' && (
+              <div style={{
+                background: '#111',
+                color: '#fff',
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: 6,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+              }}>
+                Bestseller
+              </div>
+            )}
+            {badge === 'amazons_choice' && (
+              <div style={{
+                background: '#ff9900',
+                color: '#fff',
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: 6,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+              }}>
+                Amazon&apos;s Choice
+              </div>
+            )}
+          </div>
+        )}
 
-          <button
-            className="product-card-overlay-btn"
-            onClick={handleQuickView}
-            aria-label="Quick view"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              border: 'none',
-              background: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              transition: 'transform 0.2s ease',
-              color: '#333',
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
-        </div>
+        <button
+          onClick={handleWishlistToggle}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            zIndex: 2,
+            width: 34,
+            height: 34,
+            borderRadius: '50%',
+            border: 'none',
+            background: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+            color: isWishlisted ? '#e74c3c' : '#666',
+            transition: 'color 0.2s ease, transform 0.15s ease',
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.12)')}
+          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          {isWishlisted ? (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          ) : (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          )}
+        </button>
       </div>
 
-      <div className="product-card-body">
-        <h3 className="product-card-name" style={{ transition: 'color 0.2s ease' }}
-          onMouseOver={(e) => (e.currentTarget.style.color = 'var(--primary, #e74c3c)')}
-          onMouseOut={(e) => (e.currentTarget.style.color = '')}
-        >{product.name}</h3>
+      <div className="product-card-body" style={{ padding: '12px 14px 14px', display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+        <h3 className="product-card-name" style={{
+          fontSize: 14,
+          fontWeight: 500,
+          lineHeight: 1.35,
+          color: '#1a1a1a',
+          margin: 0,
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}>
+          {product.name}
+        </h3>
 
-        <div className="product-card-rating">
-          {renderStars(product.rating)}
-          <span>{(product.numReviews ?? 0).toLocaleString()} reviews</span>
-        </div>
+        {product.rating > 0 && (
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            background: '#fef9c3',
+            padding: '2px 8px',
+            borderRadius: 20,
+            width: 'fit-content',
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#92400e',
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span style={{ color: '#1a1a1a' }}>{product.rating.toFixed(1)}</span>
+            <span style={{ color: '#9ca3af', fontWeight: 400 }}>({(product.numReviews ?? 0).toLocaleString()})</span>
+          </div>
+        )}
 
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-          <span className="product-card-price">${(product.price ?? 0).toFixed(2)}</span>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap', marginTop: 2 }}>
+          <span className="product-card-price" style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a' }}>
+            ${(product.price ?? 0).toFixed(2)}
+          </span>
           {product.comparePrice && product.comparePrice > product.price && (
-            <span className="product-card-compare">${(product.comparePrice ?? 0).toFixed(2)}</span>
+            <span className="product-card-compare" style={{ fontSize: 13, color: '#9ca3af', textDecoration: 'line-through' }}>
+              ${(product.comparePrice ?? 0).toFixed(2)}
+            </span>
           )}
           {discount >= 5 && (
-            <span className="product-card-discount">Save {discount}%</span>
+            <span className="product-card-discount" style={{ fontSize: 12, fontWeight: 600, color: '#16a34a' }}>
+              -{discount}%
+            </span>
           )}
+        </div>
+
+        <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 500, marginTop: 1 }}>
+          FREE delivery
         </div>
 
         {product.countInStock <= 5 && product.countInStock > 0 && (
-          <p style={{ fontSize: 12, color: 'var(--tertiary)', marginTop: 6, fontWeight: 500 }}>
+          <p style={{ fontSize: 12, color: '#dc2626', margin: 0, fontWeight: 500 }}>
             Only {product.countInStock} left in stock - order soon.
           </p>
         )}
 
-        <div className="product-card-actions">
+        <div className="product-card-actions" style={{ marginTop: 'auto', paddingTop: 8 }}>
           <button
             className="btn btn-primary btn-sm"
-            style={{ width: '100%' }}
+            style={{ width: '100%', borderRadius: 8, padding: '9px 0', fontSize: 13, fontWeight: 600 }}
             onClick={handleAddToCart}
           >
             Add to Cart

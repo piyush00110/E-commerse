@@ -1,9 +1,5 @@
-/* ============================================
-   ShopSmart Premium - Shared Components
-   Amazon + Myntra + Flipkart Level
-   ============================================ */
+/* Pulse Retail - Components */
 
-/* === BUTTONS === */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -51,24 +47,24 @@
   background: var(--gradient-primary);
   color: #ffffff;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+  box-shadow: 0 4px 15px rgba(185, 0, 65, 0.3);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+  box-shadow: 0 8px 25px rgba(185, 0, 65, 0.4);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--secondary);
-  border-color: var(--secondary);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .btn-secondary:hover {
-  background: var(--secondary);
+  background: var(--primary);
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+  box-shadow: 0 4px 15px rgba(185, 0, 65, 0.3);
   transform: translateY(-1px);
 }
 
@@ -87,12 +83,12 @@
   background: var(--error);
   color: #ffffff;
   border-color: var(--error);
-  box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+  box-shadow: 0 4px 15px rgba(186, 26, 26, 0.3);
 }
 
 .btn-danger:hover {
   background: var(--error-dark);
-  box-shadow: 0 8px 25px rgba(239,68,68,0.4);
+  box-shadow: 0 8px 25px rgba(186, 26, 26, 0.4);
   transform: translateY(-1px);
 }
 
@@ -100,19 +96,19 @@
   background: var(--success);
   color: #ffffff;
   border-color: var(--success);
-  box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+  box-shadow: 0 4px 15px rgba(0, 105, 72, 0.3);
 }
 
 .btn-success:hover {
   background: var(--success-dark);
-  box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+  box-shadow: 0 8px 25px rgba(0, 105, 72, 0.4);
   transform: translateY(-1px);
 }
 
 .btn-sm {
   padding: 6px 14px;
   font-size: 13px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
 }
 
 .btn-lg {
@@ -131,7 +127,7 @@
   padding: 10px;
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
 }
 
 .btn-icon.btn-sm { width: 32px; height: 32px; padding: 6px; }
@@ -139,7 +135,6 @@
 
 .btn-full { width: 100%; }
 
-/* === CARDS === */
 .card {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
@@ -169,7 +164,6 @@
   border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* === BADGES === */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -203,7 +197,7 @@
 }
 
 .badge-primary {
-  background: var(--secondary);
+  background: var(--primary);
   color: #ffffff;
 }
 
@@ -212,7 +206,6 @@
   color: #ffffff;
 }
 
-/* === FORM ELEMENTS === */
 .form-group {
   margin-bottom: 20px;
 }
@@ -247,8 +240,8 @@
 }
 
 .form-input:focus {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(185, 0, 65, 0.1);
 }
 
 .form-input:disabled {
@@ -279,7 +272,7 @@
 }
 
 .form-select:hover { border-color: var(--border-hover); }
-.form-select:focus { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+.form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(185, 0, 65, 0.1); }
 
 .form-textarea {
   width: 100%;
@@ -298,7 +291,7 @@
 }
 
 .form-textarea:hover { border-color: var(--border-hover); }
-.form-textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+.form-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(185, 0, 65, 0.1); }
 
 .form-error {
   color: var(--error);
@@ -307,7 +300,6 @@
   line-height: 1.4;
 }
 
-/* === PRODUCT CARD === */
 .product-card {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
@@ -350,7 +342,6 @@
   transform: scale(1.05);
 }
 
-/* === Product Card Hover Overlay (Myntra-style) === */
 .product-card-overlay {
   position: absolute;
   bottom: 0;
@@ -389,7 +380,7 @@
 }
 
 .product-card-overlay-btn:hover {
-  background: var(--secondary);
+  background: var(--primary);
   color: white;
   transform: scale(1.15);
 }
@@ -417,7 +408,7 @@
 }
 
 .product-card:hover .product-card-name {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .product-card-rating {
@@ -427,7 +418,7 @@
   margin-bottom: 8px;
 }
 
-.product-card-rating .star { color: #fbbf24; font-size: 14px; }
+.product-card-rating .star { color: var(--rating-star); font-size: 14px; }
 .product-card-rating .star-empty { color: var(--border); font-size: 14px; }
 .product-card-rating span { font-size: 12px; color: var(--text-tertiary); margin-left: 4px; }
 
@@ -461,14 +452,12 @@
   margin-top: 12px;
 }
 
-/* === PRODUCT GRID === */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
 }
 
-/* === TABLES === */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -501,11 +490,10 @@
 .table td img {
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   object-fit: cover;
 }
 
-/* === STATUS CHIPS === */
 .status {
   display: inline-flex;
   align-items: center;
@@ -532,8 +520,8 @@
 .status-processing { background: var(--info-light); color: var(--info); }
 .status-processing::before { background: var(--info); }
 
-.status-shipped { background: rgba(99,102,241,0.15); color: var(--secondary); }
-.status-shipped::before { background: var(--secondary); }
+.status-shipped { background: rgba(185, 0, 65, 0.1); color: var(--primary); }
+.status-shipped::before { background: var(--primary); }
 
 .status-delivered { background: var(--success-light); color: var(--success-dark); }
 .status-delivered::before { background: var(--success); }
@@ -541,7 +529,6 @@
 .status-cancelled { background: var(--error-light); color: var(--error-dark); }
 .status-cancelled::before { background: var(--error); }
 
-/* === TOAST === */
 .toast-container {
   position: fixed;
   bottom: 24px;
@@ -581,7 +568,6 @@
   border-left: 4px solid var(--error);
 }
 
-/* === EMPTY STATE === */
 .empty-state {
   text-align: center;
   padding: 80px 24px;
@@ -613,7 +599,6 @@
   line-height: 1.6;
 }
 
-/* === PAGINATION === */
 .pagination {
   display: flex;
   justify-content: center;
@@ -627,7 +612,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   border: 1.5px solid var(--border);
   background: var(--bg-white);
   color: var(--text);
@@ -640,15 +625,15 @@
 
 .page-btn:hover:not(.active):not(:disabled) {
   background: var(--bg-container);
-  border-color: var(--secondary);
-  color: var(--secondary);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .page-btn.active {
-  background: var(--secondary);
+  background: var(--primary);
   color: #ffffff;
-  border-color: var(--secondary);
-  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(185, 0, 65, 0.3);
 }
 
 .page-btn:disabled {
@@ -656,7 +641,6 @@
   cursor: not-allowed;
 }
 
-/* === COUPON === */
 .coupon-card {
   display: flex;
   border: 2px dashed var(--border);
@@ -666,14 +650,14 @@
 }
 
 .coupon-card:hover {
-  border-color: var(--secondary);
+  border-color: var(--primary);
 }
 
 .coupon-card-left { flex: 1; padding: 16px; }
 
 .coupon-code {
   font-weight: 700;
-  font-family: var(--font-mono);
+  font-family: var(--font);
   font-size: 16px;
   color: var(--text);
   letter-spacing: 1px;
@@ -685,7 +669,7 @@
 
 .coupon-btn {
   padding: 12px 20px;
-  background: var(--secondary);
+  background: var(--primary);
   color: #ffffff;
   font-weight: 600;
   font-size: 14px;
@@ -696,9 +680,8 @@
   white-space: nowrap;
 }
 
-.coupon-btn:hover { background: var(--secondary-dark); }
+.coupon-btn:hover { background: var(--primary-dark); }
 
-/* === PRICE DISPLAY === */
 .price { font-weight: 700; color: var(--text); }
 .price-lg { font-size: 28px; }
 .price-compare { text-decoration: line-through; color: var(--text-tertiary); font-weight: 400; font-size: 14px; }
@@ -713,7 +696,6 @@
   color: var(--success-dark);
 }
 
-/* === Summary Row === */
 .summary-row {
   display: flex;
   justify-content: space-between;
@@ -730,7 +712,6 @@
   font-size: 16px;
 }
 
-/* === Section Header === */
 .section-header {
   display: flex;
   align-items: center;
@@ -751,7 +732,7 @@
 .section-link {
   font-size: 14px;
   font-weight: 600;
-  color: var(--secondary);
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 4px;
