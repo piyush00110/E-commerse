@@ -252,7 +252,7 @@
     border: none;
     cursor: pointer;
     box-shadow: var(--shadow-lg);
-    z-index: 90;
+    z-index: 950;
     opacity: 0;
     visibility: hidden;
     transform: translateY(16px);

@@ -103,10 +103,10 @@ const HelpPage: React.FC = () => {
       <div style={{
         textAlign: 'center', padding: '48px 24px', marginBottom: 40,
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        borderRadius: 16, color: '#fff',
+        borderRadius: 16, color: 'var(--bg-card)',
       }}>
         <h1 style={{ fontSize: 36, fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: 8 }}>Help Center</h1>
-        <p style={{ fontSize: 16, color: '#94a3b8', marginBottom: 24 }}>How can we help you today?</p>
+        <p style={{ fontSize: 16, color: 'var(--text-tertiary)', marginBottom: 24 }}>How can we help you today?</p>
         <div style={{ maxWidth: 500, margin: '0 auto' }}>
           <input
             type="text"
@@ -128,29 +128,29 @@ const HelpPage: React.FC = () => {
           <Link href="/orders" style={{ textDecoration: 'none' }}>
             <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E6}'}</div>
-              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Track Order</strong>
-              <span style={{ fontSize: 12, color: '#64748b' }}>See where your package is</span>
+              <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Track Order</strong>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>See where your package is</span>
             </div>
           </Link>
           <Link href="/orders" style={{ textDecoration: 'none' }}>
             <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F504}'}</div>
-              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Return Items</strong>
-              <span style={{ fontSize: 12, color: '#64748b' }}>Start a return or replacement</span>
+              <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Return Items</strong>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Start a return or replacement</span>
             </div>
           </Link>
           <Link href="/account" style={{ textDecoration: 'none' }}>
             <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4CB}'}</div>
-              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Manage Account</strong>
-              <span style={{ fontSize: 12, color: '#64748b' }}>Update profile and addresses</span>
+              <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Manage Account</strong>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Update profile and addresses</span>
             </div>
           </Link>
           <a href="mailto:support@shopsmart.com" style={{ textDecoration: 'none' }}>
             <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E7}'}</div>
-              <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Email Support</strong>
-              <span style={{ fontSize: 12, color: '#64748b' }}>support@shopsmart.com</span>
+              <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Email Support</strong>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>support@shopsmart.com</span>
             </div>
           </a>
         </div>
@@ -183,11 +183,11 @@ const HelpPage: React.FC = () => {
                   style={{
                     width: '100%', padding: '16px 20px', border: 'none', background: 'transparent',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    cursor: 'pointer', textAlign: 'left', fontSize: 14, fontWeight: 600, color: '#0f172a',
+                    cursor: 'pointer', textAlign: 'left', fontSize: 14, fontWeight: 600, color: 'var(--text)',
                   }}>
                   <span>{faq.q}</span>
                   <span style={{
-                    fontSize: 12, color: '#6366f1', transition: 'transform 0.2s ease',
+                    fontSize: 12, color: 'var(--primary)', transition: 'transform 0.2s ease',
                     transform: openIndex === realIdx ? 'rotate(180deg)' : 'rotate(0deg)',
                   }}>{'\u25BC'}</span>
                 </button>
@@ -197,7 +197,7 @@ const HelpPage: React.FC = () => {
                   transition: 'max-height 0.3s ease, padding 0.3s ease',
                   padding: openIndex === realIdx ? '0 20px 16px' : '0 20px',
                 }}>
-                  <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6 }}>{faq.a}</p>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{faq.a}</p>
                 </div>
               </div>
             );
@@ -210,25 +210,25 @@ const HelpPage: React.FC = () => {
         <div className="section-header" style={{ marginBottom: 16 }}>
           <h2 className="section-title">Still need help?</h2>
         </div>
-        <p style={{ color: '#64748b', marginBottom: 24 }}>Our support team is available 24/7 to assist you.</p>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Our support team is available 24/7 to assist you.</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4DE}'}</div>
-            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Call Us</strong>
-            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>1-800-SHOP-SMART</span>
-            <span style={{ fontSize: 12, color: '#64748b' }}>Mon-Sat, 8AM-8PM EST</span>
+            <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Call Us</strong>
+            <span style={{ display: 'block', fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 4 }}>1-800-SHOP-SMART</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Mon-Sat, 8AM-8PM EST</span>
           </div>
           <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4AC}'}</div>
-            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Live Chat</strong>
-            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>Chat with our team</span>
-            <span style={{ fontSize: 12, color: '#64748b' }}>Average response: 2 min</span>
+            <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Live Chat</strong>
+            <span style={{ display: 'block', fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 4 }}>Chat with our team</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Average response: 2 min</span>
           </div>
           <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E7}'}</div>
-            <strong style={{ display: 'block', fontSize: 14, color: '#0f172a', marginBottom: 4 }}>Email</strong>
-            <span style={{ display: 'block', fontSize: 13, color: '#6366f1', fontWeight: 600, marginBottom: 4 }}>support@shopsmart.com</span>
-            <span style={{ fontSize: 12, color: '#64748b' }}>Response within 24 hrs</span>
+            <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Email</strong>
+            <span style={{ display: 'block', fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 4 }}>support@shopsmart.com</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Response within 24 hrs</span>
           </div>
         </div>
       </div>

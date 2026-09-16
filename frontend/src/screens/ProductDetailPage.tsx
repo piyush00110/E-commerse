@@ -298,8 +298,8 @@ const ProductDetailPage: React.FC = () => {
     return (
       <div className="empty-state" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u{1F50D}'}</div>
-        <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Product not found</h2>
-        <p style={{ color: '#64748b', marginBottom: 24 }}>The product you&apos;re looking for doesn&apos;t exist.</p>
+        <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Product not found</h2>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>The product you&apos;re looking for doesn&apos;t exist.</p>
         <Link href="/products" className="btn btn-primary" style={{ textDecoration: 'none' }}>Browse Products</Link>
       </div>
     );
@@ -328,10 +328,10 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const primaryColor = '#6366f1';
-  const bgColor = '#f8fafc';
+  const bgColor = 'var(--bg-container)';
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', fontFamily: "'Inter', sans-serif", paddingBottom: product.countInStock > 0 ? 80 : 0 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: "'Inter', sans-serif", paddingBottom: product.countInStock > 0 ? 80 : 0 }}>
       <style jsx global>{`
         @keyframes slideInLeft {
           from { opacity: 0; transform: translateX(-24px); }
@@ -405,7 +405,7 @@ const ProductDetailPage: React.FC = () => {
         .pulse-gallery-main {
           width: 100%;
           aspect-ratio: 1/1;
-          background: #f1f5f9;
+          background: var(--bg-container-low);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -420,7 +420,7 @@ const ProductDetailPage: React.FC = () => {
           padding: 12px 16px;
           scrollbar-width: none;
           -ms-overflow-style: none;
-          background: #fff;
+          background: var(--bg-card);
         }
         .pulse-thumbnails::-webkit-scrollbar {
           display: none;
@@ -430,11 +430,11 @@ const ProductDetailPage: React.FC = () => {
           height: 60px;
           border-radius: 8px;
           overflow: hidden;
-          border: 2px solid #e2e8f0;
+          border: 2px solid var(--border);
           cursor: pointer;
           flex-shrink: 0;
           transition: all 0.2s ease;
-          background: #f8fafc;
+          background: var(--bg-container);
         }
         .pulse-thumb.active {
           border-color: ${primaryColor};
@@ -453,12 +453,12 @@ const ProductDetailPage: React.FC = () => {
           display: inline-flex;
           align-items: center;
           gap: 4px;
-          background: #f1f5f9;
+          background: var(--bg-container);
           border-radius: 9999px;
           padding: 4px 10px;
           font-size: 13px;
           font-weight: 600;
-          color: #0f172a;
+          color: var(--text);
         }
         .pulse-price-row {
           display: flex;
@@ -502,9 +502,9 @@ const ProductDetailPage: React.FC = () => {
           border-radius: 8px;
           font-size: 14px;
           font-weight: 600;
-          border: 2px solid #e2e8f0;
-          background: #fff;
-          color: #475569;
+          border: 2px solid var(--border);
+          background: var(--bg-card);
+          color: var(--text-secondary);
           cursor: pointer;
           transition: all 0.2s ease;
           text-align: center;
@@ -518,19 +518,19 @@ const ProductDetailPage: React.FC = () => {
           width: 44px;
           height: 44px;
           border-radius: 8px;
-          border: 1.5px solid #e2e8f0;
-          background: #fff;
+          border: 1.5px solid var(--border);
+          background: var(--bg-card);
           fontSize: 18px;
           fontWeight: 600;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: '#475569',
+          color: 'var(--text-secondary)',
           transition: 'background 0.15s',
         }
         .pulse-qty-btn:hover {
-          background: #f1f5f9;
+          background: var(--bg-container);
         }
         .pulse-qty-btn:disabled {
           opacity: 0.4;
@@ -548,7 +548,7 @@ const ProductDetailPage: React.FC = () => {
           padding: 16px;
         }
         .pulse-bento-card {
-          background: #f8fafc;
+          background: var(--bg-container);
           border-radius: 12px;
           padding: 16px;
           display: flex;
@@ -556,7 +556,7 @@ const ProductDetailPage: React.FC = () => {
           align-items: center;
           text-align: center;
           gap: 8px;
-          border: 1px solid #f1f5f9;
+          border: 1px solid var(--border-light);
         }
         .pulse-bento-icon {
           width: 40px;
@@ -570,7 +570,7 @@ const ProductDetailPage: React.FC = () => {
           font-size: 18px;
         }
         .pulse-accordion {
-          border-top: 1px solid #f1f5f9;
+          border-top: 1px solid var(--border-light);
         }
         .pulse-accordion-header {
           display: flex;
@@ -580,7 +580,7 @@ const ProductDetailPage: React.FC = () => {
           cursor: pointer;
           font-size: 15px;
           font-weight: 600;
-          color: #0f172a;
+          color: var(--text);
           background: none;
           border: none;
           width: 100%;
@@ -589,7 +589,7 @@ const ProductDetailPage: React.FC = () => {
         .pulse-accordion-body {
           padding: 0 16px 16px;
           font-size: 14px;
-          color: #475569;
+          color: var(--text-secondary);
           line-height: 1.7;
           animation: fadeInUp 0.25s ease-out;
         }
@@ -609,8 +609,8 @@ const ProductDetailPage: React.FC = () => {
           width: 150px;
           border-radius: 12px;
           overflow: hidden;
-          background: #fff;
-          border: 1px solid #f1f5f9;
+          background: var(--bg-card);
+          border: 1px solid var(--border-light);
           text-decoration: none;
           transition: transform 0.2s;
         }
@@ -621,17 +621,17 @@ const ProductDetailPage: React.FC = () => {
           width: 100%;
           aspect-ratio: 1/1;
           object-fit: cover;
-          background: #f8fafc;
+          background: var(--bg-container);
         }
         .pulse-sticky-bar {
           position: fixed;
-          bottom: 0;
+          bottom: calc(var(--bottom-nav-height, 68px) + 20px + env(safe-area-inset-bottom, 0px));
           left: 0;
           right: 0;
-          background: #fff;
-          border-top: 1px solid #e2e8f0;
+          background: var(--bg-card);
+          border-top: 1px solid var(--border);
           padding: 12px 16px;
-          z-index: 50;
+          z-index: 100;
           box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
           transform: translateY(100%);
           transition: transform 0.3s ease-out;
@@ -652,7 +652,7 @@ const ProductDetailPage: React.FC = () => {
             left: 16px;
             bottom: 16px;
             padding: 8px;
-            background: rgba(255,255,255,0.92);
+            background: var(--bg-glass-thick);
             backdrop-filter: blur(8px);
             border-radius: 12px;
             width: auto;
@@ -703,7 +703,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="pulse-info">
         {/* Breadcrumb */}
         <nav className="breadcrumb" style={{
-          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14, fontSize: 12, color: '#94a3b8', flexWrap: 'wrap',
+          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14, fontSize: 12, color: 'var(--text-tertiary)', flexWrap: 'wrap',
           opacity: breadcrumbVisible ? 1 : 0,
           transform: breadcrumbVisible ? 'translateX(0)' : 'translateX(-16px)',
           transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
@@ -718,11 +718,11 @@ const ProductDetailPage: React.FC = () => {
               <span>/</span>
             </>
           )}
-          <span style={{ color: '#64748b', fontWeight: 500 }}>{product.name}</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{product.name}</span>
         </nav>
 
         {/* Title */}
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', marginBottom: 10, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)'  , marginBottom: 10, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
           {product.name}
         </h1>
 
@@ -732,7 +732,7 @@ const ProductDetailPage: React.FC = () => {
             <span style={{ color: '#f59e0b', fontSize: 14 }}>{'\u2605'}</span>
             <span>{product.rating.toFixed(1)}</span>
           </div>
-          <span style={{ fontSize: 13, color: '#94a3b8' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
             ({product.numReviews.toLocaleString()} {product.numReviews === 1 ? 'review' : 'reviews'})
           </span>
         </div>
@@ -740,12 +740,12 @@ const ProductDetailPage: React.FC = () => {
         {/* Price */}
         <div style={{ marginBottom: 14 }}>
           <div className="pulse-price-row">
-            <span style={{ fontSize: 28, fontWeight: 800, color: '#0f172a' }}>
+            <span style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)'   }}>
               ${(product.price ?? 0).toFixed(2)}
             </span>
             {product.comparePrice && product.comparePrice > product.price && (
               <>
-                <span style={{ fontSize: 16, color: '#94a3b8', textDecoration: 'line-through' }}>
+                <span style={{ fontSize: 16, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>
                   ${(product.comparePrice ?? 0).toFixed(2)}
                 </span>
                 <span className="pulse-badge pulse-badge-success">-{discount}%</span>
@@ -781,7 +781,7 @@ const ProductDetailPage: React.FC = () => {
 
       {/* Color Selector */}
       <div style={{ padding: '0 16px 20px' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)'  , marginBottom: 10 }}>
           Color: <span style={{ color: primaryColor, fontWeight: 700 }}>{selectedColor || 'Select'}</span>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -800,7 +800,7 @@ const ProductDetailPage: React.FC = () => {
       {/* Size Selector */}
       <div style={{ padding: '0 16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)'   }}>
             Size: <span style={{ color: primaryColor, fontWeight: 700 }}>{selectedSize || 'Select'}</span>
           </span>
           <button style={{ fontSize: 13, color: primaryColor, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
@@ -821,13 +821,13 @@ const ProductDetailPage: React.FC = () => {
       {/* Quantity Selector */}
       {product.countInStock > 0 && (
         <div style={{ padding: '0 16px 20px' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>Quantity</div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 0, border: '1.5px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)'  , marginBottom: 10 }}>Quantity</div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 0, border: '1.5px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
             <button className="pulse-qty-btn" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
               style={{ borderRadius: 0, border: 'none' }}>
               {'\u2212'}
             </button>
-            <span style={{ width: 48, textAlign: 'center', fontWeight: 700, fontSize: 16, color: '#0f172a' }}>{quantity}</span>
+            <span style={{ width: 48, textAlign: 'center', fontWeight: 700, fontSize: 16, color: 'var(--text)'   }}>{quantity}</span>
             <button className="pulse-qty-btn" onClick={() => setQuantity(Math.min(product.countInStock, quantity + 1))}
               style={{ borderRadius: 0, border: 'none' }}>
               +
@@ -862,7 +862,7 @@ const ProductDetailPage: React.FC = () => {
             onClick={handleBuyNow}
             style={{
               flex: 1, height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12,
-              background: '#fff', border: `2px solid ${primaryColor}`, color: primaryColor,
+              background: 'var(--bg-card)', border: `2px solid ${primaryColor}`, color: primaryColor,
             }}
           >
             Buy Now
@@ -871,7 +871,7 @@ const ProductDetailPage: React.FC = () => {
       )}
 
       {/* Bento Feature Deck */}
-      <div style={{ borderTop: '8px solid #f8fafc' }}>
+      <div style={{ borderTop: '8px solid var(--bg-container)' }}>
         <div className="pulse-bento-grid">
           {[
             { icon: '\u{1F69A}', label: 'Free Shipping', desc: 'On orders over $50' },
@@ -881,15 +881,15 @@ const ProductDetailPage: React.FC = () => {
           ].map((f) => (
             <div key={f.label} className="pulse-bento-card">
               <div className="pulse-bento-icon">{f.icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{f.label}</div>
-              <div style={{ fontSize: 11, color: '#94a3b8' }}>{f.desc}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)'   }}>{f.label}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{f.desc}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Collapsible Accordions */}
-      <div style={{ borderTop: '1px solid #f1f5f9' }}>
+      <div style={{ borderTop: '1px solid var(--border-light)' }}>
         {/* Product Details */}
         <div className="pulse-accordion">
           <button className="pulse-accordion-header" onClick={() => toggleAccordion('details')}>
@@ -905,7 +905,7 @@ const ProductDetailPage: React.FC = () => {
                 </ul>
               )}
               {!product.description && (!product.features || product.features.length === 0) && (
-                <p style={{ margin: 0, color: '#94a3b8' }}>No additional details available.</p>
+                <p style={{ margin: 0, color: 'var(--text-tertiary)' }}>No additional details available.</p>
               )}
             </div>
           )}
@@ -920,10 +920,10 @@ const ProductDetailPage: React.FC = () => {
           {activeAccordion === 'specs' && (
             <div className="pulse-accordion-body">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
-                {product.brand && <><div style={{ color: '#94a3b8', fontSize: 13 }}>Brand</div><div style={{ fontWeight: 600 }}>{product.brand}</div></>}
-                {typeof product.category === 'object' && <><div style={{ color: '#94a3b8', fontSize: 13 }}>Category</div><div style={{ fontWeight: 600 }}>{(product.category as { name: string }).name}</div></>}
-                {typeof product === 'object' && 'sku' in product && (product as any).sku && <><div style={{ color: '#94a3b8', fontSize: 13 }}>SKU</div><div style={{ fontWeight: 600 }}>{(product as any).sku}</div></>}
-                <div style={{ color: '#94a3b8', fontSize: 13 }}>Weight</div>
+                {product.brand && <><div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>Brand</div><div style={{ fontWeight: 600 }}>{product.brand}</div></>}
+                {typeof product.category === 'object' && <><div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>Category</div><div style={{ fontWeight: 600 }}>{(product.category as { name: string }).name}</div></>}
+                {typeof product === 'object' && 'sku' in product && (product as any).sku && <><div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>SKU</div><div style={{ fontWeight: 600 }}>{(product as any).sku}</div></>}
+                <div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>Weight</div>
                 <div style={{ fontWeight: 600 }}>{typeof product === 'object' && 'weight' in product && (product as any).weight ? `${(product as any).weight}kg` : 'N/A'}</div>
               </div>
             </div>
@@ -960,22 +960,22 @@ const ProductDetailPage: React.FC = () => {
                     <div className="card" style={{ padding: 16, marginBottom: 16, borderRadius: 12 }}>
                       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
                         <div style={{ textAlign: 'center', minWidth: 80 }}>
-                          <div style={{ fontSize: 36, fontWeight: 800, color: '#0f172a' }}>{product.rating.toFixed(1)}</div>
+                          <div style={{ fontSize: 36, fontWeight: 800, color: 'var(--text)'   }}>{product.rating.toFixed(1)}</div>
                           <div style={{ display: 'flex', gap: 1, justifyContent: 'center', marginBottom: 4 }}>
                             {[1, 2, 3, 4, 5].map((s) => (
                               <span key={s} style={{ fontSize: 14, color: s <= Math.round(product.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
                             ))}
                           </div>
-                          <div style={{ fontSize: 12, color: '#94a3b8' }}>{product.numReviews} ratings</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{product.numReviews} ratings</div>
                         </div>
                         <div style={{ flex: 1, minWidth: 160 }}>
                           {getStarDistribution().map(({ star, count, pct }) => (
                             <div key={star} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                               <span style={{ fontSize: 12, color: '#475569', width: 32 }}>{star} star</span>
-                              <div style={{ flex: 1, height: 6, background: '#e2e8f0', borderRadius: 9999, overflow: 'hidden' }}>
+                              <div style={{ flex: 1, height: 6, background: 'var(--border)', borderRadius: 9999, overflow: 'hidden' }}>
                                 <div style={{ width: `${pct}%`, height: '100%', background: '#f59e0b', borderRadius: 9999 }} />
                               </div>
-                              <span style={{ fontSize: 11, color: '#94a3b8', width: 20, textAlign: 'right' }}>{count}</span>
+                              <span style={{ fontSize: 11, color: 'var(--text-tertiary)', width: 20, textAlign: 'right' }}>{count}</span>
                             </div>
                           ))}
                         </div>
@@ -984,9 +984,9 @@ const ProductDetailPage: React.FC = () => {
 
                     {/* Sort */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>All Reviews</span>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)'   }}>All Reviews</span>
                       <select value={sortReviews} onChange={(e) => setSortReviews(e.target.value as SortMode)}
-                        className="form-select" style={{ padding: '6px 10px', borderRadius: 6, border: '1.5px solid #e2e8f0', fontSize: 12, background: '#fff' }}>
+                        className="form-select" style={{ padding: '6px 10px', borderRadius: 6, border: '1.5px solid var(--border)', fontSize: 12, background: 'var(--bg-card)' }}>
                         <option value="newest">Most recent</option>
                         <option value="highest">Highest rated</option>
                         <option value="lowest">Lowest rated</option>
@@ -1006,12 +1006,12 @@ const ProductDetailPage: React.FC = () => {
                                 {review.name.charAt(0).toUpperCase()}
                               </div>
                               <div style={{ flex: 1 }}>
-                                <strong style={{ fontSize: 13, color: '#0f172a' }}>{review.name}</strong>
+                                <strong style={{ fontSize: 13, color: 'var(--text)'   }}>{review.name}</strong>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 1 }}>
                                   <span className="badge badge-success" style={{ fontSize: 9, padding: '1px 5px' }}>{'\u2713'} Verified</span>
                                 </div>
                               </div>
-                              <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                              <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                                 {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
                             </div>
@@ -1020,12 +1020,12 @@ const ProductDetailPage: React.FC = () => {
                                 <span key={s} style={{ fontSize: 12, color: s <= review.rating ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
                               ))}
                             </div>
-                            <div style={{ fontWeight: 700, fontSize: 13, color: '#0f172a', marginBottom: 3 }}>{review.title}</div>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)'  , marginBottom: 3 }}>{review.title}</div>
                             <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6, marginBottom: 6 }}>{review.comment}</div>
                             {imgs.length > 0 && (
                               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
                                 {imgs.map((url: string, i: number) => (
-                                  <img key={i} src={url} alt="Review" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
+                                  <img key={i} src={url} alt="Review" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
                                 ))}
                               </div>
                             )}
@@ -1036,10 +1036,10 @@ const ProductDetailPage: React.FC = () => {
 
                     {/* Write Review */}
                     <div className="card" style={{ padding: 16, marginTop: 16, borderRadius: 12 }}>
-                      <h4 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 12 }}>Write a Review</h4>
+                      <h4 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)'  , marginBottom: 12 }}>Write a Review</h4>
                       <form onSubmit={handleSubmitReview}>
                         <div style={{ marginBottom: 12 }}>
-                          <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13, color: '#0f172a' }}>Rating</label>
+                          <label style={{ display: 'block', fontWeight: 600, marginBottom: 6, fontSize: 13, color: 'var(--text)'   }}>Rating</label>
                           <div style={{ display: 'flex', gap: 2 }}>
                             {renderInteractiveStars(reviewRating, setReviewRating)}
                           </div>
@@ -1068,7 +1068,7 @@ const ProductDetailPage: React.FC = () => {
                             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
                               {reviewImages.map((url, idx) => (
                                 <div key={idx} style={{ position: 'relative' }}>
-                                  <img src={url} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0' }} />
+                                  <img src={url} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
                                   <button type="button" onClick={() => handleRemoveReviewImage(idx)} style={{
                                     position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: 9999,
                                     background: '#ef4444', color: '#fff', border: 'none', fontSize: 10, cursor: 'pointer',
@@ -1088,8 +1088,8 @@ const ProductDetailPage: React.FC = () => {
                   </>
                 ) : (
                   <div className="card" style={{ padding: 32, textAlign: 'center', borderRadius: 12 }}>
-                    <p style={{ color: '#94a3b8', marginBottom: 12, fontSize: 14 }}>No reviews yet</p>
-                    <p style={{ color: '#94a3b8', fontSize: 13 }}>Be the first to review this product!</p>
+                    <p style={{ color: 'var(--text-tertiary)', marginBottom: 12, fontSize: 14 }}>No reviews yet</p>
+                    <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>Be the first to review this product!</p>
                   </div>
                 )}
               </div>
@@ -1100,9 +1100,9 @@ const ProductDetailPage: React.FC = () => {
 
       {/* Related Products */}
       {related.length > 0 && (
-        <section style={{ marginTop: 8, borderTop: '8px solid #f8fafc' }}>
+        <section style={{ marginTop: 8, borderTop: '8px solid var(--bg-container)' }}>
           <div style={{ padding: '16px 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h2 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', margin: 0 }}>Related Products</h2>
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)'  , margin: 0 }}>Related Products</h2>
             <Link href="/products" style={{ fontSize: 13, color: primaryColor, textDecoration: 'none', fontWeight: 600 }}>See all</Link>
           </div>
           <div className="carousel-scroll pulse-related-scroll">
@@ -1110,7 +1110,7 @@ const ProductDetailPage: React.FC = () => {
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
                 <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
                 <div style={{ padding: '8px 10px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)'  , marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}
                   </div>
                   <div style={{ display: 'flex', gap: 1, marginBottom: 3 }}>
@@ -1118,7 +1118,7 @@ const ProductDetailPage: React.FC = () => {
                       <span key={s} style={{ fontSize: 10, color: s <= Math.round(p.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
                     ))}
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>${(p.price ?? 0).toFixed(2)}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)'   }}>${(p.price ?? 0).toFixed(2)}</div>
                 </div>
               </Link>
             ))}
@@ -1128,19 +1128,19 @@ const ProductDetailPage: React.FC = () => {
 
       {/* Also Viewed */}
       {alsoViewed.length > 0 && (
-        <section style={{ borderTop: '1px solid #f1f5f9' }}>
+        <section style={{ borderTop: '1px solid var(--border-light)' }}>
           <div style={{ padding: '16px 16px 12px' }}>
-            <h2 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', margin: 0 }}>You May Also Like</h2>
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)'  , margin: 0 }}>You May Also Like</h2>
           </div>
           <div className="carousel-scroll pulse-related-scroll">
             {alsoViewed.map((p) => (
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
                 <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
                 <div style={{ padding: '8px 10px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)'  , marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>${(p.price ?? 0).toFixed(2)}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)'   }}>${(p.price ?? 0).toFixed(2)}</div>
                 </div>
               </Link>
             ))}
@@ -1173,9 +1173,9 @@ const ProductDetailPage: React.FC = () => {
         <div className={`pulse-sticky-bar ${showStickyBar ? 'visible' : ''}`}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ flexShrink: 0 }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>${(product.price ?? 0).toFixed(2)}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)'   }}>${(product.price ?? 0).toFixed(2)}</div>
               {product.comparePrice && (
-                <div style={{ fontSize: 11, color: '#94a3b8', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</div>
               )}
             </div>
             <button

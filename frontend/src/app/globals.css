@@ -652,7 +652,6 @@
 
 .delivery-item-previews {
   display: flex;
-  gap: -8px;
 }
 
 .delivery-item-previews img {
@@ -857,40 +856,6 @@
   margin-bottom: 12px;
 }
 
-/* === Mobile Menu === */
-.mobile-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: var(--z-modal-backdrop);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--duration-slow) var(--ease);
-}
-
-.mobile-menu-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100vh;
-  background: var(--bg-card);
-  z-index: var(--z-modal);
-  transform: translateX(-100%);
-  transition: transform var(--duration-slow) var(--ease);
-  overflow-y: auto;
-  box-shadow: var(--shadow-xl);
-}
-
-.mobile-menu.open {
-  transform: translateX(0);
-}
-
 .mobile-menu-header {
   display: flex;
   align-items: center;
@@ -982,22 +947,6 @@
 .city-option.active {
   background: var(--secondary);
   color: var(--text-white);
-}
-
-/* === Account Dropdown === */
-.account-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  min-width: 220px;
-  padding: 8px;
-  z-index: var(--z-dropdown);
-  animation: fadeSlideDown var(--duration) var(--ease);
 }
 
 .account-dropdown-header {
@@ -1410,7 +1359,7 @@
 @media (max-width: 768px) {
   .bottom-nav + .page-wrapper,
   body > .page-wrapper {
-    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 16px);
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 32px);
   }
 }
 

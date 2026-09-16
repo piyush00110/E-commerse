@@ -418,3 +418,44 @@ h6 { font-size: clamp(13px, 1.2vw, 14px); font-weight: 600; }
   transform: scale(2.5);
   transition: 0s;
 }
+
+/* Focus-visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s var(--ease);
+}
+
+img[loading="lazy"] {
+  opacity: 0;
+}
+
+img[loading="lazy"].loaded,
+img[loading="lazy"]:not([src=""]) {
+  opacity: 1;
+}
+
+/* Page section fade-in on load */
+section {
+  animation: fadeIn 0.4s var(--ease-out-expo) both;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}

@@ -230,11 +230,11 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-layout">
       <div className="checkout-form">
         {/* Progress Bar */}
-        <div style={{ width: '100%', height: 4, background: 'var(--border-color, #e2e8f0)', borderRadius: 2, marginBottom: 28, overflow: 'hidden' }}>
+        <div style={{ width: '100%', height: 4, background: 'var(--border, #e2e8f0)', borderRadius: 2, marginBottom: 28, overflow: 'hidden' }}>
           <div style={{
             height: '100%',
             width: `${completionPercent}%`,
-            background: 'linear-gradient(90deg, var(--color-secondary), var(--color-success, #10b981))',
+            background: 'linear-gradient(90deg, var(--secondary), var(--success, #10b981))',
             borderRadius: 2,
             transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
           }} />
@@ -247,7 +247,7 @@ const CheckoutPage: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, position: 'relative' }}>
                 <div style={{
                   width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: step > s.num ? 'var(--color-success)' : step === s.num ? 'var(--color-secondary)' : 'var(--bg-container, #f1f5f9)',
+                  background: step > s.num ? 'var(--success)' : step === s.num ? 'var(--secondary)' : 'var(--bg-container, #f1f5f9)',
                   color: step >= s.num ? '#fff' : 'var(--text-tertiary)',
                   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: step === s.num ? '0 0 0 4px rgba(99,102,241,0.15), 0 4px 12px rgba(99,102,241,0.2)' : step > s.num ? '0 2px 8px rgba(16,185,129,0.3)' : 'none',
@@ -259,7 +259,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 <span style={{
                   fontSize: 13, fontWeight: step === s.num ? 600 : 500,
-                  color: step === s.num ? 'var(--color-secondary)' : step > s.num ? 'var(--color-success)' : 'var(--text-tertiary)',
+                  color: step === s.num ? 'var(--secondary)' : step > s.num ? 'var(--success)' : 'var(--text-tertiary)',
                   transition: 'color 0.3s ease'
                 }}>
                   {s.label}
@@ -268,7 +268,7 @@ const CheckoutPage: React.FC = () => {
               {i < steps.length - 1 && (
                 <div style={{
                   flex: 1, height: 2, margin: '0 12px', marginBottom: 24,
-                  background: step > s.num ? 'var(--color-success)' : 'var(--border-color, #e2e8f0)',
+                  background: step > s.num ? 'var(--success)' : 'var(--border, #e2e8f0)',
                   transition: 'background 0.5s ease', maxWidth: 120
                 }} />
               )}
@@ -279,7 +279,7 @@ const CheckoutPage: React.FC = () => {
         {/* Step 1: Shipping */}
         {step === 1 && (
           <div className="checkout-step-content fade-slide-up">
-            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Shipping Address</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Shipping Address</h3>
 
             {savedAddresses.length > 0 && !showNewAddr && (
               <div className="saved-addresses" style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
@@ -288,20 +288,20 @@ const CheckoutPage: React.FC = () => {
                     className="card"
                     style={{
                       display: 'flex', gap: 16, padding: 16, cursor: 'pointer',
-                      border: selectedAddrId === addr.id ? '2px solid var(--color-secondary)' : '2px solid var(--border-color, #e2e8f0)',
+                      border: selectedAddrId === addr.id ? '2px solid var(--secondary)' : '2px solid var(--border, #e2e8f0)',
                       transition: 'border-color 0.2s', alignItems: 'flex-start'
                     }}
                     onClick={() => { setSelectedAddrId(addr.id); setUseNewAddr(false); }}>
                     <div style={{
-                      width: 20, height: 20, borderRadius: '50%', border: `2px solid ${selectedAddrId === addr.id ? 'var(--color-secondary)' : 'var(--text-tertiary)'}`,
+                      width: 20, height: 20, borderRadius: '50%', border: `2px solid ${selectedAddrId === addr.id ? 'var(--secondary)' : 'var(--text-tertiary)'}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2, transition: 'border-color 0.2s'
                     }}>
                       {selectedAddrId === addr.id && (
-                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--color-secondary)' }} />
+                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--secondary)' }} />
                       )}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{addr.label}</div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>{addr.label}</div>
                       <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                         <div>{addr.street}</div>
                         <div>{addr.city}, {addr.state} {addr.zip}</div>
@@ -314,7 +314,7 @@ const CheckoutPage: React.FC = () => {
                         background: 'transparent', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 6,
                         color: 'var(--text-tertiary)', transition: 'color 0.15s'
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-error, #ef4444)'; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--error, #ef4444)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-tertiary)'; }}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -331,9 +331,9 @@ const CheckoutPage: React.FC = () => {
               style={{
                 display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', width: '100%',
                 background: showNewAddr ? 'var(--bg-container, #f8fafc)' : 'transparent',
-                border: `1px dashed ${showNewAddr ? 'var(--color-secondary)' : 'var(--border-color, #e2e8f0)'}`,
+                border: `1px dashed ${showNewAddr ? 'var(--secondary)' : 'var(--border, #e2e8f0)'}`,
                 borderRadius: 12, cursor: 'pointer', fontSize: 14, fontWeight: 500,
-                color: showNewAddr ? 'var(--color-secondary)' : 'var(--text-secondary)',
+                color: showNewAddr ? 'var(--secondary)' : 'var(--text-secondary)',
                 transition: 'all 0.2s', marginBottom: showNewAddr ? 16 : 0
               }}
             >
@@ -348,32 +348,32 @@ const CheckoutPage: React.FC = () => {
             {showNewAddr && (
               <div className="new-addr-form card" style={{ padding: 24, marginTop: 0 }}>
                 <div className="form-group" style={{ marginBottom: 16 }}>
-                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Street Address</label>
+                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Street Address</label>
                   <input className="form-input" type="text" value={newAddr.street} onChange={(e) => setNewAddr({ ...newAddr, street: e.target.value })}
-                    placeholder="123 Main Street, Apt 4B" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none', transition: 'border-color 0.2s' }} />
+                    placeholder="123 Main Street, Apt 4B" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none', transition: 'border-color 0.2s' }} />
                 </div>
                 <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>City</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>City</label>
                     <input className="form-input" type="text" value={newAddr.city} onChange={(e) => setNewAddr({ ...newAddr, city: e.target.value })} placeholder="New York"
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>State</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>State</label>
                     <input className="form-input" type="text" value={newAddr.state} onChange={(e) => setNewAddr({ ...newAddr, state: e.target.value })} placeholder="NY"
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                 </div>
                 <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>ZIP Code</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>ZIP Code</label>
                     <input className="form-input" type="text" value={newAddr.zip} onChange={(e) => setNewAddr({ ...newAddr, zip: e.target.value })} placeholder="10001"
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Phone</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Phone</label>
                     <input className="form-input" type="tel" value={newAddr.phone} onChange={(e) => setNewAddr({ ...newAddr, phone: e.target.value })} placeholder="+1 (555) 000-0000"
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                 </div>
                 <button className="btn btn-primary" onClick={handleSaveNewAddress} style={{ padding: '12px 28px', fontSize: 14, fontWeight: 600, borderRadius: 10 }}>
@@ -384,13 +384,13 @@ const CheckoutPage: React.FC = () => {
 
             {/* Gift Options */}
             <div className="gift-options card" style={{ padding: 20, marginTop: 20 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--text-primary)' }}>Gift Options</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>Gift Options</h3>
               <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
                 <div style={{ position: 'relative' }}>
                   <input type="checkbox" checked={giftWrap} onChange={(e) => setGiftWrap(e.target.checked)} style={{ display: 'none' }} />
                   <div style={{
                     width: 44, height: 24, borderRadius: 12, cursor: 'pointer', transition: 'background 0.2s',
-                    background: giftWrap ? 'var(--color-secondary)' : 'var(--border-color, #cbd5e1)',
+                    background: giftWrap ? 'var(--secondary)' : 'var(--border, #cbd5e1)',
                     position: 'relative'
                   }} onClick={(e) => { e.preventDefault(); setGiftWrap(!giftWrap); }}>
                     <div style={{
@@ -400,16 +400,16 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>This order contains a gift</div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text)' }}>This order contains a gift</div>
                   <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>+${GIFT_WRAP_PRICE.toFixed(2)} gift wrap fee</div>
                 </div>
               </label>
               {giftWrap && (
                 <div style={{ marginTop: 16 }}>
-                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Gift message (optional)</label>
+                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Gift message (optional)</label>
                   <textarea className="form-input" placeholder="Write a gift message..." value={giftMessage}
                     onChange={(e) => setGiftMessage(e.target.value)} rows={3} maxLength={200}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
                   <div style={{ fontSize: 12, color: 'var(--text-tertiary)', textAlign: 'right', marginTop: 4 }}>{giftMessage.length}/200</div>
                 </div>
               )}
@@ -427,14 +427,14 @@ const CheckoutPage: React.FC = () => {
         {/* Step 2: Payment */}
         {step === 2 && (
           <div className="checkout-step-content fade-slide-up">
-            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Payment Method</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Payment Method</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
               {PAYMENT_METHODS.map((pm) => (
                 <div key={pm.id}
                   className="card payment-glow-card"
                   style={{
                     display: 'flex', alignItems: 'center', gap: 14, padding: 16, cursor: 'pointer',
-                    border: paymentMethod === pm.id ? '2px solid var(--color-secondary)' : '2px solid var(--border-color, #e2e8f0)',
+                    border: paymentMethod === pm.id ? '2px solid var(--secondary)' : '2px solid var(--border, #e2e8f0)',
                     transition: 'all 0.25s ease',
                     boxShadow: hoveredPayment === pm.id
                       ? '0 0 20px rgba(99,102,241,0.15), 0 4px 16px rgba(99,102,241,0.1)'
@@ -447,20 +447,20 @@ const CheckoutPage: React.FC = () => {
                   onMouseEnter={() => setHoveredPayment(pm.id)}
                   onMouseLeave={() => setHoveredPayment(null)}>
                   <div style={{
-                    width: 20, height: 20, borderRadius: '50%', border: `2px solid ${paymentMethod === pm.id ? 'var(--color-secondary)' : 'var(--text-tertiary)'}`,
+                    width: 20, height: 20, borderRadius: '50%', border: `2px solid ${paymentMethod === pm.id ? 'var(--secondary)' : 'var(--text-tertiary)'}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'border-color 0.2s'
                   }}>
                     {paymentMethod === pm.id && (
-                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--color-secondary)' }} />
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--secondary)' }} />
                     )}
                   </div>
                   <span style={{ fontSize: 24 }}>{pm.icon}</span>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{pm.label}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{pm.label}</div>
                     <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{pm.desc}</div>
                   </div>
                   {paymentMethod === pm.id && (
-                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--color-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                     </div>
                   )}
@@ -470,32 +470,32 @@ const CheckoutPage: React.FC = () => {
 
             {paymentMethod === 'credit_card' && (
               <div className="card" style={{ padding: 24 }}>
-                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Card Details</h4>
+                <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Card Details</h4>
                 <div className="form-group" style={{ marginBottom: 16 }}>
-                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Card Number</label>
+                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Card Number</label>
                   <input className="form-input" type="text" value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim())}
                     placeholder="1234 5678 9012 3456" maxLength={19}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none', letterSpacing: 1 }} />
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none', letterSpacing: 1 }} />
                 </div>
                 <div className="form-group" style={{ marginBottom: 16 }}>
-                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Name on Card</label>
+                  <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Name on Card</label>
                   <input className="form-input" type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="John Doe"
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                    style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Expiry Date</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Expiry Date</label>
                     <input className="form-input" type="text" value={cardExpiry} onChange={(e) => {
                       const v = e.target.value.replace(/\D/g, '');
                       if (v.length <= 4) setCardExpiry(v.length > 2 ? v.slice(0, 2) + '/' + v.slice(2) : v);
                     }} placeholder="MM/YY" maxLength={5}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>CVV</label>
+                    <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>CVV</label>
                     <input className="form-input" type="text" value={cardCvv} onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="123" maxLength={4}
-                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 14, outline: 'none' }} />
+                      style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                 </div>
               </div>
@@ -504,10 +504,10 @@ const CheckoutPage: React.FC = () => {
             {paymentMethod === 'cod' && (
               <div className="card" style={{ padding: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
                 </div>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Cash on Delivery</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Cash on Delivery</div>
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Pay with cash when your order is delivered. No additional fees.</div>
                 </div>
               </div>
@@ -518,7 +518,7 @@ const CheckoutPage: React.FC = () => {
                 onClick={() => handleBack(1)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
-                  border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
+                  border: '1px solid var(--border, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
                   fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', transition: 'all 0.2s'
                 }}
               >
@@ -536,14 +536,14 @@ const CheckoutPage: React.FC = () => {
         {/* Step 3: Review */}
         {step === 3 && (
           <div className="checkout-step-content fade-slide-up">
-            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Review Your Order</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Review Your Order</h3>
 
             <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Shipping Address</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Shipping Address</span>
                 <button onClick={() => handleBack(1)} style={{
                   background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                  color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
+                  color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: 4
                 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                   Edit
@@ -560,10 +560,10 @@ const CheckoutPage: React.FC = () => {
 
             <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16, animationDelay: '0.1s' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Payment Method</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Payment Method</span>
                 <button onClick={() => handleBack(2)} style={{
                   background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                  color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
+                  color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: 4
                 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                   Edit
@@ -579,10 +579,10 @@ const CheckoutPage: React.FC = () => {
             {giftWrap && (
               <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 16, animationDelay: '0.2s' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Gift Options</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>Gift Options</span>
                   <button onClick={() => handleBack(1)} style={{
                     background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                    color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', gap: 4
+                    color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: 4
                   }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                     Edit
@@ -599,7 +599,7 @@ const CheckoutPage: React.FC = () => {
             )}
 
             <div className="card slide-in-right-card" style={{ padding: 20, marginBottom: 24, animationDelay: '0.3s' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Items ({cart.items.length})</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>Items ({cart.items.length})</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {cart.items.map((item) => (
                   <div key={item._id} style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
@@ -608,12 +608,12 @@ const CheckoutPage: React.FC = () => {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Link href={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}
-                        style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        style={{ fontSize: 14, fontWeight: 500, color: 'var(--text)', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {item.name}
                       </Link>
                       <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>Qty: {item.quantity}</div>
                     </div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', flexShrink: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', flexShrink: 0 }}>
                       ${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}
                     </div>
                   </div>
@@ -626,7 +626,7 @@ const CheckoutPage: React.FC = () => {
                 onClick={() => handleBack(2)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
-                  border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
+                  border: '1px solid var(--border, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
                   fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', transition: 'all 0.2s'
                 }}
               >
@@ -673,7 +673,7 @@ const CheckoutPage: React.FC = () => {
 
       {/* Sidebar */}
       <div className="order-summary">
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Order Summary</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Order Summary</h2>
 
         {/* Item Thumbnails */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -698,7 +698,7 @@ const CheckoutPage: React.FC = () => {
         </div>
         <div className="summary-row">
           <span>Shipping</span>
-          <span style={{ color: shippingPrice === 0 ? 'var(--color-success)' : 'inherit', fontWeight: shippingPrice === 0 ? 600 : 400 }}>
+          <span style={{ color: shippingPrice === 0 ? 'var(--success)' : 'inherit', fontWeight: shippingPrice === 0 ? 600 : 400 }}>
             {shippingPrice === 0 ? 'FREE' : `$${shippingPrice.toFixed(2)}`}
           </span>
         </div>
@@ -713,19 +713,19 @@ const CheckoutPage: React.FC = () => {
           </div>
         )}
         {promoDiscount > 0 && (
-          <div className="summary-row" style={{ color: 'var(--color-success)' }}>
+          <div className="summary-row" style={{ color: 'var(--success)' }}>
             <span>Promo Discount</span>
             <span>-${promoDiscountValue.toFixed(2)}</span>
           </div>
         )}
         {applyWallet && walletApplied > 0 && (
-          <div className="summary-row" style={{ color: 'var(--color-success)' }}>
+          <div className="summary-row" style={{ color: 'var(--success)' }}>
             <span>Gift Card</span>
             <span>-${walletApplied.toFixed(2)}</span>
           </div>
         )}
         {cart.totalPrice < 50 && cart.totalPrice > 0 && (
-          <div style={{ fontSize: 12, color: 'var(--color-secondary)', marginTop: 4, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ fontSize: 12, color: 'var(--secondary)', marginTop: 4, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
             Add ${(50 - cart.totalPrice).toFixed(2)} more for FREE shipping
           </div>
@@ -737,12 +737,12 @@ const CheckoutPage: React.FC = () => {
 
         {/* Promo Code */}
         <div style={{ marginTop: 20, padding: 16, background: 'var(--bg-container, #f8fafc)', borderRadius: 10 }}>
-          <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>Promo Code</label>
+          <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>Promo Code</label>
           <div style={{ display: 'flex', gap: 8 }}>
             <input type="text" placeholder="Enter code" value={promoCode}
               onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); }}
               style={{
-                flex: 1, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color, #e2e8f0)',
+                flex: 1, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border, #e2e8f0)',
                 fontSize: 13, outline: 'none', textTransform: 'uppercase', letterSpacing: 0.5
               }} />
             <button className="btn btn-primary" onClick={handleApplyPromo}
@@ -750,9 +750,9 @@ const CheckoutPage: React.FC = () => {
               Apply
             </button>
           </div>
-          {promoError && <div style={{ fontSize: 12, color: 'var(--color-error, #ef4444)', marginTop: 8 }}>{promoError}</div>}
+          {promoError && <div style={{ fontSize: 12, color: 'var(--error, #ef4444)', marginTop: 8 }}>{promoError}</div>}
           {promoDiscount > 0 && !promoError && (
-            <div style={{ fontSize: 12, color: 'var(--color-success)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ fontSize: 12, color: 'var(--success)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
               Coupon applied! ${promoDiscountValue.toFixed(2)} off
             </div>
@@ -769,7 +769,7 @@ const CheckoutPage: React.FC = () => {
               <input type="checkbox" checked={applyWallet} onChange={(e) => setApplyWallet(e.target.checked)} style={{ display: 'none' }} />
               <div style={{
                 width: 40, height: 22, borderRadius: 11, cursor: 'pointer', transition: 'background 0.2s',
-                background: applyWallet ? 'var(--color-success)' : 'var(--border-color, #cbd5e1)',
+                background: applyWallet ? 'var(--success)' : 'var(--border, #cbd5e1)',
                 position: 'relative'
               }} onClick={(e) => { e.preventDefault(); setApplyWallet(!applyWallet); }}>
                 <div style={{
@@ -779,29 +779,29 @@ const CheckoutPage: React.FC = () => {
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Use Gift Card Balance</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Use Gift Card Balance</div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Available: ${walletBalance.toFixed(2)}</div>
             </div>
           </label>
         )}
 
         {/* Security Badges */}
-        <div style={{ marginTop: 24, padding: '16px 0', borderTop: '1px solid var(--border-color, #e2e8f0)' }}>
+        <div style={{ marginTop: 24, padding: '16px 0', borderTop: '1px solid var(--border, #e2e8f0)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'var(--text-secondary)' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
               <span>Secure checkout with SSL encryption</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'var(--text-secondary)' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               <span>Free 30-day returns on all eligible items</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'var(--text-secondary)' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
               </svg>

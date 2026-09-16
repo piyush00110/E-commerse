@@ -127,24 +127,24 @@ const CartPage: React.FC = () => {
       <div className="cart-items">
         <div className="reveal" style={{ marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', margin: 0 }}>
               My Bag
             </h1>
-            <span className="badge" style={{ fontSize: 14, fontWeight: 600, padding: '4px 12px', borderRadius: 20, background: 'var(--color-primary, #6366f1)', color: '#fff' }}>
+            <span className="badge" style={{ fontSize: 14, fontWeight: 600, padding: '4px 12px', borderRadius: 20, background: 'var(--primary, #6366f1)', color: '#fff' }}>
               {cart.totalItems} {cart.totalItems === 1 ? 'item' : 'items'}
             </span>
           </div>
 
-          <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderRadius: 16, background: 'var(--bg-container, #f8fafc)', border: '1px solid var(--border-color, #e2e8f0)' }}>
+          <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderRadius: 16, background: 'var(--bg-container, #f8fafc)', border: '1px solid var(--border, #e2e8f0)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--color-primary, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--primary, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   Home - 123 Main Street, Apt 4B
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
@@ -152,38 +152,38 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button style={{ background: 'none', border: 'none', color: 'var(--color-primary, #6366f1)', fontWeight: 600, fontSize: 13, cursor: 'pointer', padding: '6px 12px', borderRadius: 8, transition: 'background 0.15s', flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-container, #f1f5f9)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}>
+            <button style={{ background: 'none', border: 'none', color: 'var(--primary, #6366f1)', fontWeight: 600, fontSize: 13, cursor: 'pointer', padding: '6px 12px', borderRadius: 8, transition: 'background 0.15s', flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-container, #f1f5f9)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}>
               Change
             </button>
           </div>
 
           {freeShippingRemaining > 0 && (
-            <div className="card" style={{ marginTop: 12, padding: 16, borderRadius: 16, background: 'var(--bg-container, #f8fafc)', border: '1px solid var(--border-color, #e2e8f0)' }}>
+            <div className="card" style={{ marginTop: 12, padding: 16, borderRadius: 16, background: 'var(--bg-container, #f8fafc)', border: '1px solid var(--border, #e2e8f0)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success, #22c55e)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success, #22c55e)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="1" y="3" width="15" height="13" />
                   <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
                   <circle cx="5.5" cy="18.5" r="2.5" />
                   <circle cx="18.5" cy="18.5" r="2.5" />
                 </svg>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
-                  Add <span style={{ color: 'var(--color-success, #22c55e)' }}>${freeShippingRemaining.toFixed(2)}</span> more for FREE delivery
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>
+                  Add <span style={{ color: 'var(--success, #22c55e)' }}>${freeShippingRemaining.toFixed(2)}</span> more for FREE delivery
                 </span>
               </div>
-              <div style={{ height: 6, borderRadius: 3, background: 'var(--border-color, #e2e8f0)', overflow: 'hidden' }}>
-                <div className="shipping-progress-bar" style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, var(--color-primary, #6366f1), var(--color-success, #22c55e))', width: `${freeShippingProgress}%`, transition: 'width 0.6s ease' }} />
+              <div style={{ height: 6, borderRadius: 3, background: 'var(--border, #e2e8f0)', overflow: 'hidden' }}>
+                <div className="shipping-progress-bar" style={{ height: '100%', borderRadius: 3, background: 'linear-gradient(90deg, var(--primary, #6366f1), var(--success, #22c55e))', width: `${freeShippingProgress}%`, transition: 'width 0.6s ease' }} />
               </div>
             </div>
           )}
           {freeShippingRemaining <= 0 && (
             <div className="card" style={{ marginTop: 12, padding: 16, borderRadius: 16, background: 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03))', border: '1px solid rgba(34,197,94,0.2)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 24, height: 24, borderRadius: 12, background: 'var(--color-success, #22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 24, height: 24, borderRadius: 12, background: 'var(--success, #22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-success, #22c55e)' }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--success, #22c55e)' }}>
                   You qualify for FREE delivery!
                 </span>
               </div>
@@ -229,40 +229,40 @@ const CartPage: React.FC = () => {
 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <Link href={`/products/${typeof item.product === 'string' ? item.product : item.product?._id ?? ''}`}
-                  style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15, textDecoration: 'none', display: 'block', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  style={{ color: 'var(--text)', fontWeight: 600, fontSize: 15, textDecoration: 'none', display: 'block', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {item.name}
                 </Link>
                 <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 2 }}>
                   <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: 6, background: 'var(--bg-container, #f1f5f9)', fontSize: 11, fontWeight: 500 }}>Size: M</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>
                     ${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}
                   </span>
                   <span style={{ fontSize: 13, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>
                     ${(originalPrice * (item.quantity ?? 0)).toFixed(2)}
                   </span>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-error, #ef4444)', background: 'rgba(239,68,68,0.08)', padding: '2px 6px', borderRadius: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--error, #ef4444)', background: 'rgba(239,68,68,0.08)', padding: '2px 6px', borderRadius: 4 }}>
                     -{itemDiscount.toFixed(0)}%
                   </span>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-color, #e2e8f0)' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border, #e2e8f0)' }}>
                     <button
                       onClick={() => handleQuantityChange(item._id ?? '', item.quantity - 1)}
                       disabled={item.quantity <= 1}
                       style={{
                         width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
                         background: 'var(--bg-container, #f8fafc)', border: 'none', cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
-                        fontSize: 14, color: item.quantity <= 1 ? 'var(--text-tertiary)' : 'var(--text-primary)', opacity: item.quantity <= 1 ? 0.4 : 1,
+                        fontSize: 14, color: item.quantity <= 1 ? 'var(--text-tertiary)' : 'var(--text)', opacity: item.quantity <= 1 ? 0.4 : 1,
                         transition: 'background 0.15s'
                       }}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12" /></svg>
                     </button>
                     <span style={{
-                      width: 40, textAlign: 'center', fontSize: 14, fontWeight: 700, color: 'var(--text-primary)',
+                      width: 40, textAlign: 'center', fontSize: 14, fontWeight: 700, color: 'var(--text)',
                       lineHeight: '34px',
                       animation: isBouncing ? 'cartBounce 0.4s ease' : 'none'
                     }}>
@@ -273,7 +273,7 @@ const CartPage: React.FC = () => {
                       style={{
                         width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
                         background: 'var(--bg-container, #f8fafc)', border: 'none', cursor: 'pointer',
-                        fontSize: 14, color: 'var(--text-primary)', transition: 'background 0.15s'
+                        fontSize: 14, color: 'var(--text)', transition: 'background 0.15s'
                       }}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
@@ -287,7 +287,7 @@ const CartPage: React.FC = () => {
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                       background: 'transparent', border: 'none', cursor: 'pointer',
-                      fontSize: 12, color: 'var(--color-error, #ef4444)', fontWeight: 500,
+                      fontSize: 12, color: 'var(--error, #ef4444)', fontWeight: 500,
                       padding: '6px 8px', borderRadius: 8, transition: 'background 0.15s',
                       animation: hoveredRemoveId === item._id ? 'shake 0.4s ease' : 'none'
                     }}
@@ -308,19 +308,19 @@ const CartPage: React.FC = () => {
 
         <div className="card reveal" style={{ marginTop: 16, padding: 16, borderRadius: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary, #6366f1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #6366f1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 5H3" />
               <path d="M21 12H3" />
               <path d="M21 19H3" />
             </svg>
-            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Apply Coupon</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Apply Coupon</span>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               type="text"
               placeholder="Enter coupon code"
               className="form-input"
-              style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid var(--border-color, #e2e8f0)', fontSize: 13, background: 'var(--bg-container, #f8fafc)' }}
+              style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 13, background: 'var(--bg-container, #f8fafc)' }}
             />
             <button className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
               Apply
@@ -328,15 +328,15 @@ const CartPage: React.FC = () => {
           </div>
           <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {['SAVE10', 'FIRST20', 'FLAT50'].map((coupon) => (
-              <div key={coupon} className="coupon-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px dashed var(--color-primary, #6366f1)', background: 'rgba(99,102,241,0.04)', cursor: 'pointer', transition: 'background 0.15s' }}
+              <div key={coupon} className="coupon-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px dashed var(--primary, #6366f1)', background: 'rgba(99,102,241,0.04)', cursor: 'pointer', transition: 'background 0.15s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.04)'; }}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary, #6366f1)" strokeWidth="2">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #6366f1)" strokeWidth="2">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                   <line x1="7" y1="7" x2="7.01" y2="7" />
                 </svg>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-primary, #6366f1)' }}>{coupon}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary, #6366f1)' }}>{coupon}</span>
               </div>
             ))}
           </div>
@@ -350,13 +350,13 @@ const CartPage: React.FC = () => {
               </svg>
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Use SuperCoins</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Use SuperCoins</div>
               <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>You have 250 SuperCoins available</div>
             </div>
           </div>
           <div style={{ position: 'relative', width: 44, height: 24 }}>
             <input type="checkbox" id="supercoins-toggle" style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} />
-            <label htmlFor="supercoins-toggle" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: 'var(--border-color, #e2e8f0)', borderRadius: 12, transition: 'background 0.3s' }}>
+            <label htmlFor="supercoins-toggle" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: 'var(--border, #e2e8f0)', borderRadius: 12, transition: 'background 0.3s' }}>
               <span style={{ position: 'absolute', content: '', height: 18, width: 18, left: 3, bottom: 3, background: '#fff', borderRadius: '50%', transition: 'transform 0.3s', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
             </label>
           </div>
@@ -364,7 +364,7 @@ const CartPage: React.FC = () => {
       </div>
 
       <div className="order-summary reveal">
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>Order Summary</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: 'var(--text)' }}>Order Summary</h2>
 
         <div className="summary-row">
           <span style={{ fontSize: 14 }}>Subtotal ({cart.totalItems} items)</span>
@@ -372,11 +372,11 @@ const CartPage: React.FC = () => {
         </div>
         <div className="summary-row">
           <span style={{ fontSize: 14 }}>Discount</span>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-success, #22c55e)' }}>-${discount.toFixed(2)}</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--success, #22c55e)' }}>-${discount.toFixed(2)}</span>
         </div>
         <div className="summary-row">
           <span style={{ fontSize: 14 }}>Delivery</span>
-          <span style={{ fontSize: 14, fontWeight: 600, color: shipping === 0 ? 'var(--color-success, #22c55e)' : 'var(--text-primary)' }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: shipping === 0 ? 'var(--success, #22c55e)' : 'var(--text)' }}>
             {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
           </span>
         </div>
@@ -385,14 +385,14 @@ const CartPage: React.FC = () => {
           <span style={{ fontSize: 14, fontWeight: 600 }}>${tax.toFixed(2)}</span>
         </div>
 
-        <div style={{ height: 1, background: 'var(--border-color, #e2e8f0)', margin: '12px 0' }} />
+        <div style={{ height: 1, background: 'var(--border, #e2e8f0)', margin: '12px 0' }} />
 
         <div className="summary-row total">
           <span style={{ fontSize: 16, fontWeight: 700 }}>Total</span>
-          <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>${(total - discount).toFixed(2)}</span>
+          <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>${(total - discount).toFixed(2)}</span>
         </div>
 
-        <div style={{ fontSize: 12, color: 'var(--color-success, #22c55e)', fontWeight: 500, textAlign: 'right', marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: 'var(--success, #22c55e)', fontWeight: 500, textAlign: 'right', marginBottom: 12 }}>
           You save ${discount.toFixed(2)} on this order!
         </div>
 
@@ -431,7 +431,7 @@ const CartPage: React.FC = () => {
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ width: '100%', height: 140, background: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: 140, background: 'var(--bg-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                   <img
                     src={product.images?.[0] || ''}
                     alt={product.name}

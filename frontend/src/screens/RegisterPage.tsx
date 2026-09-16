@@ -28,7 +28,7 @@ const RegisterPage: React.FC = () => {
     if (score <= 2) return { score, label: 'Weak', color: '#ef4444' };
     if (score <= 3) return { score, label: 'Fair', color: '#f59e0b' };
     if (score <= 4) return { score, label: 'Good', color: '#06b6d4' };
-    return { score, label: 'Strong', color: '#10b981' };
+    return { score, label: 'Strong', color: 'var(--success)' };
   }, [password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,7 +153,7 @@ const RegisterPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '48px',
-        background: '#f8fafc',
+        background: 'var(--bg-card)',
       }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
           <div className="card" style={{
@@ -166,12 +166,12 @@ const RegisterPage: React.FC = () => {
                 fontSize: '28px',
                 fontWeight: 800,
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                color: '#0f172a',
+                color: 'var(--text)',
                 marginBottom: '8px',
               }}>
                 Create Account
               </h2>
-              <p style={{ color: '#64748b', fontSize: '14px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                 Start your shopping journey today
               </p>
             </div>
@@ -179,10 +179,10 @@ const RegisterPage: React.FC = () => {
             {error && (
               <div style={{
                 padding: '12px 16px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
+                background: 'var(--error-light)',
+                border: '1px solid var(--error-light)',
                 borderRadius: '8px',
-                color: '#dc2626',
+                color: 'var(--error)',
                 fontSize: '13px',
                 marginBottom: '20px',
                 display: 'flex',
@@ -217,11 +217,11 @@ const RegisterPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '12px 16px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     transition: 'all 0.2s',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -249,11 +249,11 @@ const RegisterPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '12px 16px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     transition: 'all 0.2s',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -283,11 +283,11 @@ const RegisterPage: React.FC = () => {
                     style={{
                       width: '100%',
                       padding: '12px 48px 12px 16px',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid var(--border)',
                       borderRadius: '8px',
                       fontSize: '14px',
-                      background: '#ffffff',
-                      color: '#0f172a',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text)',
                       transition: 'all 0.2s',
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -305,7 +305,7 @@ const RegisterPage: React.FC = () => {
                       border: 'none',
                       cursor: 'pointer',
                       padding: '4px',
-                      color: '#94a3b8',
+                      color: 'var(--text-tertiary)',
                       display: 'flex',
                       alignItems: 'center',
                     }}
@@ -338,7 +338,7 @@ const RegisterPage: React.FC = () => {
                             flex: 1,
                             height: '4px',
                             borderRadius: '2px',
-                            background: level <= passwordStrength.score ? passwordStrength.color : '#e2e8f0',
+                            background: level <= passwordStrength.score ? passwordStrength.color : 'var(--border)',
                             transition: 'all 0.3s',
                           }}
                         />
@@ -376,11 +376,11 @@ const RegisterPage: React.FC = () => {
                     style={{
                       width: '100%',
                       padding: '12px 48px 12px 16px',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid var(--border)',
                       borderRadius: '8px',
                       fontSize: '14px',
-                      background: '#ffffff',
-                      color: '#0f172a',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text)',
                       transition: 'all 0.2s',
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -398,7 +398,7 @@ const RegisterPage: React.FC = () => {
                       border: 'none',
                       cursor: 'pointer',
                       padding: '4px',
-                      color: '#94a3b8',
+                      color: 'var(--text-tertiary)',
                       display: 'flex',
                       alignItems: 'center',
                     }}
@@ -434,7 +434,7 @@ const RegisterPage: React.FC = () => {
                 style={{
                   width: '100%',
                   padding: '14px 24px',
-                  background: loading ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  background: loading ? 'var(--text-tertiary)' : 'linear-gradient(135deg, #6366f1, #4f46e5)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
@@ -461,11 +461,11 @@ const RegisterPage: React.FC = () => {
               marginTop: '28px',
               textAlign: 'center',
               fontSize: '14px',
-              color: '#64748b',
+              color: 'var(--text-secondary)',
             }}>
               Already have an account?{' '}
               <Link href="/login" style={{
-                color: '#6366f1',
+                color: 'var(--primary)',
                 fontWeight: 600,
                 textDecoration: 'none',
                 transition: 'color 0.2s',

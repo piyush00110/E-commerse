@@ -122,8 +122,8 @@ const AccountPage: React.FC = () => {
       <div style={{
         width: '40px',
         height: '40px',
-        border: '3px solid #e2e8f0',
-        borderTopColor: '#6366f1',
+        border: '3px solid var(--border)',
+        borderTopColor: 'var(--primary)',
         borderRadius: '50%',
         animation: 'spin 1s linear infinite',
       }} />
@@ -158,7 +158,7 @@ const AccountPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#ffffff',
+          color: 'var(--bg-card)',
           fontSize: '22px',
           fontWeight: 700,
           fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -171,14 +171,14 @@ const AccountPage: React.FC = () => {
             fontSize: '28px',
             fontWeight: 800,
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            color: '#0f172a',
+            color: 'var(--text)',
             margin: 0,
           }}>
             My Account
           </h1>
           <p style={{
             fontSize: '14px',
-            color: '#64748b',
+            color: 'var(--text-secondary)',
             margin: '4px 0 0',
           }}>
             Manage your profile and preferences
@@ -197,7 +197,7 @@ const AccountPage: React.FC = () => {
           padding: '28px',
           borderRadius: '12px',
           boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-          background: '#ffffff',
+          background: 'var(--bg-card)',
         }}>
           <div style={{
             display: 'flex',
@@ -209,7 +209,7 @@ const AccountPage: React.FC = () => {
               fontSize: '18px',
               fontWeight: 700,
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              color: '#0f172a',
+              color: 'var(--text)',
               margin: 0,
             }}>
               Profile
@@ -219,13 +219,13 @@ const AccountPage: React.FC = () => {
               className="btn btn-ghost"
               style={{
                 padding: '8px 16px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
-                background: '#ffffff',
+                background: 'var(--bg-card)',
                 fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
-                color: '#64748b',
+                color: 'var(--text-secondary)',
                 transition: 'all 0.2s',
               }}
             >
@@ -260,7 +260,7 @@ const AccountPage: React.FC = () => {
                 alignItems: 'center',
                 gap: '16px',
                 padding: '20px',
-                background: '#f8fafc',
+                background: 'var(--bg-card)',
                 borderRadius: '12px',
                 marginBottom: '20px',
               }}>
@@ -272,7 +272,7 @@ const AccountPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#ffffff',
+                  color: 'var(--bg-card)',
                   fontSize: '18px',
                   fontWeight: 700,
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -283,14 +283,14 @@ const AccountPage: React.FC = () => {
                   <div style={{
                     fontSize: '16px',
                     fontWeight: 600,
-                    color: '#0f172a',
+                    color: 'var(--text)',
                     marginBottom: '2px',
                   }}>
                     {user.name}
                   </div>
                   <div style={{
                     fontSize: '13px',
-                    color: '#64748b',
+                    color: 'var(--text-secondary)',
                   }}>
                     {user.email}
                   </div>
@@ -306,10 +306,10 @@ const AccountPage: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     padding: '12px 0',
-                    borderBottom: '1px solid #f1f5f9',
+                    borderBottom: '1px solid var(--bg-container)',
                   }}>
-                    <span style={{ fontSize: '13px', color: '#64748b' }}>{item.label}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{item.value}</span>
+                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.label}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -334,11 +334,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -362,11 +362,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -378,7 +378,7 @@ const AccountPage: React.FC = () => {
                 style={{
                   padding: '10px 24px',
                   background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                  color: '#ffffff',
+                  color: 'var(--bg-card)',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '14px',
@@ -400,20 +400,20 @@ const AccountPage: React.FC = () => {
             padding: '28px',
             borderRadius: '12px',
             boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-            background: '#ffffff',
+            background: 'var(--bg-card)',
           }}>
             <h2 style={{
               fontSize: '18px',
               fontWeight: 700,
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              color: '#0f172a',
+              color: 'var(--text)',
               margin: '0 0 20px',
             }}>
               Quick Links
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { href: '/orders', icon: '📦', label: 'My Orders', count: orders.length, color: '#6366f1' },
+                { href: '/orders', icon: '📦', label: 'My Orders', count: orders.length, color: 'var(--primary)' },
                 { href: '/wishlist', icon: '❤️', label: 'My Wishlist', count: null, color: '#ef4444' },
                 { href: '/cart', icon: '🛒', label: 'Shopping Cart', count: null, color: '#06b6d4' },
               ].map((link) => (
@@ -422,10 +422,10 @@ const AccountPage: React.FC = () => {
                   href={link.href}
                   style={{
                     padding: '16px 20px',
-                    background: '#f8fafc',
+                    background: 'var(--bg-card)',
                     borderRadius: '12px',
-                    border: '1px solid #f1f5f9',
-                    color: '#0f172a',
+                    border: '1px solid var(--bg-container)',
+                    color: 'var(--text)',
                     fontWeight: 600,
                     fontSize: '14px',
                     textDecoration: 'none',
@@ -472,14 +472,14 @@ const AccountPage: React.FC = () => {
         padding: '28px',
         borderRadius: '12px',
         boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        background: '#ffffff',
+        background: 'var(--bg-card)',
         marginTop: '24px',
       }}>
         <h2 style={{
           fontSize: '18px',
           fontWeight: 700,
           fontFamily: "'Plus Jakarta Sans', sans-serif",
-          color: '#0f172a',
+          color: 'var(--text)',
           margin: '0 0 20px',
           display: 'flex',
           alignItems: 'center',
@@ -518,7 +518,7 @@ const AccountPage: React.FC = () => {
             </div>
             <div style={{
               fontSize: '13px',
-              color: '#64748b',
+              color: 'var(--text-secondary)',
               marginTop: '4px',
             }}>
               Available balance
@@ -540,11 +540,11 @@ const AccountPage: React.FC = () => {
               style={{
                 width: '120px',
                 padding: '12px 16px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 fontSize: '14px',
-                background: '#ffffff',
-                color: '#0f172a',
+                background: 'var(--bg-card)',
+                color: 'var(--text)',
                 outline: 'none',
               }}
             />
@@ -562,7 +562,7 @@ const AccountPage: React.FC = () => {
               style={{
                 padding: '12px 24px',
                 background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                color: '#ffffff',
+                color: 'var(--bg-card)',
                 border: 'none',
                 borderRadius: '8px',
                 fontSize: '14px',
@@ -584,7 +584,7 @@ const AccountPage: React.FC = () => {
         padding: '28px',
         borderRadius: '12px',
         boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        background: '#ffffff',
+        background: 'var(--bg-card)',
         marginTop: '24px',
       }}>
         <div style={{
@@ -597,7 +597,7 @@ const AccountPage: React.FC = () => {
             fontSize: '18px',
             fontWeight: 700,
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            color: '#0f172a',
+            color: 'var(--text)',
             margin: 0,
           }}>
             My Addresses
@@ -611,8 +611,8 @@ const AccountPage: React.FC = () => {
             className="btn btn-secondary"
             style={{
               padding: '8px 16px',
-              background: showAddrForm ? '#f1f5f9' : 'linear-gradient(135deg, #06b6d4, #0891b2)',
-              color: showAddrForm ? '#64748b' : '#ffffff',
+              background: showAddrForm ? 'var(--bg-container)' : 'linear-gradient(135deg, #06b6d4, #0891b2)',
+              color: showAddrForm ? 'var(--text-secondary)' : 'var(--bg-card)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '13px',
@@ -628,16 +628,16 @@ const AccountPage: React.FC = () => {
 
         {showAddrForm && (
           <div style={{
-            background: '#f8fafc',
+            background: 'var(--bg-card)',
             borderRadius: '12px',
             padding: '24px',
             marginBottom: '20px',
-            border: '1px solid #f1f5f9',
+            border: '1px solid var(--bg-container)',
           }}>
             <h3 style={{
               fontSize: '15px',
               fontWeight: 600,
-              color: '#0f172a',
+              color: 'var(--text)',
               margin: '0 0 16px',
             }}>
               {editAddrId ? 'Edit Address' : 'New Address'}
@@ -661,11 +661,11 @@ const AccountPage: React.FC = () => {
                 style={{
                   width: '100%',
                   padding: '10px 14px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid var(--border)',
                   borderRadius: '8px',
                   fontSize: '14px',
-                  background: '#ffffff',
-                  color: '#0f172a',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text)',
                   outline: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -691,11 +691,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -720,11 +720,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -751,11 +751,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -780,11 +780,11 @@ const AccountPage: React.FC = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    background: '#ffffff',
-                    color: '#0f172a',
+                    background: 'var(--bg-card)',
+                    color: 'var(--text)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -798,7 +798,7 @@ const AccountPage: React.FC = () => {
                 style={{
                   padding: '10px 24px',
                   background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                  color: '#ffffff',
+                  color: 'var(--bg-card)',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '14px',
@@ -815,13 +815,13 @@ const AccountPage: React.FC = () => {
                 className="btn btn-ghost"
                 style={{
                   padding: '10px 24px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid var(--border)',
                   borderRadius: '8px',
-                  background: '#ffffff',
+                  background: 'var(--bg-card)',
                   fontSize: '14px',
                   fontWeight: 500,
                   cursor: 'pointer',
-                  color: '#64748b',
+                  color: 'var(--text-secondary)',
                   transition: 'all 0.2s',
                 }}
               >
@@ -835,15 +835,15 @@ const AccountPage: React.FC = () => {
           <div className="empty-state" style={{
             textAlign: 'center',
             padding: '48px 24px',
-            background: '#f8fafc',
+            background: 'var(--bg-card)',
             borderRadius: '12px',
-            border: '1px dashed #e2e8f0',
+            border: '1px dashed var(--border)',
           }}>
             <div style={{
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              background: '#f1f5f9',
+              background: 'var(--bg-container)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -852,10 +852,10 @@ const AccountPage: React.FC = () => {
             }}>
               📍
             </div>
-            <p style={{ color: '#64748b', fontSize: '14px', margin: '0 0 8px' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 8px' }}>
               No saved addresses yet
             </p>
-            <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: '13px', margin: 0 }}>
               Add an address for faster checkout!
             </p>
           </div>
@@ -867,10 +867,10 @@ const AccountPage: React.FC = () => {
           }}>
             {addresses.map((addr) => (
               <div key={addr.id} style={{
-                border: '1px solid #f1f5f9',
+                border: '1px solid var(--bg-container)',
                 borderRadius: '12px',
                 padding: '20px',
-                background: '#f8fafc',
+                background: 'var(--bg-card)',
                 position: 'relative',
                 transition: 'all 0.2s',
               }}>
@@ -886,7 +886,7 @@ const AccountPage: React.FC = () => {
                     borderRadius: '20px',
                     fontSize: '12px',
                     fontWeight: 600,
-                    color: '#6366f1',
+                    color: 'var(--primary)',
                   }}>
                     {addr.label}
                   </div>
@@ -905,14 +905,14 @@ const AccountPage: React.FC = () => {
                   display: 'flex',
                   gap: '16px',
                   paddingTop: '12px',
-                  borderTop: '1px solid #e2e8f0',
+                  borderTop: '1px solid var(--border)',
                 }}>
                   <button
                     onClick={() => startEditAddress(addr)}
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#6366f1',
+                      color: 'var(--primary)',
                       fontSize: '13px',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -947,7 +947,7 @@ const AccountPage: React.FC = () => {
         padding: '28px',
         borderRadius: '12px',
         boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        background: '#ffffff',
+        background: 'var(--bg-card)',
         marginTop: '24px',
       }}>
         <div style={{
@@ -960,14 +960,14 @@ const AccountPage: React.FC = () => {
             fontSize: '18px',
             fontWeight: 700,
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            color: '#0f172a',
+            color: 'var(--text)',
             margin: 0,
           }}>
             Recent Orders
           </h2>
           {orders.length > 0 && (
             <Link href="/orders" style={{
-              color: '#6366f1',
+              color: 'var(--primary)',
               fontSize: '13px',
               fontWeight: 600,
               textDecoration: 'none',
@@ -981,15 +981,15 @@ const AccountPage: React.FC = () => {
           <div className="empty-state" style={{
             textAlign: 'center',
             padding: '48px 24px',
-            background: '#f8fafc',
+            background: 'var(--bg-card)',
             borderRadius: '12px',
-            border: '1px dashed #e2e8f0',
+            border: '1px dashed var(--border)',
           }}>
             <div style={{
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              background: '#f1f5f9',
+              background: 'var(--bg-container)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -998,10 +998,10 @@ const AccountPage: React.FC = () => {
             }}>
               📦
             </div>
-            <p style={{ color: '#64748b', fontSize: '14px', margin: '0 0 8px' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 8px' }}>
               No orders yet
             </p>
-            <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 16px' }}>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: '13px', margin: '0 0 16px' }}>
               Start shopping to see your orders here!
             </p>
             <Link
@@ -1011,7 +1011,7 @@ const AccountPage: React.FC = () => {
                 display: 'inline-block',
                 padding: '10px 24px',
                 background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                color: '#ffffff',
+                color: 'var(--bg-card)',
                 borderRadius: '8px',
                 fontSize: '14px',
                 fontWeight: 600,
@@ -1030,9 +1030,9 @@ const AccountPage: React.FC = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '16px 20px',
-                background: '#f8fafc',
+                background: 'var(--bg-card)',
                 borderRadius: '12px',
-                border: '1px solid #f1f5f9',
+                border: '1px solid var(--bg-container)',
                 transition: 'all 0.2s',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -1040,7 +1040,7 @@ const AccountPage: React.FC = () => {
                     width: '44px',
                     height: '44px',
                     borderRadius: '10px',
-                    background: order.isDelivered ? '#10b98115' : order.isPaid ? '#6366f115' : '#f59e0b15',
+                    background: order.isDelivered ? 'rgba(16,185,129,0.15)' : order.isPaid ? '#6366f115' : 'rgba(245,158,11,0.15)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1053,14 +1053,14 @@ const AccountPage: React.FC = () => {
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontSize: '14px',
                       fontWeight: 700,
-                      color: '#0f172a',
+                      color: 'var(--text)',
                       marginBottom: '2px',
                     }}>
                       #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}
                     </div>
                     <div style={{
                       fontSize: '12px',
-                      color: '#64748b',
+                      color: 'var(--text-secondary)',
                     }}>
                       {new Date(order.createdAt).toLocaleDateString()} · {order.items?.length} items
                     </div>
@@ -1070,7 +1070,7 @@ const AccountPage: React.FC = () => {
                   <div style={{
                     fontWeight: 700,
                     fontSize: '15px',
-                    color: '#0f172a',
+                    color: 'var(--text)',
                     marginBottom: '4px',
                   }}>
                     ${order.totalPrice?.toFixed(2) ?? '0.00'}

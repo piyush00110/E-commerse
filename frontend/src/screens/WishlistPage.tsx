@@ -50,14 +50,14 @@ const WishlistPage: React.FC = () => {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 32, fontWeight: 800, color: '#0f172a' }}>My Wishlist</h1>
+          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 32, fontWeight: 800, color: 'var(--text)' }}>My Wishlist</h1>
           {products.length > 0 && (
             <span className="badge badge-success" style={{ fontSize: 13, padding: '4px 12px' }}>
               {products.length} {products.length === 1 ? 'item' : 'items'}
             </span>
           )}
         </div>
-        <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>
           {products.length === 0 ? 'Save items you love to your wishlist.' : 'Items you&apos;ve saved for later.'}
         </p>
       </div>
@@ -65,8 +65,8 @@ const WishlistPage: React.FC = () => {
       {products.length === 0 ? (
         <div className="empty-state" style={{ textAlign: 'center', padding: '80px 24px' }}>
           <div style={{ fontSize: 72, marginBottom: 16 }}>{'\u{1F497}'}</div>
-          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Your wishlist is empty</h2>
-          <p style={{ color: '#64748b', marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
+          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>Your wishlist is empty</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
             Save items you love to your wishlist. Browse products and click the heart icon to add them.
           </p>
           <Link href="/products" className="btn btn-primary" style={{ textDecoration: 'none', display: 'inline-flex' }}>
@@ -83,7 +83,7 @@ const WishlistPage: React.FC = () => {
                 {/* Remove Button */}
                 <button onClick={() => handleRemove(product._id)} style={{
                   position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 9999,
-                  background: '#fff', border: '1px solid #e2e8f0', fontSize: 16, cursor: 'pointer',
+                  background: 'var(--bg-card)', border: '1px solid var(--border)', fontSize: 16, cursor: 'pointer',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)', zIndex: 2,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444',
                   transition: 'all 0.2s',
@@ -95,7 +95,7 @@ const WishlistPage: React.FC = () => {
                 {discount > 0 && (
                   <div style={{
                     position: 'absolute', top: 12, left: 12, padding: '3px 10px', borderRadius: 9999,
-                    background: '#dcfce7', color: '#10b981', fontSize: 11, fontWeight: 700, zIndex: 2,
+                    background: '#dcfce7', color: 'var(--success)', fontSize: 11, fontWeight: 700, zIndex: 2,
                   }}>
                     -{discount}%
                   </div>
@@ -104,7 +104,7 @@ const WishlistPage: React.FC = () => {
                 {/* Product Image */}
                 <Link href={`/products/${product._id}`} style={{ display: 'block' }}>
                   <div style={{
-                    aspectRatio: '1/1', background: '#f8fafc', display: 'flex',
+                    aspectRatio: '1/1', background: 'var(--bg-card)', display: 'flex',
                     alignItems: 'center', justifyContent: 'center', padding: 16,
                   }}>
                     <img src={(product.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>'))} alt={product.name}
@@ -116,7 +116,7 @@ const WishlistPage: React.FC = () => {
                 <div style={{ padding: '16px 16px 20px' }}>
                   <Link href={`/products/${product._id}`} style={{ textDecoration: 'none' }}>
                     <div style={{
-                      fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 8, lineHeight: 1.4,
+                      fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 8, lineHeight: 1.4,
                       display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                       minHeight: 40,
                     }}>
@@ -131,16 +131,16 @@ const WishlistPage: React.FC = () => {
                         <span key={s} style={{ fontSize: 12, color: s <= Math.round(product.rating) ? '#f59e0b' : '#d1d5db' }}>{'\u2605'}</span>
                       ))}
                     </div>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>({product.numReviews || 0})</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>({product.numReviews || 0})</span>
                   </div>
 
                   {/* Price */}
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
-                    <span style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    <span style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       ${(product.price ?? 0).toFixed(2)}
                     </span>
                     {product.comparePrice && (
-                      <span style={{ fontSize: 14, color: '#94a3b8', textDecoration: 'line-through' }}>
+                      <span style={{ fontSize: 14, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>
                         ${(product.comparePrice ?? 0).toFixed(2)}
                       </span>
                     )}

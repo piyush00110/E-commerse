@@ -849,13 +849,4 @@
   align-items: start;
 }
 
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  z-index: 10001;
-  transition: width 0.1s linear;
-  border-radius: 0 2px 2px 0;
-}
+

@@ -38,6 +38,15 @@
   --bg-glass: rgba(255, 255, 255, 0.8);
   --bg-glass-thick: rgba(255, 255, 255, 0.92);
 
+  /* === Surface Aliases (Material 3 style) === */
+  --surface: var(--bg-card);
+  --surface-dim: var(--bg-container);
+  --surface-container: var(--bg-container);
+  --surface-container-low: var(--bg-container-low);
+  --outline-variant: var(--border);
+  --tertiary-dim: color-mix(in srgb, var(--tertiary) 50%, transparent);
+  --secondary-dark: color-mix(in srgb, var(--secondary) 70%, black);
+
   /* === Text === */
   --text: #141b2b;
   --text-secondary: #474a58;
@@ -221,6 +230,9 @@
   --shadow-glow-lg: 0 0 40px rgba(255, 79, 128, 0.25);
   --shadow-card: 0 1px 3px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.03);
   --shadow-card-hover: 0 16px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,79,128,0.1);
+
+  --tertiary-dim: color-mix(in srgb, var(--tertiary) 50%, transparent);
+  --secondary-dark: color-mix(in srgb, var(--secondary) 70%, white);
 
   --bg-overlay: rgba(0, 0, 0, 0.7);
 }

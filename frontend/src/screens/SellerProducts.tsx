@@ -79,8 +79,8 @@ const SellerProducts: React.FC = () => {
     <div style={{ maxWidth: 1440, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)' }}>My Products</h1>
-          <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>{products.length} products in your store</p>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', fontFamily: 'var(--font-heading)' }}>My Products</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>{products.length} products in your store</p>
         </div>
         <Link href="/seller/products/add" className="btn btn-primary" style={{ textDecoration: 'none' }}>
           + Add Product
@@ -103,8 +103,8 @@ const SellerProducts: React.FC = () => {
       {products.length === 0 ? (
         <div className="empty-state" style={{ padding: 80 }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u{1F4E6}'}</div>
-          <h2 style={{ marginBottom: 8, color: '#0f172a' }}>No products yet</h2>
-          <p style={{ marginBottom: 24, color: '#64748b' }}>Start adding products to your store.</p>
+          <h2 style={{ marginBottom: 8, color: 'var(--text)' }}>No products yet</h2>
+          <p style={{ marginBottom: 24, color: 'var(--text-secondary)' }}>Start adding products to your store.</p>
           <Link href="/seller/products/add" className="btn btn-primary" style={{ textDecoration: 'none' }}>
             Add Your First Product
           </Link>
@@ -146,7 +146,7 @@ const SellerProducts: React.FC = () => {
                             className="form-input" style={{ width: 70 }}
                           />
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#64748b' }}>{p.rating?.toFixed(1)}</td>
+                        <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>{p.rating?.toFixed(1)}</td>
                         <td style={{ padding: '12px 16px' }}>
                           <span className={`badge ${p.countInStock > 0 ? 'badge-success' : 'badge-error'}`}>
                             {p.countInStock > 0 ? 'Active' : 'Out of Stock'}
@@ -164,19 +164,19 @@ const SellerProducts: React.FC = () => {
                     ) : (
                       <>
                         <td style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <img src={p.images?.[0] || ''} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain', background: '#f8fafc' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                          <img src={p.images?.[0] || ''} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain', background: 'var(--bg-card)' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: 14, color: '#0f172a' }}>{p.name}</div>
-                            <div style={{ fontSize: 12, color: '#64748b' }}>ID: {p._id.slice(-8)}</div>
+                            <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{p.name}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>ID: {p._id.slice(-8)}</div>
                           </div>
                         </td>
-                        <td style={{ padding: '12px 16px', fontWeight: 600, color: '#0f172a' }}>${p.price?.toFixed(2)}</td>
+                        <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>${p.price?.toFixed(2)}</td>
                         <td style={{ padding: '12px 16px' }}>
                           <span className={`badge ${p.countInStock < 10 ? 'badge-warning' : 'badge-success'}`}>
                             {p.countInStock}
                           </span>
                         </td>
-                        <td style={{ padding: '12px 16px', color: '#64748b' }}>
+                        <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>
                           {'\u2605'.repeat(Math.floor(p.rating || 0))}{'\u2606'.repeat(5 - Math.floor(p.rating || 0))}
                         </td>
                         <td style={{ padding: '12px 16px' }}>

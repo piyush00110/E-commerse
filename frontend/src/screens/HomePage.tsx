@@ -108,6 +108,7 @@ const HomePage: React.FC = () => {
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
   const [parallaxY, setParallaxY] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   const router = useRouter();
   const { showToast } = useToast();
   const containerRef = useScrollReveal({ stagger: 80 });
@@ -143,6 +144,11 @@ const HomePage: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -349,25 +355,30 @@ const HomePage: React.FC = () => {
                 marginBottom: 20,
               }}
             >
-              {['DD', 'HH', 'MM', 'SS'].map((unit, i) => (
-                <div
-                  key={unit}
-                  style={{
-                    background: 'rgba(0,0,0,0.3)',
-                    borderRadius: 8,
-                    padding: '8px 10px',
-                    textAlign: 'center',
-                    minWidth: 48,
-                  }}
-                >
-                  <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
-                    {String(Math.floor((Date.now() / 1000 / [86400, 3600, 60, 1][i]) % [365, 24, 60, 60][i])).padStart(2, '0')}
+              {['DD', 'HH', 'MM', 'SS'].map((unit, i) => {
+                const secs = [86400, 3600, 60, 1][i];
+                const mods = [365, 24, 60, 60][i];
+                const val = Math.floor((now / 1000 / secs) % mods);
+                return (
+                  <div
+                    key={unit}
+                    style={{
+                      background: 'rgba(0,0,0,0.3)',
+                      borderRadius: 8,
+                      padding: '8px 10px',
+                      textAlign: 'center',
+                      minWidth: 48,
+                    }}
+                  >
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+                      {String(val).padStart(2, '0')}
+                    </div>
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', marginTop: 2 }}>
+                      {unit}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', marginTop: 2 }}>
-                    {unit}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <h1 style={{

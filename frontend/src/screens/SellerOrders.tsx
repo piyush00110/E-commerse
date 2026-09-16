@@ -477,8 +477,8 @@ const SellerOrders: React.FC = () => {
     <div style={{ maxWidth: 1440, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)' }}>Seller Orders</h1>
-          <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>{orders.length} total orders</p>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', fontFamily: 'var(--font-heading)' }}>Seller Orders</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>{orders.length} total orders</p>
         </div>
         <button onClick={() => openPdfForm()} className="btn btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style={{ marginRight: 6 }}><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
@@ -495,7 +495,7 @@ const SellerOrders: React.FC = () => {
           <div className="card" style={{ padding: 32, maxWidth: 500, width: '90%', maxHeight: '90vh', overflowY: 'auto' }}
             onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>PDF Order Report</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)' }}>PDF Order Report</h2>
               <button onClick={() => setShowPdfForm(false)} className="btn btn-ghost btn-sm" style={{ fontSize: 20 }}>
                 {'\u2715'}
               </button>
@@ -598,17 +598,17 @@ const SellerOrders: React.FC = () => {
       {filteredOrders.length === 0 ? (
         <div className="empty-state" style={{ padding: 80 }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u{1F4ED}'}</div>
-          <h2 style={{ marginBottom: 8, color: '#0f172a' }}>No orders found</h2>
-          <p style={{ color: '#64748b' }}>Orders will appear here when customers make purchases.</p>
+          <h2 style={{ marginBottom: 8, color: 'var(--text)' }}>No orders found</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>Orders will appear here when customers make purchases.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {filteredOrders.map((order) => (
             <div key={order._id} className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 700, fontFamily: 'monospace', fontSize: 14, color: '#0f172a' }}>Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</span>
-                  <span style={{ fontSize: 13, color: '#64748b' }}>
+                  <span style={{ fontWeight: 700, fontFamily: 'monospace', fontSize: 14, color: 'var(--text)' }}>Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                     {new Date(order.createdAt).toLocaleDateString('en-US', {
                       year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
                     })}
@@ -636,25 +636,25 @@ const SellerOrders: React.FC = () => {
 
               <div style={{ padding: '12px 20px' }}>
                 {order.items?.map((item: OrderItem, idx: number) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < (order.items?.length || 0) - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < (order.items?.length || 0) - 1 ? '1px solid var(--bg-container)' : 'none' }}>
                     <img src={item.image || ''} alt="" style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{item.name}</div>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{item.name}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>${((item.price || 0) * (item.quantity || 0)).toFixed(2)}</div>
                   </div>
                 ))}
               </div>
 
-              <div style={{ padding: '12px 20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
-                <div style={{ fontSize: 13, color: '#64748b' }}>
+              <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)' }}>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                   {order.shippingAddress?.city}, {order.shippingAddress?.state}
                   <span className="badge badge-info" style={{ marginLeft: 8 }}>
                     {order.paymentMethod?.replace('_', ' ')}
                   </span>
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>${order.totalPrice?.toFixed(2)}</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>${order.totalPrice?.toFixed(2)}</div>
               </div>
             </div>
           ))}

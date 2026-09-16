@@ -95,24 +95,10 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
         display: 'flex',
         flexDirection: 'column',
         textDecoration: 'none',
-        background: '#fff',
-        border: '1px solid #e5e7eb',
-        borderRadius: 12,
-        overflow: 'hidden',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
         position: 'relative',
       }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.transform = 'scale(1.02)';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.10)';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.transform = 'scale(1)';
-        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
-      }}
     >
-      <div className="product-card-image" style={{ position: 'relative', overflow: 'hidden', aspectRatio: '1 / 1', background: '#f8f8f8' }}>
+      <div className="product-card-image" style={{ position: 'relative' }}>
         <img
           src={imageUrl}
           alt={product.name}
@@ -133,7 +119,7 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
           }}>
             {discount >= 5 && (
               <div className="badge badge-success" style={{
-                background: '#e74c3c',
+                background: 'var(--error)',
                 color: '#fff',
                 fontSize: 11,
                 fontWeight: 700,
@@ -146,8 +132,8 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
             )}
             {badge === 'bestseller' && (
               <div style={{
-                background: '#111',
-                color: '#fff',
+                background: 'var(--text)',
+                color: 'var(--text-inverse)',
                 fontSize: 10,
                 fontWeight: 700,
                 padding: '3px 8px',
@@ -160,7 +146,7 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
             )}
             {badge === 'amazons_choice' && (
               <div style={{
-                background: '#ff9900',
+                background: 'var(--warning)',
                 color: '#fff',
                 fontSize: 10,
                 fontWeight: 700,
@@ -187,13 +173,13 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
             height: 34,
             borderRadius: '50%',
             border: 'none',
-            background: '#fff',
+            background: 'var(--bg-card)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-            color: isWishlisted ? '#e74c3c' : '#666',
+            boxShadow: 'var(--shadow-sm)',
+            color: isWishlisted ? 'var(--error)' : 'var(--text-tertiary)',
             transition: 'color 0.2s ease, transform 0.15s ease',
           }}
           onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.12)')}
@@ -212,7 +198,7 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
           fontSize: 14,
           fontWeight: 500,
           lineHeight: 1.35,
-          color: '#1a1a1a',
+          color: 'var(--text)',
           margin: 0,
           display: '-webkit-box',
           WebkitLineClamp: 2,
@@ -228,44 +214,44 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: 4,
-            background: '#fef9c3',
+            background: 'var(--warning-light)',
             padding: '2px 8px',
             borderRadius: 20,
             width: 'fit-content',
             fontSize: 12,
             fontWeight: 600,
-            color: '#92400e',
+            color: 'var(--warning)',
           }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--rating-star)" stroke="var(--rating-star)" strokeWidth="1">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            <span style={{ color: '#1a1a1a' }}>{product.rating.toFixed(1)}</span>
-            <span style={{ color: '#9ca3af', fontWeight: 400 }}>({(product.numReviews ?? 0).toLocaleString()})</span>
+            <span style={{ color: 'var(--text)' }}>{product.rating.toFixed(1)}</span>
+            <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>({(product.numReviews ?? 0).toLocaleString()})</span>
           </div>
         )}
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap', marginTop: 2 }}>
-          <span className="product-card-price" style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a' }}>
+          <span className="product-card-price" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>
             ${(product.price ?? 0).toFixed(2)}
           </span>
           {product.comparePrice && product.comparePrice > product.price && (
-            <span className="product-card-compare" style={{ fontSize: 13, color: '#9ca3af', textDecoration: 'line-through' }}>
+            <span className="product-card-compare" style={{ fontSize: 13, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>
               ${(product.comparePrice ?? 0).toFixed(2)}
             </span>
           )}
           {discount >= 5 && (
-            <span className="product-card-discount" style={{ fontSize: 12, fontWeight: 600, color: '#16a34a' }}>
+            <span className="product-card-discount" style={{ fontSize: 12, fontWeight: 600, color: 'var(--success)' }}>
               -{discount}%
             </span>
           )}
         </div>
 
-        <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 500, marginTop: 1 }}>
+        <div style={{ fontSize: 12, color: 'var(--success)', fontWeight: 500, marginTop: 1 }}>
           FREE delivery
         </div>
 
         {product.countInStock <= 5 && product.countInStock > 0 && (
-          <p style={{ fontSize: 12, color: '#dc2626', margin: 0, fontWeight: 500 }}>
+          <p style={{ fontSize: 12, color: 'var(--error)', margin: 0, fontWeight: 500 }}>
             Only {product.countInStock} left in stock - order soon.
           </p>
         )}

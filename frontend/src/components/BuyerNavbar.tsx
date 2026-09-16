@@ -365,7 +365,7 @@ const BuyerNavbar: React.FC = () => {
                   <div className="mini-cart-items">
                     {cartItems.slice(0, 4).map((item: any, idx: number) => (
                       <div key={idx} className="mini-cart-item" onClick={() => { setShowMiniCart(false); router.push('/cart'); }}>
-                        <img src={item.image || item.images?.[0]} alt={item.name} className="mini-cart-img" />
+                        <img src={item.image || item.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="%23e5e7eb"><rect width="60" height="60" rx="8"/><text x="30" y="34" text-anchor="middle" fill="%239ca3af" font-size="10">No Img</text></svg>')} alt={item.name} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="%23e5e7eb"><rect width="60" height="60" rx="8"/><text x="30" y="34" text-anchor="middle" fill="%239ca3af" font-size="10">No Img</text></svg>'); }} className="mini-cart-img" />
                         <div className="mini-cart-info">
                           <div className="mini-cart-name">{item.name}</div>
                           <div className="mini-cart-qty">Qty: {item.quantity}</div>

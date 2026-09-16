@@ -97,16 +97,16 @@ const SellerAddProduct: React.FC = () => {
     return (
       <div className="empty-state" style={{ maxWidth: 600, margin: '80px auto', padding: 60 }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>{'\u2705'}</div>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0f172a', marginBottom: 8 }}>Product Added!</h1>
-        <p style={{ color: '#64748b' }}>Redirecting to your products...</p>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Product Added!</h1>
+        <p style={{ color: 'var(--text-secondary)' }}>Redirecting to your products...</p>
       </div>
     );
   }
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)', marginBottom: 4 }}>Add New Product</h1>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 32 }}>List a new product in your store</p>
+      <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', fontFamily: 'var(--font-heading)', marginBottom: 4 }}>Add New Product</h1>
+      <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 32 }}>List a new product in your store</p>
 
       <div className="card" style={{ padding: 32 }}>
         {error && (
@@ -116,7 +116,7 @@ const SellerAddProduct: React.FC = () => {
         )}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 32 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Basic Information</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>Basic Information</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">Product Name *</label>
@@ -147,7 +147,7 @@ const SellerAddProduct: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: 32 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Pricing</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>Pricing</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Selling Price *</label>
@@ -165,7 +165,7 @@ const SellerAddProduct: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: 32 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Inventory</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>Inventory</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Stock Quantity *</label>
@@ -177,7 +177,7 @@ const SellerAddProduct: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: 32 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Images</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>Images</h2>
             <div className="form-group">
               <label className="form-label">Image URL</label>
               <input type="url" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })}
@@ -186,7 +186,7 @@ const SellerAddProduct: React.FC = () => {
           </div>
 
           <div style={{ marginBottom: 32 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #e2e8f0' }}>Features</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>Features</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {form.features.map((feat, idx) => (
                 <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -202,7 +202,7 @@ const SellerAddProduct: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 12, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', gap: 12, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
             <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
               {submitting ? 'Adding Product...' : 'Add Product to Store'}
             </button>

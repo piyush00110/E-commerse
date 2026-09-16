@@ -69,13 +69,13 @@ const OrdersPage: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {[1, 2, 3].map((i) => (
             <div key={i} className="card" style={{ padding: 24, animation: 'pulse 2s infinite' }}>
-              <div style={{ height: 20, background: '#e2e8f0', borderRadius: 8, width: '40%', marginBottom: 12 }} />
-              <div style={{ height: 16, background: '#e2e8f0', borderRadius: 8, width: '60%', marginBottom: 16 }} />
+              <div style={{ height: 20, background: 'var(--bg-container)', borderRadius: 8, width: '40%', marginBottom: 12 }} />
+              <div style={{ height: 16, background: 'var(--bg-container)', borderRadius: 8, width: '60%', marginBottom: 16 }} />
               <div style={{ display: 'flex', gap: 12 }}>
-                <div style={{ width: 60, height: 60, background: '#e2e8f0', borderRadius: 8 }} />
+                <div style={{ width: 60, height: 60, background: 'var(--bg-container)', borderRadius: 8 }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ height: 14, background: '#e2e8f0', borderRadius: 8, width: '70%', marginBottom: 6 }} />
-                  <div style={{ height: 12, background: '#e2e8f0', borderRadius: 8, width: '40%' }} />
+                  <div style={{ height: 14, background: 'var(--bg-container)', borderRadius: 8, width: '70%', marginBottom: 6 }} />
+                  <div style={{ height: 12, background: 'var(--bg-container)', borderRadius: 8, width: '40%' }} />
                 </div>
               </div>
             </div>
@@ -89,8 +89,8 @@ const OrdersPage: React.FC = () => {
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 24px', fontFamily: "'Inter', sans-serif" }}>
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 32, fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>My Orders</h1>
-        <p style={{ color: '#64748b', fontSize: 14 }}>
+        <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 32, fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>My Orders</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
           {orders.length === 0 ? 'You haven\'t placed any orders yet.' : `${orders.length} total ${orders.length === 1 ? 'order' : 'orders'}`}
         </p>
       </div>
@@ -98,8 +98,8 @@ const OrdersPage: React.FC = () => {
       {orders.length === 0 ? (
         <div className="empty-state" style={{ textAlign: 'center', padding: '80px 24px' }}>
           <div style={{ fontSize: 72, marginBottom: 16 }}>{'\u{1F4ED}'}</div>
-          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>No orders yet</h2>
-          <p style={{ color: '#64748b', marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
+          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>No orders yet</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
             You haven&apos;t placed any orders yet. Start shopping to see your orders here.
           </p>
           <Link href="/products" className="btn btn-primary" style={{ textDecoration: 'none', display: 'inline-flex' }}>
@@ -123,10 +123,10 @@ const OrdersPage: React.FC = () => {
                 {/* Order Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
                   <div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>
+                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
                       Order #{order._id.slice(-8).toUpperCase()}
                     </div>
-                    <div style={{ fontSize: 13, color: '#64748b' }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                       Placed on {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                   </div>
@@ -134,7 +134,7 @@ const OrdersPage: React.FC = () => {
                     <span className={statusClass(order)}>
                       {statusLabel(order)}
                     </span>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       ${order.totalPrice?.toFixed(2) ?? '0.00'}
                     </div>
                   </div>
@@ -144,12 +144,12 @@ const OrdersPage: React.FC = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                   {order.items?.slice(0, 3).map((item, idx) => (
                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <img src={item.image || ''} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain', background: '#f8fafc', border: '1px solid #e2e8f0' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                      <img src={item.image || ''} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain', background: 'var(--bg-container)', border: '1px solid var(--border)' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
                       <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{item.name}</span>
-                        <div style={{ fontSize: 12, color: '#64748b' }}>Qty: {item.quantity}</div>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{item.name}</span>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
                       </div>
-                      <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</div>
                     </div>
                   ))}
                   {order.items.length > 3 && (
@@ -160,8 +160,8 @@ const OrdersPage: React.FC = () => {
                 </div>
 
                 {/* Footer */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingTop: 12, borderTop: '1px solid #f1f5f9' }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: '#64748b' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingTop: 12, borderTop: '1px solid var(--border-light)' }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--text-secondary)' }}>
                     <span>{order.paymentMethod?.replace('_', ' ')}</span>
                     <span style={{ color: '#cbd5e1' }}>{'\u2022'}</span>
                     <span>{order.shippingAddress?.city || 'N/A'}</span>
@@ -179,7 +179,7 @@ const OrdersPage: React.FC = () => {
 
                 {/* Progress Bar */}
                 {!order.isDelivered && order.status !== 'cancelled' && (
-                  <div style={{ marginTop: 16, padding: 16, background: '#f8fafc', borderRadius: 12 }}>
+                  <div style={{ marginTop: 16, padding: 16, background: 'var(--bg-container)', borderRadius: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
                       {steps.map((step, idx) => {
                         const isComplete = idx <= currentIdx;
@@ -198,7 +198,7 @@ const OrdersPage: React.FC = () => {
                               </div>
                               <div style={{
                                 fontSize: 11, fontWeight: isCurrent ? 700 : 500,
-                                color: isComplete ? '#0f172a' : '#94a3b8',
+                                color: isComplete ? 'var(--text)' : 'var(--text-tertiary)',
                               }}>{step}</div>
                             </div>
                             {idx < steps.length - 1 && (

@@ -99,8 +99,8 @@ const LoginPage: React.FC = () => {
           transition: all 0.2s ease;
         }
         .guest-btn:hover {
-          border-color: #6366f1;
-          color: #6366f1;
+          border-color: var(--primary);
+          color: var(--primary);
           background: #f5f3ff;
           transform: translateY(-1px);
           box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
@@ -178,7 +178,7 @@ const LoginPage: React.FC = () => {
             width: '72px',
             height: '72px',
             borderRadius: '16px',
-            background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+            background: 'linear-gradient(135deg, var(--primary), #06b6d4)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -231,7 +231,7 @@ const LoginPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '48px',
-        background: '#f8fafc',
+        background: 'var(--bg-card)',
       }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
           <div className="card form-animate" style={{
@@ -244,12 +244,12 @@ const LoginPage: React.FC = () => {
                 fontSize: '28px',
                 fontWeight: 800,
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                color: '#0f172a',
+                color: 'var(--text)',
                 marginBottom: '8px',
               }}>
                 Welcome Back
               </h2>
-              <p style={{ color: '#64748b', fontSize: '14px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                 Sign in to continue to ShopSmart
               </p>
             </div>
@@ -259,10 +259,10 @@ const LoginPage: React.FC = () => {
                 className={errorShake ? 'shake-error' : ''}
                 style={{
                   padding: '12px 16px',
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
+                  background: 'var(--error-light)',
+                  border: '1px solid var(--error-light)',
                   borderRadius: '8px',
-                  color: '#dc2626',
+                  color: 'var(--error)',
                   fontSize: '13px',
                   marginBottom: '20px',
                   display: 'flex',
@@ -287,13 +287,13 @@ const LoginPage: React.FC = () => {
                       display: 'block',
                       fontSize: emailFocused || email ? '11px' : '13px',
                       fontWeight: 600,
-                      color: emailFocused ? '#6366f1' : '#374151',
+                      color: emailFocused ? 'var(--primary)' : '#374151',
                       marginBottom: '6px',
                       position: emailFocused || email ? 'absolute' : 'relative',
                       top: emailFocused || email ? '-2px' : '0',
                       left: '16px',
                       zIndex: emailFocused || email ? 1 : 0,
-                      background: emailFocused || email ? '#f8fafc' : 'transparent',
+                      background: emailFocused || email ? 'var(--bg-card)' : 'transparent',
                       padding: emailFocused || email ? '0 4px' : '0',
                       transition: 'all 0.2s ease',
                       transformOrigin: 'left',
@@ -313,11 +313,11 @@ const LoginPage: React.FC = () => {
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      border: `1px solid ${emailFocused ? '#6366f1' : '#e2e8f0'}`,
+                      border: `1px solid ${emailFocused ? 'var(--primary)' : 'var(--border)'}`,
                       borderRadius: '8px',
                       fontSize: '14px',
-                      background: '#ffffff',
-                      color: '#0f172a',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text)',
                       transition: 'all 0.2s ease',
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -335,13 +335,13 @@ const LoginPage: React.FC = () => {
                       display: 'block',
                       fontSize: passwordFocused || password ? '11px' : '13px',
                       fontWeight: 600,
-                      color: passwordFocused ? '#6366f1' : '#374151',
+                      color: passwordFocused ? 'var(--primary)' : '#374151',
                       marginBottom: '6px',
                       position: passwordFocused || password ? 'absolute' : 'relative',
                       top: passwordFocused || password ? '-2px' : '0',
                       left: '16px',
                       zIndex: passwordFocused || password ? 1 : 0,
-                      background: passwordFocused || password ? '#f8fafc' : 'transparent',
+                      background: passwordFocused || password ? 'var(--bg-card)' : 'transparent',
                       padding: passwordFocused || password ? '0 4px' : '0',
                       transition: 'all 0.2s ease',
                       transformOrigin: 'left',
@@ -362,11 +362,11 @@ const LoginPage: React.FC = () => {
                       style={{
                         width: '100%',
                         padding: '12px 48px 12px 16px',
-                        border: `1px solid ${passwordFocused ? '#6366f1' : '#e2e8f0'}`,
+                        border: `1px solid ${passwordFocused ? 'var(--primary)' : 'var(--border)'}`,
                         borderRadius: '8px',
                         fontSize: '14px',
-                        background: '#ffffff',
-                        color: '#0f172a',
+                        background: 'var(--bg-card)',
+                        color: 'var(--text)',
                         transition: 'all 0.2s ease',
                         outline: 'none',
                         boxSizing: 'border-box',
@@ -385,13 +385,13 @@ const LoginPage: React.FC = () => {
                         border: 'none',
                         cursor: 'pointer',
                         padding: '4px',
-                        color: '#94a3b8',
+                        color: 'var(--text-tertiary)',
                         display: 'flex',
                         alignItems: 'center',
                         transition: 'color 0.2s',
                       }}
-                      onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#6366f1'; }}
-                      onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#94a3b8'; }}
+                      onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'var(--primary)'; }}
+                      onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'var(--text-tertiary)'; }}
                     >
                       {showPassword ? (
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -416,7 +416,7 @@ const LoginPage: React.FC = () => {
                 style={{
                   width: '100%',
                   padding: '14px 24px',
-                  background: loading ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  background: loading ? 'var(--text-tertiary)' : 'linear-gradient(135deg, var(--primary), #4f46e5)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
@@ -459,9 +459,9 @@ const LoginPage: React.FC = () => {
               margin: '20px 0',
               gap: '12px',
             }}>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-              <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>or</span>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 500 }}>or</span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
             </div>
 
             <button
@@ -472,12 +472,12 @@ const LoginPage: React.FC = () => {
                 width: '100%',
                 padding: '12px 24px',
                 background: 'transparent',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 fontSize: '14px',
                 fontWeight: 500,
                 cursor: 'pointer',
-                color: '#64748b',
+                color: 'var(--text-secondary)',
                 transition: 'all 0.2s ease',
                 fontFamily: "'Inter', sans-serif",
               }}
@@ -489,11 +489,11 @@ const LoginPage: React.FC = () => {
               marginTop: '28px',
               textAlign: 'center',
               fontSize: '14px',
-              color: '#64748b',
+              color: 'var(--text-secondary)',
             }}>
               Don&apos;t have an account?{' '}
               <Link href="/register" style={{
-                color: '#6366f1',
+                color: 'var(--primary)',
                 fontWeight: 600,
                 textDecoration: 'none',
                 transition: 'color 0.2s',
