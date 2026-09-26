@@ -117,6 +117,7 @@ const OrderDetailPage: React.FC = () => {
   const [trackingNumber, setTrackingNumber] = useState('');
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('user');
     if (!stored) { router.push('/login'); return; }
     if (!id) { router.push('/orders'); return; }
@@ -136,7 +137,7 @@ const OrderDetailPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id]);
+  }, [id, router, showToast]);
 
   if (loading) {
     return (

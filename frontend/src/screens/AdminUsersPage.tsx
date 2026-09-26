@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+import React, { useState, useEffect, useCallback } from 'react';
 import { adminAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -17,20 +18,21 @@ const AdminUsersPage: React.FC = () => {
   const [newAdmin, setNewAdmin] = useState({ name: '', email: '', password: '' });
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await adminAPI.getUsers();
       setUsers(res.data.data || []);
-    } catch (err: any) {
-      showToast(err?.response?.data?.message || 'Failed to load users', 'error');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load users';
+      showToast(msg, 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {

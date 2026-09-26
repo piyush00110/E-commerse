@@ -4,9 +4,31 @@ import './globals.css';
 
 export const dynamic = 'force-dynamic';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shopsmart.example.com';
+
 export const metadata: Metadata = {
-  title: 'ShopSmart - Modern E-Commerce',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'ShopSmart - Modern E-Commerce',
+    template: '%s | ShopSmart',
+  },
   description: 'Your one-stop shop for electronics, fashion, home goods and more.',
+  icons: { icon: '/icon.svg' },
+  openGraph: {
+    type: 'website',
+    siteName: 'ShopSmart',
+    title: 'ShopSmart - Modern E-Commerce',
+    description: 'Your one-stop shop for electronics, fashion, home goods and more.',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'ShopSmart - Modern E-Commerce',
+    description: 'Your one-stop shop for electronics, fashion, home goods and more.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {

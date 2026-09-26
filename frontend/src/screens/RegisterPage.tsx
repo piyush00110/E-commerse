@@ -35,6 +35,20 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    if (cleanName.length < 2) {
+      setError('Please enter your full name.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -43,8 +57,10 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await authAPI.register({ name, email, password });
-      localStorage.setItem('user', JSON.stringify(res.data.data));
+      const res = await authAPI.register({ name: cleanName, email: cleanEmail, password });
+      try {
+        if (typeof window !== 'undefined') localStorage.setItem('user', JSON.stringify(res.data.data));
+      } catch { /* ignore */ }
       router.push('/');
     } catch (err: unknown) {
       const msg =

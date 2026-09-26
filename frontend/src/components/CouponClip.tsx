@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 
 interface Coupon {
@@ -18,16 +19,26 @@ const AVAILABLE_COUPONS: Coupon[] = [
 ];
 
 const getAppliedCoupons = (): Coupon[] => {
-  try { return JSON.parse(localStorage.getItem('clippedCoupons') || '[]'); } catch { return []; }
+  try {
+    if (typeof window === 'undefined') return [];
+    return JSON.parse(localStorage.getItem('clippedCoupons') || '[]');
+  } catch { return []; }
 };
 
 const saveAppliedCoupons = (coupons: Coupon[]) => {
-  localStorage.setItem('clippedCoupons', JSON.stringify(coupons));
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('clippedCoupons', JSON.stringify(coupons));
+  } catch { /* storage unavailable */ }
 };
 
 const CouponClip: React.FC<Props> = ({ productPrice, productName }) => {
-  const [clipped, setClipped] = useState<Coupon[]>(getAppliedCoupons);
+  const [clipped, setClipped] = useState<Coupon[]>([]);
   const [showAll, setShowAll] = useState(false);
+
+  React.useEffect(() => {
+    setClipped(getAppliedCoupons());
+  }, []);
 
   const eligibleCoupons = AVAILABLE_COUPONS.filter(
     (c) => !c.minPurchase || productPrice >= c.minPurchase

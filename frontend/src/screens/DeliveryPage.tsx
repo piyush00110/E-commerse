@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '../services/api';
@@ -41,22 +41,24 @@ const DeliveryPage: React.FC = () => {
   const driver = selectedDriver;
   const truck = TRUCKS[DELIVERY_DRIVERS.indexOf(driver) % TRUCKS.length];
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) { router.push('/login'); return; }
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const res = await orderAPI.getAll();
       const all = (res.data?.data || res.data || []) as DeliveryOrder[];
       setShipped(all.filter((o) => o.status === 'shipped' || o.status === 'processing'));
-    } catch (e: any) {
-      showToast(e?.message || 'Failed to load deliveries', 'error');
+    } catch (e: unknown) {
+      const msg = (e as { message?: string })?.message || 'Failed to load deliveries';
+      showToast(msg, 'error');
     }
     finally { setLoading(false); }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem('user');
+    if (!stored) { router.push('/login'); return; }
+    fetchOrders();
+  }, [fetchOrders, router]);
 
   const handleMarkDelivered = async (orderId: string) => {
     setMarkingId(orderId);

@@ -10,23 +10,23 @@ const Footer: React.FC = () => {
       <div className="footer-grid">
         <div className="footer-column">
           <h4 className="footer-col-title">Get to Know Us</h4>
-          <Link href="/about" className="footer-link">About Us</Link>
-          <Link href="/careers" className="footer-link">Careers</Link>
-          <Link href="/press" className="footer-link">Press Releases</Link>
-          <Link href="/cares" className="footer-link">ShopSmart Cares</Link>
+          <Link href="/help" className="footer-link">About Us</Link>
+          <Link href="/sell" className="footer-link">Careers</Link>
+          <Link href="/help" className="footer-link">Press Releases</Link>
+          <Link href="/help" className="footer-link">ShopSmart Cares</Link>
         </div>
         <div className="footer-column">
           <h4 className="footer-col-title">Make Money with Us</h4>
           <Link href="/seller/products/add" className="footer-link">Sell products</Link>
-          <Link href="/affiliate" className="footer-link">Become an Affiliate</Link>
-          <Link href="/advertise" className="footer-link">Advertise Your Products</Link>
-          <Link href="/publish" className="footer-link">Self-Publish with Us</Link>
+          <Link href="/sell" className="footer-link">Become an Affiliate</Link>
+          <Link href="/sell" className="footer-link">Advertise Your Products</Link>
+          <Link href="/sell" className="footer-link">Self-Publish with Us</Link>
         </div>
         <div className="footer-column">
           <h4 className="footer-col-title">Let Us Help You</h4>
           <Link href="/account" className="footer-link">Your Account</Link>
           <Link href="/cart" className="footer-link">Your Cart</Link>
-          <Link href="/returns" className="footer-link">Return Centre</Link>
+          <Link href="/orders" className="footer-link">Return Centre</Link>
           <Link href="/help" className="footer-link">Help & Support</Link>
         </div>
         <div className="footer-column">

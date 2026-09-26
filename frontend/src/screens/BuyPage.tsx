@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,11 +15,17 @@ interface SavedAddress extends Address {
 const STORAGE_KEY = 'savedAddresses';
 
 const loadAddresses = (): SavedAddress[] => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  try {
+    if (typeof window === 'undefined') return [];
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch { return []; }
 };
 
 const saveAddresses = (addrs: SavedAddress[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(addrs));
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(addrs));
+  } catch { /* storage unavailable */ }
 };
 
 const EMPTY_ADDRESS: Address = { street: '', city: '', state: '', zip: '', country: 'US', phone: '' };
@@ -56,7 +63,10 @@ const BuyPage: React.FC = () => {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoError, setPromoError] = useState('');
   const [walletBalance, setWalletBalance] = useState(() => {
-    try { return Number(localStorage.getItem('walletBalance')) || 0; } catch { return 0; }
+    try {
+      if (typeof window === 'undefined') return 0;
+      return Number(localStorage.getItem('walletBalance')) || 0;
+    } catch { return 0; }
   });
   const [applyWallet, setApplyWallet] = useState(false);
 

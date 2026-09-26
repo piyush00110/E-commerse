@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -49,7 +49,16 @@ const ShippingDashboard: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const fetchOrders = useCallback(async () => {
+    try {
+      const res = await orderAPI.getAll();
+      setOrders(res.data.data || []);
+    } catch { showToast('Failed to load orders', 'error'); }
+    finally { setLoading(false); }
+  }, [showToast]);
+
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('user');
     if (!stored) { router.push('/login'); return; }
     try {
@@ -60,15 +69,7 @@ const ShippingDashboard: React.FC = () => {
       return;
     }
     fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      const res = await orderAPI.getAll();
-      setOrders(res.data.data || []);
-    } catch { showToast('Failed to load orders', 'error'); }
-    finally { setLoading(false); }
-  };
+  }, [fetchOrders, router, showToast]);
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -98,7 +99,7 @@ const ShippingDashboard: React.FC = () => {
     cancelled: orders.filter((o) => o.status === 'cancelled').length,
   }), [orders]);
 
-  const getTabOrders = (tab: ShipTab) => {
+  const getTabOrders = useCallback((tab: ShipTab) => {
     switch (tab) {
       case 'pickup': return orders.filter((o) => o.status === 'pending');
       case 'pack': return orders.filter((o) => o.status === 'processing');
@@ -106,7 +107,7 @@ const ShippingDashboard: React.FC = () => {
       case 'deliver': return orders.filter((o) => o.status === 'delivered');
       default: return orders;
     }
-  };
+  }, [orders]);
 
   const filteredOrders = useMemo(() => {
     let result = getTabOrders(activeTab);
@@ -119,7 +120,7 @@ const ShippingDashboard: React.FC = () => {
       );
     }
     return result;
-  }, [activeTab, orders, searchQuery]);
+  }, [activeTab, getTabOrders, searchQuery]);
 
   const driver = DELIVERY_DRIVERS[selectedDriverIdx];
   const routeOrders = orders.filter((o) =>

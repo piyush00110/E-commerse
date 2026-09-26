@@ -5,10 +5,45 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authAPI } from '../services/api';
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 60_000;
+
+function safeRedirect(raw: string | null): string {
+  if (!raw) return '/';
+  // Only allow same-origin relative paths (blocks open-redirect attacks).
+  if (!raw.startsWith('/') || raw.startsWith('//') || raw.includes('://')) return '/';
+  if (raw.startsWith('/manage') || raw.startsWith('/shipping') || raw.startsWith('/delivery')) return '/';
+  return raw.slice(0, 200);
+}
+
+function lockoutKey(email: string): string {
+  return `loginLockout:${email.trim().toLowerCase()}`;
+}
+
+function readLockout(email: string): { attempts: number; lockedUntil: number } {
+  try {
+    if (typeof window === 'undefined') return { attempts: 0, lockedUntil: 0 };
+    const raw = localStorage.getItem(lockoutKey(email));
+    if (!raw) return { attempts: 0, lockedUntil: 0 };
+    const parsed = JSON.parse(raw) as { attempts?: number; lockedUntil?: number };
+    return { attempts: Number(parsed.attempts) || 0, lockedUntil: Number(parsed.lockedUntil) || 0 };
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+}
+
+function writeLockout(email: string, attempts: number, lockedUntil: number) {
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(lockoutKey(email), JSON.stringify({ attempts, lockedUntil }));
+  } catch { /* ignore */ }
+}
+
 const LoginPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+  const redirect = safeRedirect(searchParams.get('redirect'));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +53,8 @@ const LoginPage: React.FC = () => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [parallaxY, setParallaxY] = useState(0);
   const [errorShake, setErrorShake] = useState(false);
+  const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
+  const [lockedSeconds, setLockedSeconds] = useState(0);
   const brandingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,20 +76,58 @@ const LoginPage: React.FC = () => {
     }
   }, [error]);
 
+  useEffect(() => {
+    if (lockedSeconds <= 0) return;
+    const timer = setTimeout(() => setLockedSeconds((s) => Math.max(0, s - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [lockedSeconds]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setAttemptsLeft(null);
 
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(cleanEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    const lock = readLockout(cleanEmail);
+    if (lock.lockedUntil > Date.now()) {
+      const secs = Math.ceil((lock.lockedUntil - Date.now()) / 1000);
+      setLockedSeconds(secs);
+      setError(`Too many failed attempts. Try again in ${secs} seconds.`);
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await authAPI.login({ email, password });
-      localStorage.setItem('user', JSON.stringify(res.data.data));
+      const res = await authAPI.login({ email: cleanEmail, password });
+      writeLockout(cleanEmail, 0, 0);
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(res.data.data));
+        }
+      } catch { /* ignore */ }
       router.push(redirect);
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Login failed';
-      setError(msg);
+      const attempts = lock.attempts + 1;
+      if (attempts >= MAX_ATTEMPTS) {
+        writeLockout(cleanEmail, 0, Date.now() + LOCKOUT_MS);
+        setLockedSeconds(Math.ceil(LOCKOUT_MS / 1000));
+        setError('Too many failed attempts. Account locked for 60 seconds.');
+      } else {
+        writeLockout(cleanEmail, attempts, 0);
+        const left = MAX_ATTEMPTS - attempts;
+        setAttemptsLeft(left);
+        // Generic message — never reveal whether the email exists.
+        setError(`Invalid email or password. ${left} ${left === 1 ? 'attempt' : 'attempts'} remaining.`);
+      }
     } finally {
       setLoading(false);
     }
@@ -304,6 +379,8 @@ const LoginPage: React.FC = () => {
                   <input
                     className="form-input"
                     type="email"
+                    autoComplete="email"
+                    maxLength={254}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onFocus={() => setEmailFocused(true)}
@@ -353,6 +430,8 @@ const LoginPage: React.FC = () => {
                     <input
                       className="form-input"
                       type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      maxLength={128}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       onFocus={() => setPasswordFocused(true)}
@@ -409,10 +488,17 @@ const LoginPage: React.FC = () => {
                 </div>
               </div>
 
+              {(attemptsLeft !== null && attemptsLeft <= 2) || lockedSeconds > 0 ? (
+                <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 12, textAlign: 'center' }}>
+                  {lockedSeconds > 0
+                    ? `Locked — retry in ${lockedSeconds}s`
+                    : 'Hint: check your email spelling and Caps Lock.'}
+                </div>
+              ) : null}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
-                disabled={loading}
+                disabled={loading || lockedSeconds > 0}
                 style={{
                   width: '100%',
                   padding: '14px 24px',

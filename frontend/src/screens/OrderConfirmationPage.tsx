@@ -26,9 +26,19 @@ const OrderConfirmationPage: React.FC = () => {
   const { showToast } = useToast();
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [customerName, setCustomerName] = useState('Customer');
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
+    try {
+      if (typeof window !== 'undefined') {
+        const raw = localStorage.getItem('user');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed?.name) setCustomerName(parsed.name);
+        }
+      }
+    } catch { /* ignore */ }
+    const stored = typeof window === 'undefined' ? null : localStorage.getItem('user');
     if (!stored) { router.push('/login'); return; }
     if (!id) { router.push('/orders'); return; }
     const fetchOrder = async () => {
@@ -43,7 +53,8 @@ const OrderConfirmationPage: React.FC = () => {
       }
     };
     fetchOrder();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, router]);
 
   if (loading) return <div className="spinner" />;
 
@@ -60,7 +71,7 @@ const OrderConfirmationPage: React.FC = () => {
         </div>
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Order Placed!</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginBottom: 4 }}>
-          Thank you for your purchase, <strong>{(() => { try { return JSON.parse(localStorage.getItem('user') || '{}').name || 'Customer'; } catch { return 'Customer'; } })()}</strong>!
+          Thank you for your purchase, <strong>{customerName}</strong>!
         </p>
         <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
           Order #{order._id?.slice(-8).toUpperCase() ?? 'N/A'}

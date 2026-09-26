@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { verifyAdminAccess, type AdminCheckResult } from '../../lib/admin';
 
 const NAV_ITEMS = [
   { href: '/manage', icon: '\u2302', label: 'Dashboard' },
@@ -18,22 +19,48 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
+  const [blocked, setBlocked] = useState<Exclude<AdminCheckResult, { ok: true }> | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('user');
-      if (!stored) { router.replace('/login'); return; }
-      const user = JSON.parse(stored);
-      if (user.role !== 'admin' && user.role !== 'seller') { router.replace('/'); return; }
-      setAuthorized(true);
-    } catch { router.replace('/login'); }
+    let cancelled = false;
+    (async () => {
+      const result = await verifyAdminAccess();
+      if (cancelled) return;
+      if (result.ok) {
+        setAuthorized(true);
+      } else if (result.reason === 'not-logged-in') {
+        router.replace('/login?redirect=%2Fmanage');
+      } else {
+        // Logged in but not the designated admin — show restricted screen,
+        // do not reveal the panel contents.
+        setBlocked(result);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [router]);
 
   const [search, setSearch] = useState('');
   useEffect(() => {
-    setSearch(window.location.search);
+    if (typeof window !== 'undefined') setSearch(window.location.search);
   }, [pathname]);
   const currentPath = pathname + search;
+
+  if (blocked) {
+    return (
+      <div style={{ maxWidth: 520, margin: '80px auto', padding: '40px 24px', textAlign: 'center' }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Admin access restricted</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6 }}>
+          {blocked.reason === 'not-allowlisted'
+            ? 'This store is managed by a single administrator. Your account does not have permission to view this panel.'
+            : 'Your account does not have permission to view this panel.'}
+        </p>
+        <Link href="/" className="btn btn-primary" style={{ marginTop: 24, display: 'inline-block', textDecoration: 'none' }}>
+          Back to Store
+        </Link>
+      </div>
+    );
+  }
 
   if (!authorized) return <div className="spinner" />;
 

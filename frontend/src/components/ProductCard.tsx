@@ -102,6 +102,8 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
         <img
           src={imageUrl}
           alt={product.name}
+          loading="lazy"
+          decoding="async"
           onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
           style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
         />

@@ -21,6 +21,46 @@ function currentUserId(): string | null {
   return getStoredUser()?._id || null;
 }
 
+// ==================== READ CACHE (traffic + speed) ====================
+// Public catalog reads (products/categories) are shared by every visitor.
+// Cache them briefly in memory and de-duplicate in-flight requests so traffic
+// spikes don't fan out into duplicate Supabase queries. Personal data
+// (cart/orders/wishlist/users) is NEVER cached — always fresh.
+
+interface CacheEntry {
+  expiry: number;
+  data: unknown;
+}
+
+const readCache = new Map<string, CacheEntry>();
+const inflightReads = new Map<string, Promise<unknown>>();
+const CATALOG_TTL_MS = 60_000;
+
+function catalogCached<T>(key: string, ttlMs: number, fn: () => Promise<T>): Promise<T> {
+  const now = Date.now();
+  const hit = readCache.get(key);
+  if (hit && hit.expiry > now) return Promise.resolve(hit.data as T);
+  const ongoing = inflightReads.get(key);
+  if (ongoing) return ongoing as Promise<T>;
+  const task = fn().then(
+    (result) => {
+      readCache.set(key, { expiry: Date.now() + ttlMs, data: result });
+      inflightReads.delete(key);
+      return result;
+    },
+    (err) => {
+      inflightReads.delete(key);
+      throw err;
+    }
+  );
+  inflightReads.set(key, task);
+  return task;
+}
+
+export function invalidateCatalogCache() {
+  readCache.clear();
+}
+
 // ==================== AUTH ====================
 
 export const authAPI = {
@@ -30,10 +70,24 @@ export const authAPI = {
       password: data.password,
       options: { data: { name: data.name } },
     });
-    if (signUpError || !authData?.user) throw { response: { data: { message: signUpError?.message || 'Registration failed' } } };
+    if (signUpError) {
+      const msg = signUpError.message || 'Registration failed';
+      throw { response: { data: { message: /already|exists|registered/i.test(msg) ? 'An account with this email already exists. Please sign in.' : msg } } };
+    }
+    if (!authData?.user) throw { response: { data: { message: 'Registration failed' } } };
+    // Supabase returns an obfuscated user (empty identities) when the email
+    // is already registered and email confirmation is on — do not leak, just
+    // guide the user to sign in.
+    const identities = (authData.user as unknown as { identities?: unknown[] }).identities;
+    if (Array.isArray(identities) && identities.length === 0) {
+      throw { response: { data: { message: 'An account with this email already exists. Please sign in.' } } };
+    }
     const userId = authData.user.id;
     const { error: insertError } = await db.from('users').insert({ id: userId, name: data.name, email: data.email, role: 'user' });
-    if (insertError) throw { response: { data: { message: 'Failed to create user profile' } } };
+    if (insertError) {
+      const msg = (insertError as { message?: string }).message || '';
+      throw { response: { data: { message: /duplicate|unique|already/i.test(msg) ? 'An account with this email already exists. Please sign in.' : 'Failed to create user profile' } } };
+    }
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
     if (signInError || !signInData?.session) {
       const userData = { _id: userId, name: data.name, email: data.email, role: 'user', token: '' };
@@ -81,8 +135,70 @@ export const authAPI = {
 
 // ==================== PRODUCTS ====================
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function resolveCategoryId(category: unknown): Promise<string | null> {
+  if (!category) return null;
+  if (typeof category === 'object') {
+    const c = category as Record<string, unknown>;
+    const id = (c._id ?? c.id) as string | undefined;
+    if (id && UUID_RE.test(String(id))) return String(id);
+    const slug = c.slug as string | undefined;
+    if (slug) {
+      const { data: catRow } = await db.from('categories').select('id').eq('slug', String(slug)).single();
+      if (catRow) return (catRow as { id: string }).id;
+    }
+    return null;
+  }
+  const cat = String(category);
+  if (UUID_RE.test(cat)) return cat;
+  const { data: catRow } = await db.from('categories').select('id').eq('slug', cat).single();
+  if (catRow) return (catRow as { id: string }).id;
+  return null;
+}
+
+// Map camelCase frontend fields to snake_case DB columns.
+function toDbProduct(data: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value === undefined) continue;
+    switch (key) {
+      case 'comparePrice': out.compare_price = value; break;
+      case 'countInStock': out.count_in_stock = value; break;
+      case 'isFeatured': out.is_featured = value; break;
+      case 'numReviews': out.num_reviews = value; break;
+      case 'category': break; // handled separately via resolveCategoryId
+      case 'category_id': out.category_id = value; break;
+      case '_id':
+      case 'id': break; // never write PK
+      case 'createdAt':
+      case 'updatedAt':
+      case 'reviews': break; // read-only / joined
+      default: out[key] = value; break;
+    }
+  }
+  return out;
+}
+
+const SORT_FIELD_MAP: Record<string, string> = {
+  created_at: 'created_at',
+  price: 'price',
+  rating: 'rating',
+  num_reviews: 'num_reviews',
+  numReviews: 'num_reviews',
+  compare_price: 'compare_price',
+  comparePrice: 'compare_price',
+  // 'discount' has no DB column — approximate with compare_price (was-price)
+  discount: 'compare_price',
+  name: 'name',
+  count_in_stock: 'count_in_stock',
+  countInStock: 'count_in_stock',
+};
+
 export const productAPI = {
   getAll: async (params?: Record<string, string | number>) => {
+    const cacheKey = `products:${JSON.stringify(params || {})}`;
+    return catalogCached(cacheKey, CATALOG_TTL_MS, async () => {
     const page = Number(params?.page) || 1;
     const limit = Number(params?.limit) || 200;
     const sort = (params?.sort as string) || '-created_at';
@@ -90,23 +206,23 @@ export const productAPI = {
     const to = from + limit - 1;
     let query = db.from('products').select('*, categories(name, slug)', { count: 'exact' });
     if (params?.search) {
-      const s = String(params.search);
-      query = query.or(`name.ilike.%${s}%,description.ilike.%${s}%,brand.ilike.%${s}%`);
+      const s = String(params.search).replace(/[%(),"]/g, ' ').trim().slice(0, 100);
+      if (s) query = query.or(`name.ilike.%${s}%,description.ilike.%${s}%,brand.ilike.%${s}%`);
     }
     if (params?.category) {
       const cat = String(params.category);
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cat);
-      if (isUuid) query = query.eq('category_id', cat);
+      if (UUID_RE.test(cat)) query = query.eq('category_id', cat);
       else {
         const { data: catRow } = await db.from('categories').select('id').eq('slug', cat).single();
-        if (catRow) query = query.eq('category_id', catRow.id);
+        if (catRow) query = query.eq('category_id', (catRow as { id: string }).id);
       }
     }
     if (params?.minPrice) query = query.gte('price', Number(params.minPrice));
     if (params?.maxPrice) query = query.lte('price', Number(params.maxPrice));
     if (params?.rating) query = query.gte('rating', Number(params.rating));
     const sortDir = sort.startsWith('-') ? 'desc' as const : 'asc' as const;
-    const sortField = sort.replace(/^-/, '');
+    const rawField = sort.replace(/^-/, '') || 'created_at';
+    const sortField = SORT_FIELD_MAP[rawField] || 'created_at';
     query = query.order(sortField, { ascending: sortDir === 'asc' });
     const { data: products, error, count } = await query.range(from, to);
     if (error) throw { response: { data: { message: error.message } } };
@@ -117,42 +233,65 @@ export const productAPI = {
         pagination: { page, limit, total: count || 0, pages: Math.ceil((count || 0) / Math.max(limit, 1)) },
       },
     };
+    });
   },
 
   getFeatured: async () => {
-    const { data: products, error } = await db.from('products').select('*, categories(name, slug)').eq('is_featured', true).order('rating', { ascending: false }).limit(8);
-    if (error) throw { response: { data: { message: error.message } } };
-    return { data: { success: true, data: mapProducts(products || []) as any } };
+    return catalogCached('products:featured', CATALOG_TTL_MS, async () => {
+      const { data: products, error } = await db.from('products').select('*, categories(name, slug)').eq('is_featured', true).order('rating', { ascending: false }).limit(8);
+      if (error) throw { response: { data: { message: error.message } } };
+      return { data: { success: true, data: mapProducts(products || []) as any } };
+    });
   },
 
   getById: async (id: string) => {
-    const { data: product, error } = await db.from('products').select('*, categories(name, slug)').eq('id', id).single();
-    if (error || !product) throw { response: { data: { message: 'Product not found' } } };
-    const { data: reviews } = await db.from('reviews').select('*').eq('product_id', id).order('created_at', { ascending: false }).limit(10);
-    const mapped = mapProduct(product) as any;
-    mapped.reviews = (reviews || []).map((r: any) => ({ _id: r.id, user: r.user_id, product: r.product_id, name: r.name, rating: r.rating, title: r.title, comment: r.comment, createdAt: r.created_at }));
-    return { data: { success: true, data: mapped } };
+    return catalogCached(`product:${id}`, 30_000, async () => {
+      const { data: product, error } = await db.from('products').select('*, categories(name, slug)').eq('id', id).single();
+      if (error || !product) throw { response: { data: { message: 'Product not found' } } };
+      const { data: reviews } = await db.from('reviews').select('*').eq('product_id', id).order('created_at', { ascending: false }).limit(10);
+      const mapped = mapProduct(product) as any;
+      mapped.reviews = (reviews || []).map((r: any) => ({ _id: r.id, user: r.user_id, product: r.product_id, name: r.name, rating: r.rating, title: r.title, comment: r.comment, createdAt: r.created_at }));
+      return { data: { success: true, data: mapped } };
+    });
   },
 
   create: async (data: unknown) => {
     const d = data as Record<string, unknown>;
-    const insertData: Record<string, unknown> = { ...d };
-    if (insertData.category) { insertData.category_id = insertData.category; delete insertData.category; }
+    const insertData = toDbProduct(d);
+    const categoryId = await resolveCategoryId(d.category ?? d.category_id);
+    if (categoryId) insertData.category_id = categoryId;
+    if (!insertData.category_id) throw { response: { data: { message: 'Valid category is required' } } };
+    if (typeof insertData.price !== 'undefined') insertData.price = Number(insertData.price);
+    if (typeof insertData.compare_price !== 'undefined' && insertData.compare_price !== '') insertData.compare_price = Number(insertData.compare_price);
+    if (typeof insertData.count_in_stock !== 'undefined') insertData.count_in_stock = Number(insertData.count_in_stock);
+    if (typeof insertData.images === 'string') insertData.images = [insertData.images];
     const { data: product, error } = await db.from('products').insert(insertData).select('*, categories(name, slug)').single();
     if (error) throw { response: { data: { message: error.message } } };
+    invalidateCatalogCache();
     return { data: { success: true, data: mapProduct(product) as any } };
   },
 
   update: async (id: string, data: unknown) => {
-    const updates = { ...(data as Record<string, unknown>), updated_at: new Date().toISOString() };
-    const { data: product, error } = await db.from('products').update(updates).eq('id', id).select('*, categories(name, slug)').single();
+    const d = toDbProduct((data as Record<string, unknown>) || {});
+    const raw = data as Record<string, unknown>;
+    if (raw.category || raw.category_id) {
+      const categoryId = await resolveCategoryId(raw.category ?? raw.category_id);
+      if (categoryId) d.category_id = categoryId;
+    }
+    if (typeof d.price !== 'undefined') d.price = Number(d.price);
+    if (typeof d.compare_price !== 'undefined' && d.compare_price !== '') d.compare_price = Number(d.compare_price);
+    if (typeof d.count_in_stock !== 'undefined') d.count_in_stock = Number(d.count_in_stock);
+    d.updated_at = new Date().toISOString();
+    const { data: product, error } = await db.from('products').update(d).eq('id', id).select('*, categories(name, slug)').single();
     if (error) throw { response: { data: { message: error.message } } };
+    invalidateCatalogCache();
     return { data: { success: true, data: mapProduct(product) as any } };
   },
 
   delete: async (id: string) => {
     const { error } = await db.from('products').delete().eq('id', id);
     if (error) throw { response: { data: { message: error.message } } };
+    invalidateCatalogCache();
     return { data: { success: true, message: 'Product deleted' } };
   },
 
@@ -171,6 +310,7 @@ export const productAPI = {
     const numReviews = allRatings?.length || 0;
     const avgRating = allRatings && allRatings.length > 0 ? allRatings.reduce((acc: number, r: any) => acc + r.rating, 0) / allRatings.length : 0;
     await db.from('products').update({ num_reviews: numReviews, rating: Math.round(avgRating * 100) / 100, updated_at: new Date().toISOString() }).eq('id', id);
+    invalidateCatalogCache();
     return { data: { success: true, data: { _id: review.id, user: review.user_id, product: review.product_id, name: review.name, rating: review.rating, title: review.title, comment: review.comment, createdAt: review.created_at } } };
   },
 };
@@ -366,14 +506,17 @@ export const orderAPI = {
 
 export const categoryAPI = {
   getAll: async () => {
-    const { data: categories, error } = await db.from('categories').select('*').order('name');
-    if (error) throw { response: { data: { message: error.message } } };
-    return { data: { success: true, data: mapCategories(categories || []) as unknown as Category[] } };
+    return catalogCached('categories:all', CATALOG_TTL_MS, async () => {
+      const { data: categories, error } = await db.from('categories').select('*').order('name');
+      if (error) throw { response: { data: { message: error.message } } };
+      return { data: { success: true, data: mapCategories(categories || []) as unknown as Category[] } };
+    });
   },
 
   create: async (data: { name: string; slug: string; image?: string }) => {
     const { data: cat, error } = await db.from('categories').insert(data).select().single();
     if (error) throw { response: { data: { message: error.message } } };
+    invalidateCatalogCache();
     return { data: { success: true, data: mapCategory(cat) as any } };
   },
 };

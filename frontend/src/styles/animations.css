@@ -299,7 +299,7 @@
   left: 0;
   height: 3px;
   background: var(--gradient-primary);
-  z-index: 10000;
+  z-index: var(--z-toast);
   transition: width 0.1s linear;
   border-radius: 0 2px 2px 0;
 }

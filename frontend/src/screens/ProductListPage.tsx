@@ -13,8 +13,8 @@ const SORT_OPTIONS = [
   { value: '-rating', label: 'Top Rated' },
   { value: 'price', label: 'Price: Low to High' },
   { value: '-price', label: 'Price: High to Low' },
-  { value: '-numReviews', label: 'Most Reviewed' },
-  { value: '-discount', label: 'Biggest Discount' },
+  { value: '-num_reviews', label: 'Most Reviewed' },
+  { value: '-compare_price', label: 'Biggest Discount' },
 ];
 
 const ProductListPage: React.FC = () => {
@@ -108,7 +108,7 @@ const ProductListPage: React.FC = () => {
     { value: 'price', label: 'Price: Low to High' },
     { value: '-price', label: 'Price: High to Low' },
     { value: '-created_at', label: 'Newest' },
-    { value: '-numReviews', label: 'Relevance' },
+    { value: '-num_reviews', label: 'Relevance' },
   ];
 
   return (

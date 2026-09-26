@@ -51,6 +51,7 @@ const OrdersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('user');
     if (!stored) { router.push('/login'); return; }
     const fetchOrders = async () => {
@@ -61,7 +62,7 @@ const OrdersPage: React.FC = () => {
       finally { setLoading(false); }
     };
     fetchOrders();
-  }, []);
+  }, [router, showToast]);
 
   if (loading) {
     return (

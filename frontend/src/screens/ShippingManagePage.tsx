@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -46,7 +46,16 @@ const ShippingManagePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('pending');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  const fetchAllOrders = useCallback(async () => {
+    try {
+      const res = await orderAPI.getAll();
+      setOrders(res.data.data);
+    } catch { showToast('Failed to load orders', 'error'); }
+    finally { setLoading(false); }
+  }, [showToast]);
+
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('user');
     if (!stored) { router.push('/login'); return; }
     try {
@@ -57,15 +66,7 @@ const ShippingManagePage: React.FC = () => {
       return;
     }
     fetchAllOrders();
-  }, []);
-
-  const fetchAllOrders = async () => {
-    try {
-      const res = await orderAPI.getAll();
-      setOrders(res.data.data);
-    } catch { showToast('Failed to load orders', 'error'); }
-    finally { setLoading(false); }
-  };
+  }, [fetchAllOrders, router, showToast]);
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);

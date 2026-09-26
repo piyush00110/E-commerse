@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { verifyAdminAccess } from '../lib/admin';
 
 interface Props {
   children: React.ReactNode;
@@ -10,30 +11,40 @@ interface Props {
 
 const ProtectedRoute: React.FC<Props> = ({ children, adminOnly }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [authorized, setAuthorized] = useState(false);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) {
-      router.replace('/login');
-      return;
-    }
-    if (adminOnly) {
+    let cancelled = false;
+    (async () => {
       try {
-        const user = JSON.parse(stored);
-        if (user.role !== 'admin') {
-          router.replace('/');
+        if (typeof window === 'undefined') return;
+        const stored = localStorage.getItem('user');
+        if (!stored) {
+          const redirect = pathname && pathname !== '/' ? `?redirect=${encodeURIComponent(pathname)}` : '';
+          router.replace(`/login${redirect}`);
           return;
         }
+        if (adminOnly) {
+          // Single-admin panel: verified against DB role + email allowlist.
+          const result = await verifyAdminAccess();
+          if (cancelled) return;
+          if (!result.ok) {
+            router.replace(result.reason === 'not-logged-in' ? '/login' : '/');
+            return;
+          }
+        }
+        if (!cancelled) {
+          setAuthorized(true);
+          setChecked(true);
+        }
       } catch {
-        router.replace('/login');
-        return;
+        if (!cancelled) router.replace('/login');
       }
-    }
-    setAuthorized(true);
-    setChecked(true);
-  }, [adminOnly, router]);
+    })();
+    return () => { cancelled = true; };
+  }, [adminOnly, router, pathname]);
 
   if (!checked) return <div className="spinner" />;
   if (!authorized) return null;

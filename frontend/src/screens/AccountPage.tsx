@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authAPI, orderAPI } from '../services/api';
@@ -30,21 +30,17 @@ const AccountPage: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [walletBalance, setWalletBalance] = useState(() => {
-    try { return Number(localStorage.getItem('walletBalance')) || 0; } catch { return 0; }
+    try {
+      if (typeof window === 'undefined') return 0;
+      return Number(localStorage.getItem('walletBalance')) || 0;
+    } catch { return 0; }
   });
   const [walletInput, setWalletInput] = useState('');
   const [showAddrForm, setShowAddrForm] = useState(false);
   const [editAddrId, setEditAddrId] = useState<string | null>(null);
   const [addrForm, setAddrForm] = useState({ street: '', city: '', state: '', zip: '', phone: '' });
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) { router.push('/login'); return; }
-    fetchData();
-    try { setAddresses(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { /* ignore */ }
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [profileRes, orderRes] = await Promise.all([
         authAPI.getProfile(),
@@ -56,7 +52,15 @@ const AccountPage: React.FC = () => {
       setOrders(orderRes.data.data);
     } catch { /* ignore */ }
     finally { setLoading(false); }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem('user');
+    if (!stored) { router.push('/login'); return; }
+    fetchData();
+    try { setAddresses(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { /* ignore */ }
+  }, [fetchData, router]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +78,9 @@ const AccountPage: React.FC = () => {
 
   const saveAddresses = (addrs: SavedAddress[]) => {
     setAddresses(addrs);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(addrs));
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(addrs));
+    } catch { /* ignore */ }
   };
 
   const handleSaveAddress = () => {

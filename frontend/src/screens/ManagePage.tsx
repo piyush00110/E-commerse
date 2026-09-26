@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { productAPI, orderAPI } from '../services/api';

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { isAllowedAdminEmail } from '../lib/admin';
 
 interface User {
   name: string;
@@ -156,6 +157,7 @@ const SellerNavbar: React.FC = () => {
               </Link>
             ))}
 
+            {user?.role === 'admin' && isAllowedAdminEmail(user?.email) && (
             <Link
               href="/manage"
               style={{
@@ -179,6 +181,7 @@ const SellerNavbar: React.FC = () => {
               </svg>
               Manage
             </Link>
+            )}
           </div>
         </div>
 
@@ -294,6 +297,7 @@ const SellerNavbar: React.FC = () => {
                   </div>
                 </div>
 
+                {user?.role === 'admin' && isAllowedAdminEmail(user?.email) && (
                 <Link
                   href="/manage"
                   onClick={() => setDropdown(false)}
@@ -318,6 +322,7 @@ const SellerNavbar: React.FC = () => {
                   </svg>
                   Settings
                 </Link>
+                )}
 
                 <button
                   onClick={logout}
@@ -415,6 +420,7 @@ const SellerNavbar: React.FC = () => {
               {link.label}
             </Link>
           ))}
+          {user?.role === 'admin' && isAllowedAdminEmail(user?.email) && (
           <Link
             href="/manage"
             onClick={() => setMobileMenuOpen(false)}
@@ -438,6 +444,7 @@ const SellerNavbar: React.FC = () => {
             </svg>
             Manage
           </Link>
+          )}
         </div>
       )}
 

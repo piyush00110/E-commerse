@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { productAPI, cartAPI, wishlistAPI } from '../services/api';
 import { Product, Review } from '../types';
@@ -19,7 +19,6 @@ const ProductDetailPage: React.FC = () => {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { showToast } = useToast();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,11 +55,21 @@ const ProductDetailPage: React.FC = () => {
   const reviewCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mainButtonsRef = useRef<HTMLDivElement>(null);
 
+  const checkWishlistedCb = useCallback(async () => {
+    try {
+      const res = await wishlistAPI.get();
+      const ids = (res.data.data.products || []).map((p: Product) => p._id);
+      setWishlisted(id ? ids.includes(id) : false);
+    } catch { /* ignore */ }
+  }, [id]);
+
   useEffect(() => {
     if (!id) { router.push('/products'); return; }
+    let cancelled = false;
     const fetchProduct = async () => {
       try {
         const res = await productAPI.getById(id);
+        if (cancelled) return;
         const prod = res.data.data;
         setProduct(prod);
         setSelectedImage(0);
@@ -72,18 +81,20 @@ const ProductDetailPage: React.FC = () => {
             productAPI.getAll({ category: catId, limit: 8 }),
             productAPI.getAll({ limit: 20, sort: '-num_reviews' }),
           ]);
+          if (cancelled) return;
           setRelated(relatedRes.data.data.filter((p: Product) => p._id !== prod._id).slice(0, 4));
           setAlsoViewed(allRes.data.data.filter((p: Product) => p._id !== prod._id).slice(0, 4));
         }
       } catch {
-        showToast('Failed to load product', 'error');
+        if (!cancelled) showToast('Failed to load product', 'error');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     fetchProduct();
-    checkWishlisted();
-  }, [id]);
+    checkWishlistedCb();
+    return () => { cancelled = true; };
+  }, [id, router, showToast, checkWishlistedCb]);
 
   useEffect(() => {
     const timer = setTimeout(() => setBreadcrumbVisible(true), 100);
@@ -127,16 +138,12 @@ const ProductDetailPage: React.FC = () => {
     }, 200);
   }, [selectedImage]);
 
-  const checkWishlisted = async () => {
-    try {
-      const res = await wishlistAPI.get();
-      const ids = (res.data.data.products || []).map((p: Product) => p._id);
-      setWishlisted(id ? ids.includes(id) : false);
-    } catch { /* ignore */ }
-  };
+  // (uses checkWishlistedCb defined above)
+  const checkWishlisted = checkWishlistedCb;
 
   const trackRecentlyViewed = (prod: Product) => {
     try {
+      if (typeof window === 'undefined') return;
       const stored = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
       const filtered = stored.filter((p: Product) => p._id !== prod._id);
       filtered.unshift(prod);
@@ -242,7 +249,7 @@ const ProductDetailPage: React.FC = () => {
     setSubmittingReview(true);
     try {
       const reviewData: { rating: number; title: string; comment: string } = { rating: reviewRating, title: reviewTitle, comment: reviewComment };
-      if (reviewImages.length > 0) {
+      if (reviewImages.length > 0 && typeof window !== 'undefined') {
         const existing = JSON.parse(localStorage.getItem('reviewImages') || '{}');
         const key = `product_${id}`;
         existing[key] = [...(existing[key] || []), ...reviewImages];
@@ -263,7 +270,7 @@ const ProductDetailPage: React.FC = () => {
     }
   };
 
-  const getSortedReviews = () => {
+  const sortedReviews = useMemo(() => {
     if (!product?.reviews) return [];
     const reviews = [...product.reviews];
     switch (sortReviews) {
@@ -271,14 +278,16 @@ const ProductDetailPage: React.FC = () => {
       case 'lowest': return reviews.sort((a, b) => a.rating - b.rating);
       default: return reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
-  };
+  }, [product, sortReviews]);
 
-  const sortedReviews = useMemo(() => getSortedReviews(), [product, sortReviews]);
-
-  const reviewImagesMap = useMemo(() => {
-    try { return JSON.parse(localStorage.getItem('reviewImages') || '{}') as Record<string, string[]>; }
-    catch { return {} as Record<string, string[]>; }
-  }, [product]);
+  const [reviewImagesMap, setReviewImagesMap] = useState<Record<string, string[]>>({});
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        setReviewImagesMap(JSON.parse(localStorage.getItem('reviewImages') || '{}'));
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   const getStarDistribution = () => {
     if (!product?.reviews || product.reviews.length === 0) return [];

@@ -6,11 +6,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import { cartAPI } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 import { useScrollProgress } from '../hooks/useScrollProgress';
+import { isAllowedAdminEmail } from '../lib/admin';
 
 interface User {
   name: string;
   token: string;
   role?: string;
+  email?: string;
 }
 
 const CITIES = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'San Francisco', 'Seattle', 'Miami', 'Boston', 'Denver'];
@@ -264,7 +266,7 @@ const BuyerNavbar: React.FC = () => {
                     </svg>
                     Quick Buy
                   </Link>
-                  {user.role === 'admin' && (
+                  {user.role === 'admin' && isAllowedAdminEmail(user.email) && (
                     <>
                       <div className="dropdown-divider" />
                       <Link href="/manage" className="dropdown-link admin">
@@ -505,7 +507,7 @@ const BuyerNavbar: React.FC = () => {
             <Link href="/account" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Account</Link>
             <Link href="/wishlist" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Wishlist</Link>
             <Link href="/help" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Help Center</Link>
-            {user?.role === 'admin' && (
+            {user?.role === 'admin' && isAllowedAdminEmail(user?.email) && (
               <>
                 <div className="mobile-menu-divider" />
                 <div className="mobile-menu-section">Admin</div>

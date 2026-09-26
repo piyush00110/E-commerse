@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { wishlistAPI, cartAPI } from '../services/api';
@@ -14,19 +14,20 @@ const WishlistPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) { router.push('/login'); return; }
-    fetchWishlist();
-  }, []);
-
-  const fetchWishlist = async () => {
+  const fetchWishlist = useCallback(async () => {
     try {
       const res = await wishlistAPI.get();
       setProducts(res.data.data.products || []);
     } catch { showToast('Failed to load wishlist', 'error'); }
     finally { setLoading(false); }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = localStorage.getItem('user');
+    if (!stored) { router.push('/login'); return; }
+    fetchWishlist();
+  }, [fetchWishlist, router]);
 
   const handleRemove = async (productId: string) => {
     try {
