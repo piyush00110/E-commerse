@@ -63,17 +63,16 @@ const BRANDS = [
   { name: 'OnePlus', logo: 'https://cdn.worldvectorlogo.com/logos/oneplus-3.svg' },
 ];
 
+// Story circles mirror the REAL store categories — every tap lands on products.
 const STORY_REELS = [
-  { label: 'Fashion', emoji: '👗', gradient: 'linear-gradient(135deg, #b90041, #ff4d7a)' },
-  { label: 'Tech', emoji: '💻', gradient: 'linear-gradient(135deg, #006948, #00b894)' },
-  { label: 'Home', emoji: '🏠', gradient: 'linear-gradient(135deg, #875200, #f5a623)' },
-  { label: 'Sports', emoji: '⚽', gradient: 'linear-gradient(135deg, #6c3ce0, #a78bfa)' },
-  { label: 'Beauty', emoji: '💄', gradient: 'linear-gradient(135deg, #e84393, #fd79a8)' },
-  { label: 'Books', emoji: '📚', gradient: 'linear-gradient(135deg, #0984e3, #74b9ff)' },
-  { label: 'Kids', emoji: '🧸', gradient: 'linear-gradient(135deg, #00cec9, #81ecec)' },
-  { label: 'Gourmet', emoji: '🍕', gradient: 'linear-gradient(135deg, #d63031, #ff7675)' },
-  { label: 'Travel', emoji: '✈️', gradient: 'linear-gradient(135deg, #2d3436, #636e72)' },
-  { label: 'Fitness', emoji: '💪', gradient: 'linear-gradient(135deg, #b90041, #d63031)' },
+  { label: 'Fashion', emoji: '👗', slug: 'fashion' },
+  { label: 'Electronics', emoji: '💻', slug: 'electronics' },
+  { label: 'Home', emoji: '🏠', slug: 'home-kitchen' },
+  { label: 'Sports', emoji: '⚽', slug: 'sports-outdoors' },
+  { label: 'Beauty', emoji: '💄', slug: 'beauty' },
+  { label: 'Books', emoji: '📚', slug: 'books' },
+  { label: 'Toys', emoji: '🧸', slug: 'toys-games' },
+  { label: 'Automotive', emoji: '🚗', slug: 'automotive' },
 ];
 
 const CATEGORY_EMOJI_MAP: Record<string, string> = {
@@ -264,9 +263,19 @@ const HomePage: React.FC = () => {
             scrollbarWidth: 'none',
           }}
         >
-          {STORY_REELS.map((reel, i) => (
+          {STORY_REELS.map((reel) => (
             <div
-              key={i}
+              key={reel.slug}
+              role="button"
+              tabIndex={0}
+              aria-label={`Shop ${reel.label}`}
+              onClick={() => router.push(`/products?category=${reel.slug}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  router.push(`/products?category=${reel.slug}`);
+                }
+              }}
               style={{
                 flexShrink: 0,
                 display: 'flex',
@@ -275,16 +284,20 @@ const HomePage: React.FC = () => {
                 gap: 6,
                 scrollSnapAlign: 'center',
                 cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                padding: 0,
               }}
             >
               <div
+                className="story-ring"
                 style={{
                   width: 66,
                   height: 66,
                   borderRadius: '50%',
                   background: 'conic-gradient(from 0deg, var(--primary), var(--secondary), var(--tertiary), var(--primary))',
                   padding: 3,
-                  animation: 'spinBorder 3s linear infinite',
+                  transition: 'transform 0.2s ease',
                 }}
               >
                 <div
@@ -308,7 +321,7 @@ const HomePage: React.FC = () => {
                 fontWeight: 600,
                 color: 'var(--text)',
                 textAlign: 'center',
-                maxWidth: 64,
+                maxWidth: 72,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -319,9 +332,8 @@ const HomePage: React.FC = () => {
           ))}
         </div>
         <style>{`
-          @keyframes spinBorder {
-            to { transform: rotate(360deg); }
-          }
+          .story-ring:hover { transform: scale(1.08); }
+          .story-ring:active { transform: scale(0.95); }
         `}</style>
       </section>
 

@@ -14,7 +14,7 @@ function parseAdminEmails(): string[] {
   const raw =
     process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
     process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-    'admin@shop.com';
+    'as98979148@gmail.com';
   return raw
     .split(',')
     .map((s) => s.trim().toLowerCase())
