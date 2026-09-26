@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ProductCard from '../components/ProductCard';
@@ -13,29 +13,29 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const BANNERS = [
   {
-    title: 'Discover Amazing Deals',
+    title: 'BIG FASHION FESTIVAL',
     subtitle: 'Up to 70% off on top brands. Free delivery on orders over $50.',
     cta: 'Shop Now',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #6366f1 70%, #06b6d4 100%)',
-    accent: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #ff3f6c 0%, #ff7a97 45%, #ffc48f 100%)',
+    accent: '#ffffff',
     icon: '💰',
     link: '/products',
   },
   {
-    title: 'New Electronics Arrived',
+    title: 'TOP TECH BRANDS',
     subtitle: 'Latest gadgets, laptops, and accessories at unbeatable prices.',
     cta: 'Explore Tech',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #2563eb 70%, #3b82f6 100%)',
-    accent: '#60a5fa',
+    gradient: 'linear-gradient(135deg, #14958f 0%, #4fc3bd 50%, #b8ece9 100%)',
+    accent: '#ffffff',
     icon: '📱',
     link: '/products?category=electronics',
   },
   {
-    title: 'Season Fashion Sale',
+    title: 'SEASON STYLE SALE',
     subtitle: 'Refresh your wardrobe with trending styles. Extra 20% off on your first order.',
     cta: 'Shop Fashion',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #3d1566 40%, #6366f1 70%, #a855f7 100%)',
-    accent: '#a855f7',
+    gradient: 'linear-gradient(135deg, #ff905a 0%, #ffb37e 50%, #ffe3c2 100%)',
+    accent: '#ffffff',
     icon: '👗',
     link: '/products?category=fashion',
   },
@@ -97,6 +97,35 @@ const getCategoryEmoji = (name: string) => {
   return '📦';
 };
 
+// Isolated 1s ticker: only the countdown digits re-render, not the whole page.
+const LiveDropTimer: React.FC = React.memo(() => {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+  return (
+    <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+      {['DD', 'HH', 'MM', 'SS'].map((unit, i) => {
+        const secs = [86400, 3600, 60, 1][i];
+        const mods = [365, 24, 60, 60][i];
+        const val = Math.floor((now / 1000 / secs) % mods);
+        return (
+          <div key={unit} style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 8, padding: '8px 10px', textAlign: 'center', minWidth: 48 }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+              {String(val).padStart(2, '0')}
+            </div>
+            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', marginTop: 2 }}>
+              {unit}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+LiveDropTimer.displayName = 'LiveDropTimer';
+
 const HomePage: React.FC = () => {
   const [featured, setFeatured] = useState<Product[]>([]);
   const [deals, setDeals] = useState<Product[]>([]);
@@ -107,8 +136,7 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [bannerIdx, setBannerIdx] = useState(0);
-  const [parallaxY, setParallaxY] = useState(0);
-  const [now, setNow] = useState(() => Date.now());
+  const heroShapesRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { showToast } = useToast();
   const containerRef = useScrollReveal({ stagger: 80 });
@@ -132,11 +160,25 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Parallax via direct DOM writes (no React state) so scrolling never
+    // re-renders the page — this was the main mobile lag source.
+    // Disabled entirely on small screens where the effect is invisible anyway.
+    if (typeof window === 'undefined' || window.innerWidth < 768) return;
     let ticking = false;
+    const factors = [0.07, 0.14, 0.05];
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setParallaxY(window.scrollY * 0.35);
+          const y = window.scrollY;
+          // Only animate while the hero is on screen.
+          if (y < window.innerHeight) {
+            const shapes = heroShapesRef.current?.children;
+            if (shapes) {
+              for (let i = 0; i < shapes.length && i < factors.length; i++) {
+                (shapes[i] as HTMLElement).style.transform = `translate3d(0, ${(y * factors[i]).toFixed(1)}px, 0)`;
+              }
+            }
+          }
           ticking = false;
         });
         ticking = true;
@@ -144,11 +186,6 @@ const HomePage: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -294,15 +331,15 @@ const HomePage: React.FC = () => {
       <section
         className="hero"
         style={{
-          background: 'linear-gradient(135deg, #b90041 0%, #ff6b35 50%, #f7c948 100%)',
+          background: BANNERS[bannerIdx].gradient,
           overflow: 'hidden',
           position: 'relative',
         }}
       >
-        <div className="hero-bg-shapes">
-          <div className="hero-shape hero-shape-1" style={{ transform: `translateY(${parallaxY * 0.2}px)` }} />
-          <div className="hero-shape hero-shape-2" style={{ transform: `translateY(${parallaxY * 0.4}px)` }} />
-          <div className="hero-shape hero-shape-3" style={{ transform: `translateY(${parallaxY * 0.15}px)` }} />
+        <div className="hero-bg-shapes" ref={heroShapesRef}>
+          <div className="hero-shape hero-shape-1" />
+          <div className="hero-shape hero-shape-2" />
+          <div className="hero-shape hero-shape-3" />
         </div>
 
         <div
@@ -348,38 +385,7 @@ const HomePage: React.FC = () => {
               LIVE DROP
             </span>
 
-            <div
-              style={{
-                display: 'flex',
-                gap: 12,
-                marginBottom: 20,
-              }}
-            >
-              {['DD', 'HH', 'MM', 'SS'].map((unit, i) => {
-                const secs = [86400, 3600, 60, 1][i];
-                const mods = [365, 24, 60, 60][i];
-                const val = Math.floor((now / 1000 / secs) % mods);
-                return (
-                  <div
-                    key={unit}
-                    style={{
-                      background: 'rgba(0,0,0,0.3)',
-                      borderRadius: 8,
-                      padding: '8px 10px',
-                      textAlign: 'center',
-                      minWidth: 48,
-                    }}
-                  >
-                    <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1 }}>
-                      {String(val).padStart(2, '0')}
-                    </div>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', marginTop: 2 }}>
-                      {unit}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <LiveDropTimer />
 
             <h1 style={{
               fontFamily: 'var(--font-display)',

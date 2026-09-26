@@ -298,6 +298,21 @@
   .hero-cta-primary { padding: 12px 24px; font-size: 14px; }
   .hero-cta-secondary { padding: 12px 24px; font-size: 14px; }
 
+  /* Phone GPU: lighter frosted glass on large fixed layers (same look, no lag) */
+  .navbar,
+  .bottom-nav,
+  .mobile-menu,
+  .mini-cart-dropdown,
+  .account-dropdown,
+  .toast {
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+  }
+
+  /* Phones render the same hero content, just tightened — never hidden */
+  .hero-content { max-width: 100%; }
+  .hero-actions .btn { flex: 1 1 auto; min-width: 140px; }
+
   /* Overlap fixes: keep carousel arrows inside the viewport */
   .carousel-btn { width: 32px; height: 32px; }
   .carousel-btn-prev { left: 4px; }

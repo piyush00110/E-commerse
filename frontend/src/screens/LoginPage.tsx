@@ -58,11 +58,17 @@ const LoginPage: React.FC = () => {
   const brandingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Branding panel is hidden on phones — skip the listener there entirely
+    // so scrolling never re-renders the form on mobile.
+    if (typeof window === 'undefined' || window.innerWidth < 769) return;
+    let ticking = false;
     const handleScroll = () => {
-      if (brandingRef.current) {
-        const scrollY = window.scrollY;
-        setParallaxY(scrollY * 0.3);
-      }
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        if (brandingRef.current) setParallaxY(window.scrollY * 0.3);
+        ticking = false;
+      });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);

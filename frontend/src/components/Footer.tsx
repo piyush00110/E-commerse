@@ -7,6 +7,21 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="footer-accent-bar" />
+      <div className="glass" style={{ display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap', padding: '20px 24px', margin: '0 auto 28px', maxWidth: 900, borderRadius: 'var(--radius-lg)' }}>
+        {[
+          { icon: '✅', title: '100% ORIGINAL', desc: 'guarantee on all products' },
+          { icon: '🔄', title: 'EASY RETURNS', desc: 'within 14 days of delivery' },
+          { icon: '🔒', title: 'SECURE PAYMENTS', desc: '256-bit SSL encryption' },
+        ].map((item) => (
+          <div key={item.title} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 26 }}>{item.icon}</span>
+            <span>
+              <span style={{ display: 'block', fontSize: 13, fontWeight: 800, letterSpacing: 0.4 }}>{item.title}</span>
+              <span style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)' }}>{item.desc}</span>
+            </span>
+          </div>
+        ))}
+      </div>
       <div className="footer-grid">
         <div className="footer-column">
           <h4 className="footer-col-title">Get to Know Us</h4>

@@ -181,8 +181,8 @@
 }
 
 @keyframes countdown-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(185, 0, 65, 0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(185, 0, 65, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 63, 108, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 63, 108, 0); }
 }
 
 @keyframes toastSlideIn {
@@ -211,8 +211,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(185, 0, 65, 0.4); }
-  50% { box-shadow: 0 0 12px 4px rgba(185, 0, 65, 0.15); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 63, 108, 0.4); }
+  50% { box-shadow: 0 0 12px 4px rgba(255, 63, 108, 0.15); }
 }
 
 @keyframes gradient-shift {

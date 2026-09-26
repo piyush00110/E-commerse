@@ -215,20 +215,22 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: 4,
-            background: 'var(--warning-light)',
+            gap: 3,
+            background: 'var(--success-light)',
             padding: '2px 8px',
-            borderRadius: 20,
+            borderRadius: 3,
             width: 'fit-content',
             fontSize: 12,
-            fontWeight: 600,
-            color: 'var(--warning)',
+            fontWeight: 700,
+            color: 'var(--success-dark)',
           }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--rating-star)" stroke="var(--rating-star)" strokeWidth="1">
+            <span>{product.rating.toFixed(1)}</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            <span style={{ color: 'var(--text)' }}>{product.rating.toFixed(1)}</span>
-            <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>({(product.numReviews ?? 0).toLocaleString()})</span>
+            <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>
+              | {(product.numReviews ?? 0) >= 1000 ? `${((product.numReviews ?? 0) / 1000).toFixed(1)}k` : (product.numReviews ?? 0).toLocaleString()}
+            </span>
           </div>
         )}
 
@@ -242,8 +244,8 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
             </span>
           )}
           {discount >= 5 && (
-            <span className="product-card-discount" style={{ fontSize: 12, fontWeight: 600, color: 'var(--success)' }}>
-              -{discount}%
+            <span className="product-card-discount" style={{ fontSize: 12, fontWeight: 700, color: 'var(--secondary)' }}>
+              ({discount}% OFF)
             </span>
           )}
         </div>
