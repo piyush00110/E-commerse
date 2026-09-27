@@ -7,6 +7,7 @@ import { verifyAdminAccess, type AdminCheckResult } from '../../lib/admin';
 const NAV_ITEMS = [
   { href: '/manage', icon: '\u2302', label: 'Dashboard' },
   { href: '/manage?tab=products', icon: '\u2261', label: 'Products' },
+  { href: '/manage?tab=categories', icon: '\u25A4', label: 'Categories' },
   { href: '/manage?tab=orders', icon: '\u2299', label: 'Orders' },
   { href: '/manage?tab=analytics', icon: '\u2197', label: 'Analytics' },
   { href: '/manage?tab=users', icon: '\u263A', label: 'Users' },

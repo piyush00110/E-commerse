@@ -519,6 +519,17 @@ export const categoryAPI = {
     invalidateCatalogCache();
     return { data: { success: true, data: mapCategory(cat) as any } };
   },
+
+  delete: async (id: string) => {
+    const { data: using } = await db.from('products').select('id').eq('category_id', id).limit(1);
+    if (using && (using as unknown[]).length > 0) {
+      throw { response: { data: { message: 'Cannot delete: products still use this category. Move them first.' } } };
+    }
+    const { error } = await db.from('categories').delete().eq('id', id);
+    if (error) throw { response: { data: { message: error.message } } };
+    invalidateCatalogCache();
+    return { data: { success: true, message: 'Category deleted' } };
+  },
 };
 
 // ==================== WISHLIST ====================

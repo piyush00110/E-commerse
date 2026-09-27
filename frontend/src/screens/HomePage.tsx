@@ -48,19 +48,21 @@ const TRUST_ITEMS = [
   { icon: '📞', title: '24/7 Support', desc: 'Dedicated help center' },
 ];
 
+// Self-contained brand chips (monogram + name) — no third-party logo
+// dependency, so this strip can never break or show empty boxes.
 const BRANDS = [
-  { name: 'Nike', logo: 'https://cdn.worldvectorlogo.com/logos/nike-4.svg' },
-  { name: 'Samsung', logo: 'https://cdn.worldvectorlogo.com/logos/samsung-2.svg' },
-  { name: 'Apple', logo: 'https://cdn.worldvectorlogo.com/logos/apple-14.svg' },
-  { name: 'Adidas', logo: 'https://cdn.worldvectorlogo.com/logos/adidas-6.svg' },
-  { name: 'Sony', logo: 'https://cdn.worldvectorlogo.com/logos/sony-1.svg' },
-  { name: 'Puma', logo: 'https://cdn.worldvectorlogo.com/logos/puma.svg' },
-  { name: 'LG', logo: 'https://cdn.worldvectorlogo.com/logos/lg-2.svg' },
-  { name: 'HP', logo: 'https://cdn.worldvectorlogo.com/logos/hp-2.svg' },
-  { name: 'Canon', logo: 'https://cdn.worldvectorlogo.com/logos/canon-1.svg' },
-  { name: 'Dell', logo: 'https://cdn.worldvectorlogo.com/logos/dell-1.svg' },
-  { name: 'Lenovo', logo: 'https://cdn.worldvectorlogo.com/logos/lenovo-2.svg' },
-  { name: 'OnePlus', logo: 'https://cdn.worldvectorlogo.com/logos/oneplus-3.svg' },
+  { name: 'Nike', color: '#111111' },
+  { name: 'Samsung', color: '#1428a0' },
+  { name: 'Apple', color: '#555555' },
+  { name: 'Adidas', color: '#000000' },
+  { name: 'Sony', color: '#000000' },
+  { name: 'Puma', color: '#8a2128' },
+  { name: 'LG', color: '#a50034' },
+  { name: 'HP', color: '#0096d6' },
+  { name: 'Canon', color: '#cc0000' },
+  { name: 'Dell', color: '#007db8' },
+  { name: 'Lenovo', color: '#e2231a' },
+  { name: 'OnePlus', color: '#eb0029' },
 ];
 
 // Story circles mirror the REAL store categories — every tap lands on products.
@@ -452,7 +454,9 @@ const HomePage: React.FC = () => {
               <img
                 src={featured[bannerIdx]?.images?.[0] || featured[0]?.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="%23f43f5e"><rect width="400" height="240" rx="0"/><text x="200" y="128" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48">' + banner.icon + '</text></svg>')}
                 alt={banner.title}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                loading="eager"
+                decoding="async"
+                onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="%23ff3f6c"><rect width="400" height="240" rx="0"/><text x="200" y="128" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48">' + banner.icon + '</text></svg>'); }}
                 style={{
                   width: '100%',
                   height: 240,
@@ -635,15 +639,17 @@ const HomePage: React.FC = () => {
         <div className="brand-marquee-track">
           {[...BRANDS, ...BRANDS].map((brand, i) => (
             <div key={i} className="brand-marquee-item">
-              <img
-                src={brand.logo}
-                alt={brand.name}
-                style={{ height: 28, width: 'auto', filter: 'brightness(0) invert(0.5)' }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).nextElementSibling!.textContent = brand.name;
+              <span
+                aria-hidden
+                style={{
+                  width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+                  background: brand.color, color: '#fff',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 800,
                 }}
-              />
+              >
+                {brand.name.charAt(0)}
+              </span>
               <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>
                 {brand.name}
               </span>
