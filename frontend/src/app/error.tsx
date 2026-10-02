@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 export default function Error({
   error,
@@ -21,12 +22,12 @@ export default function Error({
         {error?.message || 'An unexpected error occurred. Please try again.'}
       </p>
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <button onClick={reset} className="btn btn-primary">
+        <GradientButton onClick={reset}>
           Try Again
-        </button>
-        <a href="/" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
+        </GradientButton>
+        <GradientButton variant="secondary" onClick={() => { window.location.href = '/'; }}>
           Back to Home
-        </a>
+        </GradientButton>
       </div>
     </div>
   );

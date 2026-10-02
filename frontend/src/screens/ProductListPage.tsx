@@ -403,6 +403,8 @@ const ProductListPage: React.FC = () => {
             >
               Min: ${priceMin}
               <button
+                type="button"
+                aria-label="Clear minimum price filter"
                 onClick={() => { setPriceMin(''); debouncedSetPrice('', priceMax); setPage(1); }}
                 style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: 15, lineHeight: 1, padding: 0 }}
               >
@@ -427,6 +429,8 @@ const ProductListPage: React.FC = () => {
             >
               Max: ${priceMax}
               <button
+                type="button"
+                aria-label="Clear maximum price filter"
                 onClick={() => { setPriceMax(''); debouncedSetPrice(priceMin, ''); setPage(1); }}
                 style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: 15, lineHeight: 1, padding: 0 }}
               >
@@ -451,6 +455,8 @@ const ProductListPage: React.FC = () => {
             >
               {'★'.repeat(Number(ratingFilter))} & up
               <button
+                type="button"
+                aria-label="Clear rating filter"
                 onClick={() => { setRatingFilter(''); setPage(1); }}
                 style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: 15, lineHeight: 1, padding: 0 }}
               >

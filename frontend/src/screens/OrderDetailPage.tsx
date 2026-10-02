@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import Plan from '@/components/ui/agent-plan';
 
 interface TrackingEvent {
   date: string;
@@ -155,19 +156,7 @@ const OrderDetailPage: React.FC = () => {
 
   const statusInfo = statusConfig[order.status] || statusConfig.pending;
   const itemsTotal = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const statusOrder = ['pending', 'processing', 'shipped', 'delivered'];
-  const currentIdx = statusOrder.indexOf(order.status);
   const carrier = CARRIERS[order._id.charCodeAt(0) % CARRIERS.length];
-
-  const milestones = [
-    { key: 'pending', label: 'Order Placed', icon: '\u2714' },
-    { key: 'processing', label: 'Confirmed', icon: '\u2714' },
-    { key: 'shipped', label: 'Shipped', icon: '\u{1F4E6}' },
-    { key: 'out', label: 'Out for Delivery', icon: '\u{1F69A}' },
-    { key: 'delivered', label: 'Delivered', icon: '\u2705' },
-  ];
-
-  const milestoneIdx = order.status === 'cancelled' ? -1 : currentIdx === -1 ? -1 : currentIdx === 3 ? 4 : currentIdx === 2 ? 2 : currentIdx + 1;
 
   const bannerGradient = order.status === 'delivered'
     ? 'linear-gradient(135deg, #059669 0%, var(--success) 50%, #34d399 100%)'
@@ -305,68 +294,14 @@ const OrderDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* ─── Milestone Stepper ─── */}
-          <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 24 }}>Shipment Progress</h2>
-            <div style={{ position: 'relative', paddingLeft: 8 }}>
-              {milestones.map((ms, idx) => {
-                const isComplete = idx < milestoneIdx;
-                const isCurrent = idx === milestoneIdx;
-                const isPending = idx > milestoneIdx;
-                const stepTime = idx === 0
-                  ? new Date(order.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-                  : idx <= currentIdx
-                  ? new Date(new Date(order.createdAt).getTime() + idx * 86400000).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-                  : '';
-
-                return (
-                  <div key={ms.key} style={{ display: 'flex', gap: 16, position: 'relative', marginBottom: idx < milestones.length - 1 ? 0 : 0 }}>
-                    {/* Connector line */}
-                    {idx < milestones.length - 1 && (
-                      <div style={{
-                        position: 'absolute', left: 15, top: 36, bottom: -20,
-                        width: 3,
-                        background: isComplete
-                          ? 'var(--success)'
-                          : isCurrent
-                          ? 'repeating-linear-gradient(135deg, var(--success) 0, var(--success) 4px, #d1d5db 4px, #d1d5db 8px)'
-                          : '#e5e7eb',
-                        borderRadius: 2,
-                        ...(isCurrent && !isPending ? { animation: 'stripeMove 1s linear infinite' } : {}),
-                      }} />
-                    )}
-                    {/* Circle */}
-                    <div style={{
-                      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: isComplete ? 14 : 13, fontWeight: 700,
-                      background: isComplete ? 'var(--success)' : isCurrent ? 'var(--primary)' : '#e5e7eb',
-                      color: isComplete || isCurrent ? 'var(--bg-card)' : 'var(--text-tertiary)',
-                      boxShadow: isCurrent ? '0 0 0 5px rgba(99,102,241,0.25)' : 'none',
-                      animation: isCurrent ? 'glowPulse 2s ease-in-out infinite' : 'none',
-                      transition: 'all 0.3s',
-                    }}>
-                      {isComplete ? '\u2714' : isCurrent ? '\u25CF' : '\u25CB'}
-                    </div>
-                    {/* Content */}
-                    <div style={{ flex: 1, paddingBottom: idx < milestones.length - 1 ? 24 : 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: isCurrent ? 800 : 600, color: isPending ? 'var(--text-tertiary)' : 'var(--text)' }}>
-                        {ms.label}
-                      </div>
-                      {stepTime && (
-                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{stepTime}</div>
-                      )}
-                      {isCurrent && !isPending && (
-                        <div style={{ fontSize: 12, color: 'var(--primary)', marginTop: 4, fontWeight: 600 }}>
-                          {order.status === 'pending' ? 'Awaiting confirmation' : order.status === 'processing' ? 'Package being prepared' : order.status === 'shipped' ? 'In transit to you' : ''}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          {/* ─── Delivery Plan ─── */}
+          <Plan
+            status={order.status}
+            createdAt={order.createdAt}
+            deliveredAt={order.deliveredAt}
+            trackingNumber={trackingNumber}
+            carrier={carrier}
+          />
 
           {/* ─── Package Contents ─── */}
           <div className="card" style={{ padding: 24, marginBottom: 20 }}>

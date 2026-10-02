@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '../services/api';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
@@ -443,34 +444,21 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
 
-              <button
+              <GradientButton
                 type="submit"
-                className="btn btn-primary btn-lg"
+                size="lg"
+                fullWidth
                 disabled={loading}
+                loading={loading}
                 style={{
-                  width: '100%',
                   padding: '14px 24px',
-                  background: loading ? 'var(--text-tertiary)' : 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
                   fontSize: '15px',
                   fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: loading ? 'none' : '0 4px 12px rgba(99, 102, 241, 0.3)',
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                 }}
               >
-                {loading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
-                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                    </svg>
-                    Creating account...
-                  </span>
-                ) : 'Create Account'}
-              </button>
+                {loading ? 'Creating account...' : 'Create Account'}
+              </GradientButton>
             </form>
 
             <div style={{

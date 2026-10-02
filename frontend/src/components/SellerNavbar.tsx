@@ -274,7 +274,7 @@ const SellerNavbar: React.FC = () => {
                 boxShadow: 'var(--shadow-lg)',
                 padding: 6,
                 animation: 'fadeSlideDown 0.15s ease',
-                zIndex: 1001,
+                zIndex: 1025,
               }}>
                 <div style={{
                   padding: '12px 14px',
@@ -358,6 +358,8 @@ const SellerNavbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="seller-mobile-toggle"
             style={{

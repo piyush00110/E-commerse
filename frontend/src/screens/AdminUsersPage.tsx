@@ -82,7 +82,7 @@ const AdminUsersPage: React.FC = () => {
             marginBottom: 24, border: '1px solid var(--border)',
           }}>
           <h3 style={{ marginBottom: 16, fontSize: 16 }}>New Admin Account</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 12, alignItems: 'end' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, alignItems: 'end' }}>
             <div>
               <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>Name</label>
               <input value={newAdmin.name} onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
@@ -111,9 +111,9 @@ const AdminUsersPage: React.FC = () => {
 
       <div style={{
         background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)',
-        overflow: 'hidden',
+        overflowX: 'auto',
       }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+        <table style={{ width: '100%', minWidth: 640, borderCollapse: 'collapse', fontSize: 14 }}>
           <thead>
             <tr style={{ borderBottom: '2px solid var(--border)', background: 'var(--surface-container-low)' }}>
               <th style={{ padding: '14px 16px', textAlign: 'left', color: 'var(--text-secondary)', fontWeight: 600 }}>Name</th>

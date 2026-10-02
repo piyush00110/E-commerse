@@ -7,6 +7,7 @@ import { cartAPI, orderAPI } from '../services/api';
 import { Cart, Address } from '../types';
 import { useToast } from '../context/ToastContext';
 import { getAppliedCoupons } from '../components/CouponClip';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 interface SavedAddress extends Address {
   id: string;
@@ -318,6 +319,8 @@ const CheckoutPage: React.FC = () => {
                       </div>
                     </div>
                     <button
+                      type="button"
+                      aria-label="Delete address"
                       onClick={(e) => { e.stopPropagation(); handleDeleteAddress(addr.id); }}
                       style={{
                         background: 'transparent', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 6,
@@ -361,7 +364,7 @@ const CheckoutPage: React.FC = () => {
                   <input className="form-input" type="text" value={newAddr.street} onChange={(e) => setNewAddr({ ...newAddr, street: e.target.value })}
                     placeholder="123 Main Street, Apt 4B" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none', transition: 'border-color 0.2s' }} />
                 </div>
-                <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div className="form-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, marginBottom: 16 }}>
                   <div className="form-group">
                     <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>City</label>
                     <input className="form-input" type="text" value={newAddr.city} onChange={(e) => setNewAddr({ ...newAddr, city: e.target.value })} placeholder="New York"
@@ -373,7 +376,7 @@ const CheckoutPage: React.FC = () => {
                       style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                 </div>
-                <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                <div className="form-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, marginBottom: 20 }}>
                   <div className="form-group">
                     <label className="form-label" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>ZIP Code</label>
                     <input className="form-input" type="text" value={newAddr.zip} onChange={(e) => setNewAddr({ ...newAddr, zip: e.target.value })} placeholder="10001"
@@ -385,9 +388,9 @@ const CheckoutPage: React.FC = () => {
                       style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 14, outline: 'none' }} />
                   </div>
                 </div>
-                <button className="btn btn-primary" onClick={handleSaveNewAddress} style={{ padding: '12px 28px', fontSize: 14, fontWeight: 600, borderRadius: 10 }}>
+                <GradientButton onClick={handleSaveNewAddress} style={{ padding: '12px 28px', fontSize: 14, fontWeight: 600, borderRadius: 10 }}>
                   Save & Use This Address
-                </button>
+                </GradientButton>
               </div>
             )}
 
@@ -425,10 +428,10 @@ const CheckoutPage: React.FC = () => {
             </div>
 
             <div className="step-actions" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
-              <button className="btn btn-primary" onClick={handleNext} style={{ padding: '14px 32px', fontSize: 15, fontWeight: 600, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <GradientButton onClick={handleNext} style={{ padding: '14px 32px', fontSize: 15, fontWeight: 600, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                 Continue to Payment
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-              </button>
+              </GradientButton>
             </div>
           </div>
         )}
@@ -523,21 +526,20 @@ const CheckoutPage: React.FC = () => {
             )}
 
             <div className="step-actions" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-              <button
+              <GradientButton variant="secondary"
                 onClick={() => handleBack(1)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
-                  border: '1px solid var(--border, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
-                  fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', transition: 'all 0.2s'
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px',
+                  fontSize: 14, fontWeight: 500,
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
                 Back
-              </button>
-              <button className="btn btn-primary" onClick={handleNext} style={{ padding: '14px 32px', fontSize: 15, fontWeight: 600, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              </GradientButton>
+              <GradientButton onClick={handleNext} style={{ padding: '14px 32px', fontSize: 15, fontWeight: 600, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                 Continue to Review
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-              </button>
+              </GradientButton>
             </div>
           </div>
         )}
@@ -631,50 +633,36 @@ const CheckoutPage: React.FC = () => {
             </div>
 
             <div className="step-actions" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button
+              <GradientButton
+                variant="secondary"
                 onClick={() => handleBack(2)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'transparent',
-                  border: '1px solid var(--border, #e2e8f0)', borderRadius: 10, cursor: 'pointer',
-                  fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', transition: 'all 0.2s'
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px',
+                  fontSize: 14, fontWeight: 500,
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
                 Back
-              </button>
-              <button
-                className="btn btn-primary"
+              </GradientButton>
+              <GradientButton
                 onClick={handlePlaceOrder}
                 disabled={submitting}
+                loading={submitting}
                 style={{
                   padding: '14px 36px', fontSize: 15, fontWeight: 700, borderRadius: 12,
-                  opacity: submitting ? 0.8 : 1, display: 'flex', alignItems: 'center', gap: 10,
-                  transition: 'all 0.3s ease',
-                  position: 'relative', overflow: 'hidden',
+                  display: 'flex', alignItems: 'center', gap: 10,
                   minWidth: submitting ? 180 : 'auto'
                 }}
               >
-                {submitting && (
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                    animation: 'shimmer 1.5s infinite'
-                  }} />
-                )}
                 {submitting ? (
-                  <>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
-                      <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="32" strokeLinecap="round" />
-                    </svg>
-                    <span style={{ position: 'relative' }}>Placing Order...</span>
-                  </>
+                  <span style={{ position: 'relative' }}>Placing Order...</span>
                 ) : (
                   <>
                     <span>Place Order &mdash; ${totalPrice.toFixed(2)}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </>
                 )}
-              </button>
+              </GradientButton>
             </div>
           </div>
         )}
@@ -754,10 +742,10 @@ const CheckoutPage: React.FC = () => {
                 flex: 1, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border, #e2e8f0)',
                 fontSize: 13, outline: 'none', textTransform: 'uppercase', letterSpacing: 0.5
               }} />
-            <button className="btn btn-primary" onClick={handleApplyPromo}
+            <GradientButton onClick={handleApplyPromo}
               style={{ padding: '10px 16px', fontSize: 13, fontWeight: 600, borderRadius: 8, whiteSpace: 'nowrap' }}>
               Apply
-            </button>
+            </GradientButton>
           </div>
           {promoError && <div style={{ fontSize: 12, color: 'var(--error, #ef4444)', marginTop: 8 }}>{promoError}</div>}
           {promoDiscount > 0 && !promoError && (

@@ -26,7 +26,7 @@ const BackToTop: React.FC = () => {
   if (!visible) return null;
 
   return (
-    <button className="back-to-top" onClick={scrollToTop} title="Back to top">
+    <button type="button" className="back-to-top" onClick={scrollToTop} title="Back to top" aria-label="Back to top">
       {'\u2191'}
     </button>
   );

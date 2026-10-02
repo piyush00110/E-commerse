@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { productAPI, categoryAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { Category } from '../types';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 const FALLBACK_CATEGORIES: Category[] = [
   { _id: 'electronics', name: 'Electronics', slug: 'electronics' },
@@ -207,16 +208,15 @@ const AddProductPage: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
-            <button type="submit" className="submit-btn" disabled={submitting}
-              style={{ opacity: submitting ? 0.6 : 1, flex: 1 }}>
+            <GradientButton type="submit" disabled={submitting} loading={submitting}
+              style={{ flex: 1 }}>
               {submitting ? 'Creating...' : 'Create Product'}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{
-              padding: '12px 24px', border: '1px solid var(--border)', borderRadius: 8,
-              background: 'var(--bg-white)', fontSize: 16, fontWeight: 600, cursor: 'pointer',
+            </GradientButton>
+            <GradientButton type="button" variant="secondary" onClick={() => router.back()} style={{
+              padding: '12px 24px', fontSize: 16, fontWeight: 600,
             }}>
               Cancel
-            </button>
+            </GradientButton>
           </div>
         </form>
       </div>

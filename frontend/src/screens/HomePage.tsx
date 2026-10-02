@@ -10,6 +10,7 @@ import { Product, Category } from '../types';
 import { GridSkeleton } from '../components/Skeleton';
 import { useToast } from '../context/ToastContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import Plan from '../components/ui/agent-plan';
 
 const BANNERS = [
   {
@@ -1126,6 +1127,22 @@ const HomePage: React.FC = () => {
           </div>
         </section>
       )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          DELIVERY PLAN — how every order reaches you
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="reveal" style={{ padding: '32px 16px 8px', maxWidth: 1000, margin: '0 auto' }}>
+        <div className="section-header">
+          <div>
+            <div className="section-title">📦 Track every step</div>
+            <p className="section-subtitle">Live delivery plans on every order — from warehouse to doorstep.</p>
+          </div>
+          <Link href="/orders" style={{ fontSize: 13, color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+            Track My Order →
+          </Link>
+        </div>
+        <Plan status="shipped" />
+      </section>
 
       {/* ═══════════════════════════════════════════════════════════════
           9. TRUST BADGES — bottom row

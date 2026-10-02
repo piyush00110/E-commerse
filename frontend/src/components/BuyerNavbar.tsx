@@ -158,7 +158,7 @@ const BuyerNavbar: React.FC = () => {
         width: `${scrollProgress}%`,
         height: '3px',
         background: 'linear-gradient(90deg, var(--primary), var(--accent, #ff6b35))',
-        zIndex: 10001,
+        zIndex: 1035,
         transition: 'width 0.1s ease-out'
       }} />
 
@@ -487,7 +487,7 @@ const BuyerNavbar: React.FC = () => {
         <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
           <div className="mobile-menu-header">
             <strong>Shop by Category</strong>
-            <button onClick={() => setMenuOpen(false)} className="close-btn">
+            <button type="button" onClick={() => setMenuOpen(false)} className="close-btn" aria-label="Close menu">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
@@ -597,16 +597,16 @@ const BuyerNavbar: React.FC = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'var(--bg-primary, #fff)',
-          zIndex: 10002,
+          background: 'var(--bg-card, #fff)',
+          zIndex: 1055,
           display: 'flex',
           flexDirection: 'column',
           padding: '12px 16px',
           gap: '12px'
         }}>
           <form onSubmit={handleMobileSearch} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button type="button" onClick={() => { setShowMobileSearch(false); setSearchQuery(''); }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-primary)' }}>
+            <button type="button" aria-label="Back" onClick={() => { setShowMobileSearch(false); setSearchQuery(''); }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
@@ -644,10 +644,10 @@ const BuyerNavbar: React.FC = () => {
         maxWidth: 420,
         height: 'auto',
         borderRadius: 'var(--radius-full)',
-        background: 'rgba(255,255,255,0.72)',
+        background: 'var(--bg-glass-thick, rgba(255,255,255,0.72))',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.3)',
+        border: '1px solid var(--border-light, rgba(255,255,255,0.3))',
         boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
         zIndex: 1030,
         padding: '6px 8px',

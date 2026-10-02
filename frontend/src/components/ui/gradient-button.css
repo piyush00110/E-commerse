@@ -1,0 +1,229 @@
+/* ============================================
+   GradientButton — ShopSmart Premium
+   Works without Tailwind, uses design tokens.
+   Variants: default | variant | outline | ghost | secondary
+   Sizes: sm | default | lg | icon
+   ============================================ */
+
+.gradient-button {
+  --gb-radius: var(--radius-lg, 20px);
+  --gb-primary-from: #ff3f6c;
+  --gb-primary-to: #ff905a;
+  --gb-cool-from: #14958f;
+  --gb-cool-to: #7fd6d1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: var(--gb-radius);
+  padding: 12px 28px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  text-decoration: none;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.2s ease,
+    background 0.25s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.gradient-button:focus-visible {
+  outline: 3px solid rgba(255, 63, 108, 0.35);
+  outline-offset: 2px;
+}
+
+.gradient-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.gradient-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---------- default: pink -> orange hero gradient ---------- */
+.gradient-button--default {
+  background: linear-gradient(135deg, var(--gb-primary-from) 0%, #ff6c8f 50%, var(--gb-primary-to) 100%);
+  background-size: 150% 150%;
+  color: #fff;
+  border-color: transparent;
+  box-shadow:
+    0 4px 15px rgba(255, 63, 108, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.gradient-button--default:hover:not(:disabled) {
+  background-position: 100% 50%;
+  box-shadow:
+    0 8px 28px rgba(255, 63, 108, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* shine sweep */
+.gradient-button--default::after,
+.gradient-button--variant::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gradient-button--default:hover::after,
+.gradient-button--variant:hover::after {
+  left: 130%;
+}
+
+/* ---------- variant: dark glass + gradient border glow ---------- */
+.gradient-button--variant {
+  background:
+    linear-gradient(var(--bg-card, #1c1f2b), var(--bg-card, #1c1f2b)) padding-box,
+    linear-gradient(135deg, #ff3f6c, #ff905a, #ffc48f, #14958f) border-box;
+  border: 2px solid transparent;
+  color: var(--text, #282c3f);
+  box-shadow: 0 4px 18px rgba(255, 63, 108, 0.18);
+}
+
+[data-theme='dark'] .gradient-button--variant {
+  color: #fff;
+}
+
+.gradient-button--variant:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(255, 63, 108, 0.3);
+  filter: brightness(1.05);
+}
+
+/* fallback when used on light bg without theme attr */
+.gradient-button--variant > span.gb-text {
+  background: linear-gradient(135deg, #ff3f6c, #ff905a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme='dark'] .gradient-button--variant > span.gb-text {
+  background: none;
+  color: #fff;
+}
+
+/* ---------- outline ---------- */
+.gradient-button--outline {
+  background: transparent;
+  border-color: var(--primary, #ff3f6c);
+  color: var(--primary, #ff3f6c);
+  box-shadow: none;
+}
+
+.gradient-button--outline:hover:not(:disabled) {
+  background: var(--primary, #ff3f6c);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 63, 108, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ---------- secondary ---------- */
+.gradient-button--secondary {
+  background: var(--bg-container, #f5f5f6);
+  border-color: var(--border, #eaeaec);
+  color: var(--text, #282c3f);
+  box-shadow: none;
+}
+
+.gradient-button--secondary:hover:not(:disabled) {
+  border-color: var(--primary, #ff3f6c);
+  color: var(--primary, #ff3f6c);
+  transform: translateY(-1px);
+}
+
+/* ---------- ghost ---------- */
+.gradient-button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary, #535665);
+  padding: 10px 18px;
+  box-shadow: none;
+}
+
+.gradient-button--ghost:hover:not(:disabled) {
+  background: var(--bg-container, #f5f5f6);
+  color: var(--text, #282c3f);
+}
+
+/* ---------- sizes ---------- */
+.gradient-button--sm {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: var(--radius, 12px);
+}
+
+.gradient-button--lg {
+  padding: 16px 36px;
+  font-size: 16px;
+  border-radius: var(--radius-xl, 28px);
+}
+
+.gradient-button--icon {
+  padding: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius, 12px);
+}
+
+.gradient-button--full {
+  width: 100%;
+}
+
+/* spinner */
+.gb-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: gb-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.gradient-button--variant .gb-spinner,
+.gradient-button--outline .gb-spinner,
+.gradient-button--secondary .gb-spinner,
+.gradient-button--ghost .gb-spinner {
+  border-color: rgba(255, 63, 108, 0.25);
+  border-top-color: var(--primary, #ff3f6c);
+}
+
+@keyframes gb-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .gradient-button {
+    padding: 12px 22px;
+  }
+  .gradient-button--lg {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+}

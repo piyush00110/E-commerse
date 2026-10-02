@@ -10,6 +10,7 @@ import { ProductDetailSkeleton } from '../components/Skeleton';
 import FrequentlyBought from '../components/FrequentlyBought';
 import CouponClip from '../components/CouponClip';
 import CountdownTimer from '../components/CountdownTimer';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 type SortMode = 'newest' | 'highest' | 'lowest';
 
@@ -699,7 +700,7 @@ const ProductDetailPage: React.FC = () => {
         {product.images && product.images.length > 1 && (
           <div className="pulse-thumbnails thumbnail-scroll" style={{ position: 'relative' }}>
             {product.images.map((img, idx) => (
-              <button key={idx} onClick={() => handleImageSwitch(idx)}
+              <button key={idx} type="button" aria-label={`View image ${idx + 1}`} onClick={() => handleImageSwitch(idx)}
                 className={`pulse-thumb ${idx === selectedImage ? 'active' : ''}`}>
                 <img src={img} alt="" style={{ opacity: idx === selectedImage ? 1 : 0.6 }} />
               </button>
@@ -780,7 +781,7 @@ const ProductDetailPage: React.FC = () => {
         </div>
 
         {/* Free Delivery */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: '#f0fdf4', borderRadius: 10, marginBottom: 20, fontSize: 13, color: '#065f46' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--success-light)', borderRadius: 10, marginBottom: 20, fontSize: 13, color: 'var(--success-dark)' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
           </svg>
@@ -795,8 +796,9 @@ const ProductDetailPage: React.FC = () => {
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {colors.map((c) => (
-            <button key={c.name} onClick={() => handleColorSelect(c.name)}
+            <button key={c.name} type="button" onClick={() => handleColorSelect(c.name)}
               className={`pulse-color-swatch ${selectedColor === c.name ? 'active' : ''}`}
+              aria-label={`Select color ${c.name}`}
               style={{
                 background: c.hex,
                 transform: colorAnimating === c.name ? 'scale(1.15)' : 'scale(1)',
@@ -848,13 +850,12 @@ const ProductDetailPage: React.FC = () => {
       {/* Action Buttons */}
       {product.countInStock > 0 && (
         <div ref={mainButtonsRef} className="pulse-action-row">
-          <button
-            className={`btn btn-primary btn-lg ${cartBounce ? 'cart-bounce' : ''}`}
+          <GradientButton
+            size="lg"
             onClick={handleAddToCart}
             style={{
               flex: 2, height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12,
-              background: cartSuccess ? '#10b981' : primaryColor,
-              transition: 'background 0.3s, transform 0.2s',
+              background: cartSuccess ? '#10b981' : undefined,
             }}
           >
             {cartSuccess ? (
@@ -865,17 +866,17 @@ const ProductDetailPage: React.FC = () => {
                 Added!
               </span>
             ) : 'Add to Cart'}
-          </button>
-          <button
-            className="btn btn-lg"
+          </GradientButton>
+          <GradientButton
+            size="lg"
+            variant="variant"
             onClick={handleBuyNow}
             style={{
               flex: 1, height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12,
-              background: 'var(--bg-card)', border: `2px solid ${primaryColor}`, color: primaryColor,
             }}
           >
             Buy Now
-          </button>
+          </GradientButton>
         </div>
       )}
 
@@ -1088,10 +1089,10 @@ const ProductDetailPage: React.FC = () => {
                             </div>
                           )}
                         </div>
-                        <button type="submit" className="btn btn-primary btn-full" disabled={submittingReview}
+                        <GradientButton type="submit" fullWidth disabled={submittingReview} loading={submittingReview}
                           style={{ height: 42, fontSize: 14, borderRadius: 10 }}>
                           {submittingReview ? 'Submitting...' : 'Submit Review'}
-                        </button>
+                        </GradientButton>
                       </form>
                     </div>
                   </>
@@ -1162,11 +1163,11 @@ const ProductDetailPage: React.FC = () => {
         <div
           className="toast-enter"
           style={{
-            position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+            position: 'fixed', bottom: 'calc(var(--bottom-nav-height, 68px) + 48px + env(safe-area-inset-bottom))', left: '50%', transform: 'translateX(-50%)',
             background: 'linear-gradient(135deg, #10b981, #059669)',
             color: '#fff', padding: '12px 24px', borderRadius: 12,
             boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
-            fontWeight: 600, fontSize: 14, zIndex: 200,
+            fontWeight: 600, fontSize: 14, zIndex: 1040,
             display: 'flex', alignItems: 'center', gap: 8,
           }}
         >
@@ -1187,16 +1188,15 @@ const ProductDetailPage: React.FC = () => {
                 <div style={{ fontSize: 11, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>${(product.comparePrice ?? 0).toFixed(2)}</div>
               )}
             </div>
-            <button
-              className={`btn btn-primary ${cartBounce ? 'cart-bounce' : ''}`}
+            <GradientButton
               onClick={handleAddToCart}
               style={{
                 flex: 1, height: 44, fontSize: 14, fontWeight: 700, borderRadius: 10,
-                background: cartSuccess ? '#10b981' : primaryColor,
+                background: cartSuccess ? '#10b981' : undefined,
               }}
             >
-              {cartSuccess ? '\u2713 Added' : 'Add to Cart'}
-            </button>
+              {cartSuccess ? '✓ Added' : 'Add to Cart'}
+            </GradientButton>
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { productAPI, orderAPI, categoryAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -416,7 +417,7 @@ const ManagePage: React.FC = () => {
             <div className="mg-header-actions">
               <input type="text" className="mg-search" placeholder="Search products..." value={productSearch} onChange={(e) => setProductSearch(e.target.value)} />
               <button className="mg-btn-sm" onClick={handleExportProducts} title="Download products CSV">⬇ Export</button>
-              <a href="/seller/products/add" className="mg-btn-primary">+ Add Product</a>
+              <Link href="/seller/products/add" className="mg-btn-primary">+ Add Product</Link>
             </div>
           </div>
 
@@ -495,7 +496,7 @@ const ManagePage: React.FC = () => {
                               </button>
                             </td>
                             <td><span className={`mg-badge ${p.countInStock > 0 ? 'mg-badge-success' : 'mg-badge-error'}`}>{p.countInStock > 0 ? 'Active' : 'Out of Stock'}</span></td>
-                            <td><div className="mg-actions"><button className="mg-btn-sm mg-btn-edit" onClick={() => startEdit(p)}>Edit</button><button className="mg-btn-sm mg-btn-delete" onClick={() => handleDelete(p._id)}>{'\u2717'}</button></div></td>
+                            <td><div className="mg-actions"><button type="button" className="mg-btn-sm mg-btn-edit" onClick={() => startEdit(p)}>Edit</button><button type="button" aria-label={`Delete ${p.name}`} className="mg-btn-sm mg-btn-delete" onClick={() => handleDelete(p._id)}>{'\u2717'}</button></div></td>
                           </>
                         )}
                       </tr>

@@ -15,7 +15,7 @@ export const ProductCardSkeleton: React.FC = () => (
 export const ProductDetailSkeleton: React.FC = () => (
   <div style={{ maxWidth: 1440, margin: '0 auto', padding: 24 }}>
     <div className="skeleton skeleton-text" style={{ width: 200, height: 14 }} />
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginTop: 24 }}>
+    <div className="loader-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginTop: 24 }}>
       <div>
         <div className="skeleton" style={{ width: '100%', height: 400, borderRadius: 12 }} />
       </div>
@@ -32,7 +32,7 @@ export const ProductDetailSkeleton: React.FC = () => (
 );
 
 export const CartSkeleton: React.FC = () => (
-  <div style={{ maxWidth: 1440, margin: '0 auto', padding: 24, display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
+  <div className="loader-two-col" style={{ maxWidth: 1440, margin: '0 auto', padding: 24, display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
     <div>
       {[1, 2, 3].map((i) => (
         <div key={i} style={{ display: 'flex', gap: 20, padding: 20, background: 'var(--bg-white)', borderRadius: 12, marginBottom: 12 }}>

@@ -6,6 +6,7 @@ import { cartAPI, orderAPI } from '../services/api';
 import { Cart, Address } from '../types';
 import { useToast } from '../context/ToastContext';
 import { getAppliedCoupons } from '../components/CouponClip';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 interface SavedAddress extends Address {
   id: string;
@@ -276,7 +277,7 @@ const BuyPage: React.FC = () => {
                           <span>{addr.city}, {addr.state} {addr.zip}</span>
                           <span className="buy-address-phone">{addr.phone}</span>
                         </div>
-                        <button className="addr-delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteAddress(addr.id); }}>
+                        <button type="button" aria-label="Delete address" className="addr-delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteAddress(addr.id); }}>
                           {'\u2717'}
                         </button>
                       </div>
@@ -312,9 +313,9 @@ const BuyPage: React.FC = () => {
                       <label>Phone</label>
                       <input type="tel" value={newAddr.phone} onChange={(e) => setNewAddr({ ...newAddr, phone: e.target.value })} placeholder="+1 (555) 000-0000" />
                     </div>
-                    <button className="checkout-btn" onClick={handleSaveNewAddress} style={{ marginTop: 8 }}>
+                    <GradientButton onClick={handleSaveNewAddress} style={{ marginTop: 8 }}>
                       {'\u2713'} Save & Use
-                    </button>
+                    </GradientButton>
                   </div>
                 )}
 
@@ -341,9 +342,9 @@ const BuyPage: React.FC = () => {
                 </div>
 
                 <div className="buy-actions">
-                  <button className="buy-primary-btn" onClick={handleNext}>
+                  <GradientButton onClick={handleNext}>
                     Continue to Payment {'\u2192'}
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             )}
@@ -416,12 +417,12 @@ const BuyPage: React.FC = () => {
                 )}
 
                 <div className="buy-actions">
-                  <button className="buy-secondary-btn" onClick={() => setStep(1)}>
+                  <GradientButton variant="secondary" onClick={() => setStep(1)}>
                     {'\u2190'} Back to Shipping
-                  </button>
-                  <button className="buy-primary-btn" onClick={handleNext}>
+                  </GradientButton>
+                  <GradientButton onClick={handleNext}>
                     Continue to Review {'\u2192'}
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             )}
@@ -487,16 +488,16 @@ const BuyPage: React.FC = () => {
                 </div>
 
                 <div className="buy-actions">
-                  <button className="buy-secondary-btn" onClick={() => setStep(2)}>
+                  <GradientButton variant="secondary" onClick={() => setStep(2)}>
                     {'\u2190'} Back to Payment
-                  </button>
-                  <button className="buy-primary-btn buy-place-order-btn" onClick={handlePlaceOrder} disabled={submitting}>
+                  </GradientButton>
+                  <GradientButton onClick={handlePlaceOrder} disabled={submitting} loading={submitting}>
                     {submitting ? (
-                      <><span className="buy-spinner" /> Placing Order...</>
+                      <>Placing Order...</>
                     ) : (
                       `Place Order — $${totalPrice.toFixed(2)}`
                     )}
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             )}

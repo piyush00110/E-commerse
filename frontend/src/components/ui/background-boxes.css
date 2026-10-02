@@ -1,0 +1,114 @@
+/* ============================================
+   Background Boxes — Aceternity-style, no Tailwind / no Framer Motion
+   ShopSmart palette: pink / orange / teal glow on hover
+   ============================================ */
+
+.boxes-root {
+  position: absolute;
+  top: -25%;
+  left: 25%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transform:
+    translate(-40%, -60%)
+    skewX(-48deg)
+    skewY(14deg)
+    scale(0.675)
+    rotate(0deg)
+    translateZ(0);
+  transform-origin: center;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.boxes-row {
+  display: flex;
+  flex-direction: column;
+  width: 4rem; /* w-16 */
+  height: 2rem; /* h-8 */
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.boxes-cell {
+  width: 4rem;
+  height: 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: transparent;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  cursor: crosshair;
+}
+
+/* hover glow — color assigned per-cell via data attr */
+.boxes-cell:hover {
+  background-color: var(--box-hover, rgba(255, 63, 108, 0.55));
+  box-shadow: 0 0 18px 2px var(--box-glow, rgba(255, 63, 108, 0.45));
+  transition: background-color 0.05s ease, box-shadow 0.05s ease;
+}
+
+.boxes-plus {
+  position: absolute;
+  top: -14px;
+  left: -22px;
+  width: 30px;
+  height: 30px;
+  color: rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+}
+
+/*Demo shell (replaces Tailwind classes)*/
+.bboxes-demo {
+  height: 24rem; /* h-96 */
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #0f172a; /* slate-900 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.bboxes-mask {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+  z-index: 20;
+  -webkit-mask-image: radial-gradient(transparent, white);
+  mask-image: radial-gradient(transparent, white);
+  pointer-events: none;
+}
+
+.bboxes-title {
+  font-size: 1.25rem;
+  color: #fff;
+  position: relative;
+  z-index: 20;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .bboxes-title { font-size: 2.25rem; }
+}
+
+.bboxes-sub {
+  text-align: center;
+  margin-top: 8px;
+  color: #d4d4d8;
+  position: relative;
+  z-index: 20;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .boxes-root { transform: translate(-40%, -60%) skewX(-48deg) skewY(14deg) scale(0.5) translateZ(0); }
+}

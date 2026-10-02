@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 interface Props {
   product: Product;
@@ -79,10 +80,10 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
           {savings > 0 && (
             <div className="fbt-savings">Save ${(savings ?? 0).toFixed(2)}</div>
           )}
-          <button className="fbt-add-btn" onClick={handleAddAll}
+          <GradientButton onClick={handleAddAll}
             disabled={selected.length <= 1}>
             Add {selected.length > 1 ? `all ${selected.length}` : ''} to cart
-          </button>
+          </GradientButton>
         </div>
       </div>
     </div>

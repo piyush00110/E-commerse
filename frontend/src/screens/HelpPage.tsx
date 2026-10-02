@@ -124,7 +124,7 @@ const HelpPage: React.FC = () => {
         <div className="section-header" style={{ marginBottom: 16 }}>
           <h2 className="section-title">Quick Links</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
           <Link href="/orders" style={{ textDecoration: 'none' }}>
             <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E6}'}</div>
@@ -211,7 +211,7 @@ const HelpPage: React.FC = () => {
           <h2 className="section-title">Still need help?</h2>
         </div>
         <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Our support team is available 24/7 to assist you.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
           <div className="card card-hover" style={{ padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4DE}'}</div>
             <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Call Us</strong>

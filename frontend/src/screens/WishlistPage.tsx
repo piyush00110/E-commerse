@@ -7,6 +7,7 @@ import { wishlistAPI, cartAPI } from '../services/api';
 import { Product } from '../types';
 import { useToast } from '../context/ToastContext';
 import { GridSkeleton } from '../components/Skeleton';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 const WishlistPage: React.FC = () => {
   const router = useRouter();
@@ -82,7 +83,7 @@ const WishlistPage: React.FC = () => {
             return (
               <div key={product._id} className="card" style={{ padding: 0, overflow: 'hidden', position: 'relative', transition: 'transform 0.2s, box-shadow 0.2s' }}>
                 {/* Remove Button */}
-                <button onClick={() => handleRemove(product._id)} style={{
+                <button type="button" aria-label="Remove from wishlist" onClick={() => handleRemove(product._id)} style={{
                   position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 9999,
                   background: 'var(--bg-card)', border: '1px solid var(--border)', fontSize: 16, cursor: 'pointer',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)', zIndex: 2,
@@ -96,7 +97,7 @@ const WishlistPage: React.FC = () => {
                 {discount > 0 && (
                   <div style={{
                     position: 'absolute', top: 12, left: 12, padding: '3px 10px', borderRadius: 9999,
-                    background: '#dcfce7', color: 'var(--success)', fontSize: 11, fontWeight: 700, zIndex: 2,
+                    background: 'var(--success-light)', color: 'var(--success-dark)', fontSize: 11, fontWeight: 700, zIndex: 2,
                   }}>
                     -{discount}%
                   </div>
@@ -161,11 +162,11 @@ const WishlistPage: React.FC = () => {
                   </div>
 
                   {/* Actions */}
-                  <button className="btn btn-primary" onClick={() => handleAddToCart(product._id)}
+                  <GradientButton onClick={() => handleAddToCart(product._id)}
                     style={{ width: '100%', height: 40, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                     disabled={product.countInStock === 0}>
                     <span>{'\u{1F6D2}'}</span> Add to Cart
-                  </button>
+                  </GradientButton>
                 </div>
               </div>
             );

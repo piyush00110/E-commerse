@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { productAPI, categoryAPI } from '../services/api';
 import { Category } from '../types';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 const FALLBACK_CATEGORIES: Category[] = [
   { _id: 'electronics', name: 'Electronics', slug: 'electronics' },
@@ -203,12 +204,12 @@ const SellerAddProduct: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', gap: 12, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
-            <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
+            <GradientButton type="submit" size="lg" disabled={submitting} loading={submitting}>
               {submitting ? 'Adding Product...' : 'Add Product to Store'}
-            </button>
-            <button type="button" onClick={() => router.back()} className="btn btn-ghost btn-lg">
+            </GradientButton>
+            <GradientButton type="button" variant="ghost" size="lg" onClick={() => router.back()}>
               Cancel
-            </button>
+            </GradientButton>
           </div>
         </form>
       </div>

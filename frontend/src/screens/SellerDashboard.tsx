@@ -102,7 +102,7 @@ const SellerDashboard: React.FC = () => {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Revenue Overview</h2>
@@ -207,7 +207,7 @@ const SellerDashboard: React.FC = () => {
       <div className="section-header" style={{ marginBottom: 16 }}>
         <h2 className="section-title">Quick Actions</h2>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
         {[
           { to: '/seller/products/add', icon: '\u{2795}', label: 'Add Product', desc: 'List a new product', className: 'btn btn-primary' },
           { to: '/seller/products', icon: '\u{1F4DD}', label: 'Manage Products', desc: 'Edit inventory & prices', className: 'btn btn-secondary' },

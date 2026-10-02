@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 interface Props {
   product: Product;
@@ -261,13 +262,14 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
         )}
 
         <div className="product-card-actions" style={{ marginTop: 'auto', paddingTop: 8 }}>
-          <button
-            className="btn btn-primary btn-sm"
-            style={{ width: '100%', borderRadius: 8, padding: '9px 0', fontSize: 13, fontWeight: 600 }}
+          <GradientButton
+            size="sm"
+            fullWidth
+            style={{ borderRadius: 8, padding: '9px 0', fontSize: 13, fontWeight: 600 }}
             onClick={handleAddToCart}
           >
             Add to Cart
-          </button>
+          </GradientButton>
         </div>
       </div>
     </Link>

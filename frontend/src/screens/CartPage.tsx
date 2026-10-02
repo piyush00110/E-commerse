@@ -7,6 +7,7 @@ import { cartAPI, productAPI } from '../services/api';
 import { Cart, Product } from '../types';
 import { useToast } from '../context/ToastContext';
 import { CartSkeleton } from '../components/Skeleton';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 const CartPage: React.FC = () => {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -250,6 +251,8 @@ const CartPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border, #e2e8f0)' }}>
                     <button
+                      type="button"
+                      aria-label="Decrease quantity"
                       onClick={() => handleQuantityChange(item._id ?? '', item.quantity - 1)}
                       disabled={item.quantity <= 1}
                       style={{
@@ -269,6 +272,8 @@ const CartPage: React.FC = () => {
                       {item.quantity}
                     </span>
                     <button
+                      type="button"
+                      aria-label="Increase quantity"
                       onClick={() => handleQuantityChange(item._id ?? '', item.quantity + 1)}
                       style={{
                         width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -281,6 +286,8 @@ const CartPage: React.FC = () => {
                   </div>
 
                   <button
+                    type="button"
+                    aria-label="Remove item from cart"
                     onClick={() => handleRemove(item._id ?? '')}
                     onMouseEnter={() => setHoveredRemoveId(item._id ?? '')}
                     onMouseLeave={() => setHoveredRemoveId(null)}
@@ -322,9 +329,9 @@ const CartPage: React.FC = () => {
               className="form-input"
               style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 13, background: 'var(--bg-container, #f8fafc)' }}
             />
-            <button className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <GradientButton size="sm" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
               Apply
-            </button>
+            </GradientButton>
           </div>
           <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {['SAVE10', 'FIRST20', 'FLAT50'].map((coupon) => (
@@ -396,8 +403,9 @@ const CartPage: React.FC = () => {
           You save ${discount.toFixed(2)} on this order!
         </div>
 
-        <button
-          className="btn btn-primary btn-lg btn-full"
+        <GradientButton
+          size="lg"
+          fullWidth
           style={{ padding: '16px 24px', fontSize: 15, fontWeight: 700, borderRadius: 14, letterSpacing: '0.02em' }}
           onClick={() => {
             const stored = localStorage.getItem('user');
@@ -406,7 +414,7 @@ const CartPage: React.FC = () => {
           }}
         >
           Proceed to Checkout
-        </button>
+        </GradientButton>
 
         <Link href="/products" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 12, fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500, transition: 'color 0.15s' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
