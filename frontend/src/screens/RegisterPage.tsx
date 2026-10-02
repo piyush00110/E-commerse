@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '../services/api';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { Boxes } from '@/components/ui/background-boxes';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
@@ -112,6 +113,9 @@ const RegisterPage: React.FC = () => {
           background: 'rgba(6, 182, 212, 0.08)',
           filter: 'blur(60px)',
         }} />
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.55 }} aria-hidden="true">
+          <Boxes />
+        </div>
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '380px' }}>
           <div style={{
             width: '72px',

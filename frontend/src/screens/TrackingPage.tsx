@@ -1,6 +1,10 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { ClipboardCheck, BadgeCheck, Package, Truck, Warehouse, Bike } from 'lucide-react';
+import RadialOrbitalTimeline, { TimelineItem } from '../components/ui/radial-orbital-timeline';
+import GlowCard from '../components/ui/spotlight-card';
+import { Boxes } from '../components/ui/background-boxes';
 
 interface TrackingEvent {
   status: string;
@@ -21,6 +25,23 @@ const TRACKING_EVENTS: TrackingEvent[] = [
 
 const SAMPLE_TRACKING_NUMBERS = ['1Z999AA10123456784', '9400111899223456789012', 'EH123456785US'];
 
+const ORBIT_ICONS = [ClipboardCheck, BadgeCheck, Package, Truck, Warehouse, Bike] as const;
+const ORBIT_CATEGORIES = ['Order', 'Payment', 'Warehouse', 'Carrier', 'Transit', 'Delivery'] as const;
+
+function toOrbitData(): TimelineItem[] {
+  return TRACKING_EVENTS.map((event, idx) => ({
+    id: idx + 1,
+    title: event.location === 'Online' ? 'Order Placed' : event.status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+    date: event.date,
+    content: `${event.description} — ${event.location}.`,
+    category: ORBIT_CATEGORIES[idx] ?? 'Shipment',
+    icon: ORBIT_ICONS[idx] ?? Package,
+    relatedIds: idx === 0 ? [2] : idx === TRACKING_EVENTS.length - 1 ? [TRACKING_EVENTS.length - 1] : [idx, idx + 2],
+    status: idx < TRACKING_EVENTS.length - 1 ? ('completed' as const) : ('in-progress' as const),
+    energy: Math.max(15, 100 - idx * 12),
+  }));
+}
+
 const TrackingPage: React.FC = () => {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [searched, setSearched] = useState(false);
@@ -36,23 +57,27 @@ const TrackingPage: React.FC = () => {
   };
 
   return (
-    <div className="tracking-page">
+    <div className="tracking-page" style={{ maxWidth: 1040, margin: '0 auto', padding: '0 16px 48px' }}>
       {/* Hero Search */}
-      <div className="tracking-hero">
-        <div className="tracking-hero-content">
-          <div className="tracking-hero-icon">{'\u{1F50D}'}</div>
-          <h1>Track Your Package</h1>
-          <p>Enter your tracking number to see real-time delivery status</p>
-          <form onSubmit={handleSearch} className="tracking-search-form">
+      <div className="tracking-hero" style={{ position: 'relative', overflow: 'hidden', background: '#0f172a', borderRadius: 20, margin: '24px auto', maxWidth: 1000 }}>
+        <Boxes />
+        <div style={{ position: 'absolute', inset: 0, background: '#0f172a', zIndex: 1, WebkitMaskImage: 'radial-gradient(transparent, white)', maskImage: 'radial-gradient(transparent, white)', pointerEvents: 'none' }} />
+        <div className="tracking-hero-content" style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '56px 24px', color: '#fff' }}>
+          <div className="tracking-hero-icon" style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
+          <h1 style={{ fontSize: 30, fontWeight: 800, margin: '0 0 8px' }}>Track Your Package</h1>
+          <p style={{ color: '#d4d4d8', margin: '0 0 24px', fontSize: 14 }}>Enter your tracking number to see real-time delivery status</p>
+          <form onSubmit={handleSearch} className="tracking-search-form" style={{ display: 'flex', gap: 8, maxWidth: 520, margin: '0 auto' }}>
             <input type="text" className="tracking-search-input"
               placeholder="Enter tracking number (e.g. 1Z999AA10123456784)"
-              value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} />
-            <button type="submit" className="tracking-search-btn">Track</button>
+              value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)}
+              style={{ flex: 1, padding: '13px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontSize: 14, outline: 'none', minWidth: 0 }} />
+            <button type="submit" className="tracking-search-btn" style={{ padding: '13px 28px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #ff3f6c, #ff905a)', color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap' }}>Track</button>
           </form>
-          <div className="tracking-quick-fill">
+          <div className="tracking-quick-fill" style={{ marginTop: 16, fontSize: 13, color: '#a1a1aa' }}>
             <span>Try: </span>
             {SAMPLE_TRACKING_NUMBERS.map((num) => (
-              <button key={num} className="tracking-sample-btn" onClick={() => quickFill(num)}>
+              <button key={num} type="button" className="tracking-sample-btn" onClick={() => quickFill(num)}
+                style={{ marginLeft: 8, padding: '6px 12px', borderRadius: 9999, border: '1px solid rgba(255,255,255,0.25)', background: 'transparent', color: '#fff', fontSize: 12, cursor: 'pointer', fontFamily: 'monospace' }}>
                 {num.slice(0, 10)}...
               </button>
             ))}
@@ -100,6 +125,15 @@ const TrackingPage: React.FC = () => {
                 <span className="tps-label">Delivered</span>
               </div>
             </div>
+          </div>
+
+          {/* Orbit View */}
+          <div className="card" style={{ padding: 24, marginBottom: 20 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>Journey Orbit</h3>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 8px' }}>
+              Tap any stop to inspect it. Overall progress lives in the center.
+            </p>
+            <RadialOrbitalTimeline timelineData={toOrbitData()} />
           </div>
 
           {/* Timeline */}
@@ -166,26 +200,26 @@ const TrackingPage: React.FC = () => {
       {/* Info cards when not searched */}
       {!searched && (
         <div className="tracking-info-cards">
-          <div className="tracking-info-card">
+          <GlowCard className="tracking-info-card">
             <div className="tracking-info-icon">{'\u{1F69A}'}</div>
             <h3>Real-Time Tracking</h3>
             <p>See exactly where your package is at every step of its journey.</p>
-          </div>
-          <div className="tracking-info-card">
+          </GlowCard>
+          <GlowCard className="tracking-info-card">
             <div className="tracking-info-icon">{'\u{1F4E2}'}</div>
             <h3>Instant Notifications</h3>
             <p>Get notified when your package ships, arrives at local hub, or is out for delivery.</p>
-          </div>
-          <div className="tracking-info-card">
+          </GlowCard>
+          <GlowCard className="tracking-info-card">
             <div className="tracking-info-icon">{'\u{1F3ED}'}</div>
             <h3>Delivery Preferences</h3>
             <p>Redirect to a pickup point, schedule a delivery window, or leave instructions for the driver.</p>
-          </div>
-          <div className="tracking-info-card">
+          </GlowCard>
+          <GlowCard className="tracking-info-card">
             <div className="tracking-info-icon">{'\u{1F504}'}</div>
             <h3>Easy Returns</h3>
             <p>Start a return from your orders page and generate a return shipping label instantly.</p>
-          </div>
+          </GlowCard>
         </div>
       )}
     </div>

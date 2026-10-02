@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { Boxes } from '@/components/ui/background-boxes';
 import './sign-in.css';
 
 export interface Testimonial {
@@ -184,6 +185,7 @@ export function SignInPage({
 
       {/* Right — hero + testimonials */}
       <div className="signin-hero">
+        <Boxes />
         {heroImageSrc && imgOk ? (
           <img
             className="signin-hero-img"

@@ -1,0 +1,290 @@
+/* ============================================
+   Radial Orbital Timeline — no Tailwind / no Framer
+   ShopSmart design tokens. Positions are %-based,
+   so the orbit scales down on phones automatically.
+   ============================================ */
+
+.orbital-wrap {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+
+.orbital-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.orbital-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.orbital-ring {
+  fill: none;
+  stroke: var(--border, #eaeaec);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 1.5;
+  animation: orbital-spin 60s linear infinite;
+  transform-origin: 50px 50px;
+}
+
+@keyframes orbital-spin {
+  to { transform: rotate(360deg); }
+}
+
+.orbital-spoke {
+  stroke-width: 0.4;
+  stroke-dasharray: 1.5 1.2;
+  opacity: 0.7;
+}
+
+.orbital-link {
+  stroke: var(--primary, #ff3f6c);
+  stroke-width: 0.35;
+  stroke-dasharray: 1 1;
+  opacity: 0.35;
+}
+
+.orbital-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #fff;
+  font-family: inherit;
+  background: linear-gradient(135deg, #ff3f6c 0%, #ff905a 100%);
+  box-shadow:
+    0 8px 32px rgba(255, 63, 108, 0.45),
+    0 0 0 10px rgba(255, 63, 108, 0.08);
+  animation: orbital-center-pulse 2.6s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes orbital-center-pulse {
+  0%, 100% { box-shadow: 0 8px 32px rgba(255, 63, 108, 0.45), 0 0 0 10px rgba(255, 63, 108, 0.08); }
+  50% { box-shadow: 0 8px 40px rgba(255, 63, 108, 0.6), 0 0 0 16px rgba(255, 63, 108, 0.05); }
+}
+
+.orbital-center-pct {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.orbital-center-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.orbital-node {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: var(--bg-card, #fff);
+  color: var(--text-secondary, #535665);
+  box-shadow: var(--shadow-md, 0 6px 16px rgba(0, 0, 0, 0.08));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  z-index: 2;
+  padding: 0;
+}
+
+.orbital-node:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.orbital-node.completed {
+  border-color: var(--success, #14958f);
+  color: var(--success, #14958f);
+}
+
+.orbital-node.in-progress {
+  border-color: var(--primary, #ff3f6c);
+  color: var(--primary, #ff3f6c);
+  animation: orbital-node-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes orbital-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(255, 63, 108, 0.2), 0 6px 16px rgba(0, 0, 0, 0.08); }
+  50% { box-shadow: 0 0 0 9px rgba(255, 63, 108, 0.08), 0 6px 20px rgba(255, 63, 108, 0.25); }
+}
+
+.orbital-node.pending {
+  opacity: 0.75;
+}
+
+.orbital-node.selected {
+  transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: 0 0 0 5px rgba(255, 63, 108, 0.18), 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.orbital-node-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-card, #fff);
+}
+
+.orbital-node-dot.completed { background: var(--success, #14958f); }
+.orbital-node-dot.in-progress { background: var(--primary, #ff3f6c); animation: orbital-blink 1.2s ease-in-out infinite; }
+.orbital-node-dot.pending { background: var(--text-tertiary, #94969f); }
+
+@keyframes orbital-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.orbital-node-lbl {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text-secondary, #535665);
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-light, #f5f5f6);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.08));
+}
+
+/* ---------- detail card ---------- */
+.orbital-detail {
+  margin-top: 20px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-light, #f5f5f6);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  padding: 20px 22px;
+  animation: orbital-detail-in 0.3s ease both;
+}
+
+@keyframes orbital-detail-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.orbital-detail-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.orbital-detail-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text, #282c3f);
+  margin: 0;
+}
+
+.orbital-cat {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 63, 108, 0.1);
+  color: var(--primary, #ff3f6c);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.orbital-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary, #94969f);
+  margin-bottom: 8px;
+}
+
+.orbital-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary, #535665);
+  margin: 0 0 14px;
+}
+
+.orbital-energy-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.orbital-energy-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--bg-container, #f5f5f6);
+  overflow: hidden;
+}
+
+.orbital-energy-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #ff3f6c, #ff905a);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orbital-energy-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text, #282c3f);
+  min-width: 36px;
+  text-align: right;
+}
+
+.orbital-status-line {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.orbital-status-line.completed { color: var(--success-dark, #0c6b67); }
+.orbital-status-line.in-progress { color: var(--primary, #ff3f6c); }
+.orbital-status-line.pending { color: var(--text-tertiary, #94969f); }
+
+@media (max-width: 480px) {
+  .orbital-node { width: 48px; height: 48px; }
+  .orbital-center { width: 78px; height: 78px; }
+  .orbital-center-pct { font-size: 16px; }
+  .orbital-node-lbl { font-size: 9.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbital-ring,
+  .orbital-center,
+  .orbital-node.in-progress,
+  .orbital-node-dot.in-progress {
+    animation: none;
+  }
+}

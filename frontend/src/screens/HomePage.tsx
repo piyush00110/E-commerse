@@ -11,6 +11,68 @@ import { GridSkeleton } from '../components/Skeleton';
 import { useToast } from '../context/ToastContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import Plan from '../components/ui/agent-plan';
+import GlowCard from '../components/ui/spotlight-card';
+import { Boxes } from '../components/ui/background-boxes';
+import { ShoppingCart, CreditCard, Package, Truck, PartyPopper } from 'lucide-react';
+import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
+
+const SHOP_JOURNEY = [
+  {
+    id: 1,
+    title: 'Shop',
+    date: 'Step 1',
+    content: 'Browse 10,000+ products across fashion, tech, home and more.',
+    category: 'Browse',
+    icon: ShoppingCart,
+    relatedIds: [2],
+    status: 'completed' as const,
+    energy: 100,
+  },
+  {
+    id: 2,
+    title: 'Pay',
+    date: 'Step 2',
+    content: 'Checkout in seconds with secure 256-bit encrypted payments.',
+    category: 'Payment',
+    icon: CreditCard,
+    relatedIds: [1, 3],
+    status: 'completed' as const,
+    energy: 90,
+  },
+  {
+    id: 3,
+    title: 'Pack',
+    date: 'Step 3',
+    content: 'Our warehouse picks, packs and labels your order with care.',
+    category: 'Warehouse',
+    icon: Package,
+    relatedIds: [2, 4],
+    status: 'completed' as const,
+    energy: 75,
+  },
+  {
+    id: 4,
+    title: 'Ship',
+    date: 'Step 4',
+    content: 'Live-tracked express shipping, free on orders over $50.',
+    category: 'Transit',
+    icon: Truck,
+    relatedIds: [3, 5],
+    status: 'in-progress' as const,
+    energy: 55,
+  },
+  {
+    id: 5,
+    title: 'Enjoy',
+    date: 'Step 5',
+    content: 'Doorstep delivery with easy 30-day returns, always.',
+    category: 'Delivery',
+    icon: PartyPopper,
+    relatedIds: [4],
+    status: 'pending' as const,
+    energy: 20,
+  },
+];
 
 const BANNERS = [
   {
@@ -355,6 +417,9 @@ const HomePage: React.FC = () => {
           <div className="hero-shape hero-shape-1" />
           <div className="hero-shape hero-shape-2" />
           <div className="hero-shape hero-shape-3" />
+        </div>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.5 }} aria-hidden="true">
+          <Boxes />
         </div>
 
         <div
@@ -1129,6 +1194,22 @@ const HomePage: React.FC = () => {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
+          HOW IT WORKS — orbital journey
+          ═══════════════════════════════════════════════════════════════ */}
+      <section className="reveal" style={{ padding: '32px 16px 8px', maxWidth: 760, margin: '0 auto' }}>
+        <div className="section-header">
+          <div>
+            <div className="section-title">🛒 How ShopSmart works</div>
+            <p className="section-subtitle">From cart to doorstep in five simple stops — tap any stop to explore.</p>
+          </div>
+          <Link href="/products" style={{ fontSize: 13, color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+            Start Shopping →
+          </Link>
+        </div>
+        <RadialOrbitalTimeline timelineData={SHOP_JOURNEY} />
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════
           DELIVERY PLAN — how every order reaches you
           ═══════════════════════════════════════════════════════════════ */}
       <section className="reveal" style={{ padding: '32px 16px 8px', maxWidth: 1000, margin: '0 auto' }}>
@@ -1149,13 +1230,13 @@ const HomePage: React.FC = () => {
           ═══════════════════════════════════════════════════════════════ */}
       <section className="trust-bar" style={{ marginTop: 32 }}>
         {TRUST_ITEMS.map((item, i) => (
-          <div key={i} className="trust-item">
+          <GlowCard key={i} className="trust-item" spotlightSize={200}>
             <span className="trust-icon">{item.icon}</span>
             <div className="trust-text">
               <strong>{item.title}</strong>
               <span>{item.desc}</span>
             </div>
-          </div>
+          </GlowCard>
         ))}
       </section>
     </div>

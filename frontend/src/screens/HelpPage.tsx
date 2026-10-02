@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import GlowCard from '../components/ui/spotlight-card';
 
 interface FAQ {
   q: string;
@@ -126,32 +127,32 @@ const HelpPage: React.FC = () => {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
           <Link href="/orders" style={{ textDecoration: 'none' }}>
-            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+            <GlowCard className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E6}'}</div>
               <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Track Order</strong>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>See where your package is</span>
-            </div>
+            </GlowCard>
           </Link>
           <Link href="/orders" style={{ textDecoration: 'none' }}>
-            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+            <GlowCard className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F504}'}</div>
               <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Return Items</strong>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Start a return or replacement</span>
-            </div>
+            </GlowCard>
           </Link>
           <Link href="/account" style={{ textDecoration: 'none' }}>
-            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+            <GlowCard className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4CB}'}</div>
               <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Manage Account</strong>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Update profile and addresses</span>
-            </div>
+            </GlowCard>
           </Link>
           <a href="mailto:support@shopsmart.com" style={{ textDecoration: 'none' }}>
-            <div className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
+            <GlowCard className="card card-hover" style={{ padding: 24, textAlign: 'center', cursor: 'pointer' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>{'\u{1F4E7}'}</div>
               <strong style={{ display: 'block', fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>Email Support</strong>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>support@shopsmart.com</span>
-            </div>
+            </GlowCard>
           </a>
         </div>
       </div>
