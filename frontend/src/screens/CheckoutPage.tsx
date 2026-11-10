@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import { cartAPI, orderAPI } from '../services/api';
 import { Cart, Address } from '../types';
 import { useToast } from '../context/ToastContext';
-import { getAppliedCoupons } from '../components/CouponClip';
+import { calculateCouponDiscount } from '../lib/coupons';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { PAYMENT_METHODS, paymentMethodLabel } from '../lib/paymentMethods';
 import { getRazorpayStatus, payOrderWithRazorpay, RazorpayCheckoutError } from '../lib/razorpay';
+import ProductImage from '../components/ProductImage';
 
 interface SavedAddress extends Address {
   id: string;
@@ -71,6 +72,7 @@ const CheckoutPage: React.FC = () => {
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
   const [promoCode, setPromoCode] = useState('');
+  const [appliedPromoCode, setAppliedPromoCode] = useState('');
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoError, setPromoError] = useState('');
   const [walletBalance, setWalletBalance] = useState(() => {
@@ -84,21 +86,23 @@ const CheckoutPage: React.FC = () => {
   const GIFT_WRAP_PRICE = 4.99;
 
   const handleApplyPromo = () => {
-    const clipped = getAppliedCoupons();
-    const match = clipped.find((c) => c.code === promoCode.toUpperCase());
-    if (promoCode.toUpperCase() === 'SAVE10' || match) {
-      const discount = match?.discount || 10;
-      setPromoDiscount(discount);
-      setPromoError('');
-      showToast(`Coupon applied! ${match?.description || 'Save 10%'}`, 'success');
-    } else if (promoCode.toUpperCase() === 'WELCOME5') {
-      setPromoDiscount(5);
-      setPromoError('');
-      showToast('$5 off coupon applied!', 'success');
-    } else {
+    const result = calculateCouponDiscount(promoCode, cart?.totalPrice || 0);
+    if (result.error) {
+      setPromoError(result.error);
+      setPromoDiscount(0);
+      setAppliedPromoCode('');
+      return;
+    }
+    if (!result.coupon) {
       setPromoError('Invalid coupon code');
       setPromoDiscount(0);
+      setAppliedPromoCode('');
+      return;
     }
+    setPromoDiscount(result.discount);
+    setAppliedPromoCode(result.coupon.code);
+    setPromoError('');
+    showToast(`Coupon applied! ${result.coupon.description}`, 'success');
   };
 
   useEffect(() => {
@@ -111,6 +115,18 @@ const CheckoutPage: React.FC = () => {
         if (cancelled) return;
         if (!res.data.data?.items?.length) { router.push('/cart'); return; }
         setCart(res.data.data);
+        // Pre-apply a coupon chosen on the cart page.
+        try {
+          const pending = localStorage.getItem('pendingCoupon');
+          if (pending) {
+            const result = calculateCouponDiscount(pending, res.data.data.totalPrice);
+            if (!result.error && result.coupon) {
+              setPromoCode(result.coupon.code);
+              setAppliedPromoCode(result.coupon.code);
+              setPromoDiscount(result.discount);
+            }
+          }
+        } catch { /* storage unavailable */ }
       } catch {
         if (!cancelled) router.push('/cart');
       } finally {
@@ -219,7 +235,7 @@ const CheckoutPage: React.FC = () => {
     setSubmitting(true);
     try {
       const orderData = {
-        shippingAddress: { ...addr, giftWrap, giftMessage: giftWrap ? giftMessage : '', walletApplied, promoDiscount: promoDiscountValue },
+        shippingAddress: { ...addr, giftWrap, giftMessage: giftWrap ? giftMessage : '', walletApplied, promoCode: appliedPromoCode, promoDiscount: promoDiscountValue },
         paymentMethod,
       };
       const res = await orderAPI.create(orderData);
@@ -281,7 +297,7 @@ const CheckoutPage: React.FC = () => {
   const taxPrice = Math.round(cart.totalPrice * 0.08 * 100) / 100;
   const shippingPrice = cart.totalPrice >= 50 ? 0 : 9.99;
   const giftWrapPrice = giftWrap ? GIFT_WRAP_PRICE : 0;
-  const promoDiscountValue = promoDiscount > 10 ? cart.totalPrice * (promoDiscount / 100) : promoDiscount;
+  const promoDiscountValue = promoDiscount;
   const subtotalAfterDiscount = Math.max(0, cart.totalPrice - promoDiscountValue);
   const beforeWallet = Math.max(0, subtotalAfterDiscount + taxPrice + shippingPrice + giftWrapPrice);
   const walletApplied = applyWallet ? Math.min(walletBalance, beforeWallet) : 0;
@@ -710,7 +726,7 @@ const CheckoutPage: React.FC = () => {
                 {cart.items.map((item) => (
                   <div key={item._id} style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                     <div style={{ width: 56, height: 56, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--bg-container, #f8fafc)' }}>
-                      <img src={item.image || ''} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                      <ProductImage src={item.image} alt={item.name} width={56} height={56} sizes="56px" objectFit="cover" style={{ width: '100%', height: '100%' }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Link href={`/products/${typeof item.product === 'string' ? item.product : item.product._id}`}
@@ -781,7 +797,7 @@ const CheckoutPage: React.FC = () => {
         <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
           {cart.items.slice(0, 4).map((item) => (
             <div key={item._id} style={{ width: 52, height: 52, borderRadius: 8, overflow: 'hidden', background: 'var(--bg-container, #f8fafc)' }}>
-              <img src={item.image || ''} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+              <ProductImage src={item.image} alt={item.name} width={52} height={52} sizes="52px" objectFit="cover" style={{ width: '100%', height: '100%' }} />
             </div>
           ))}
           {cart.items.length > 4 && (

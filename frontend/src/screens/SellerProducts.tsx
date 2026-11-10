@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { productAPI } from '../services/api';
+import ProductImage from '../components/ProductImage';
 
 const SellerProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -164,7 +165,7 @@ const SellerProducts: React.FC = () => {
                     ) : (
                       <>
                         <td style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <img src={p.images?.[0] || ''} alt="" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain', background: 'var(--bg-card)' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                          <ProductImage src={p.images?.[0]} alt={p.name || 'Product'} width={48} height={48} sizes="48px" style={{ width: 48, height: 48, borderRadius: 8, background: 'var(--bg-card)' }} />
                           <div>
                             <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{p.name}</div>
                             <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>ID: {p._id.slice(-8)}</div>

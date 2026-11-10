@@ -37,9 +37,27 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
+function ServiceWorkerRegistrar() {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!('serviceWorker' in navigator)) return;
+    // Avoid stale cached bundles while developing locally.
+    if (process.env.NODE_ENV !== 'production') return;
+    const register = () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {
+        /* PWA is progressive enhancement; ignore registration failures. */
+      });
+    };
+    window.addEventListener('load', register);
+    return () => window.removeEventListener('load', register);
+  }, []);
+  return null;
+}
+
 export default function RootClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
+      <ServiceWorkerRegistrar />
       <ToastProvider>
         <ErrorBoundary>
           <PageTransition>{children}</PageTransition>

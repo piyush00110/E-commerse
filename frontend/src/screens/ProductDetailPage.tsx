@@ -11,10 +11,9 @@ import FrequentlyBought from '../components/FrequentlyBought';
 import CouponClip from '../components/CouponClip';
 import CountdownTimer from '../components/CountdownTimer';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ProductImage from '../components/ProductImage';
 
 type SortMode = 'newest' | 'highest' | 'lowest';
-
-const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="#e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="#9ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>');
 
 const ProductDetailPage: React.FC = () => {
   const params = useParams();
@@ -689,11 +688,15 @@ const ProductDetailPage: React.FC = () => {
       <div className="pulse-gallery">
         {/* Main Image */}
         <div className="pulse-gallery-main">
-          <img
-            src={(product.images?.[selectedImage] || product.images?.[0] || PLACEHOLDER_IMG)}
+          <ProductImage
+            src={product.images?.[selectedImage] || product.images?.[0]}
             alt={product.name}
+            width={800}
+            height={800}
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="image-crossfade"
-            style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: imageFade ? 1 : 0 }}
+            style={{ width: '100%', height: '100%', opacity: imageFade ? 1 : 0 }}
           />
         </div>
         {/* Thumbnails */}
@@ -702,7 +705,14 @@ const ProductDetailPage: React.FC = () => {
             {product.images.map((img, idx) => (
               <button key={idx} type="button" aria-label={`View image ${idx + 1}`} onClick={() => handleImageSwitch(idx)}
                 className={`pulse-thumb ${idx === selectedImage ? 'active' : ''}`}>
-                <img src={img} alt="" style={{ opacity: idx === selectedImage ? 1 : 0.6 }} />
+                <ProductImage
+                  src={img}
+                  alt={`${product.name} view ${idx + 1}`}
+                  width={80}
+                  height={80}
+                  sizes="80px"
+                  style={{ opacity: idx === selectedImage ? 1 : 0.6 }}
+                />
               </button>
             ))}
           </div>
@@ -1035,7 +1045,7 @@ const ProductDetailPage: React.FC = () => {
                             {imgs.length > 0 && (
                               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
                                 {imgs.map((url: string, i: number) => (
-                                  <img key={i} src={url} alt="Review" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
+                                  <ProductImage key={i} src={url} alt="Review" width={64} height={64} sizes="64px" objectFit="cover" style={{ width: 64, height: 64, borderRadius: 8, border: '1px solid var(--border)' }} />
                                 ))}
                               </div>
                             )}
@@ -1078,7 +1088,7 @@ const ProductDetailPage: React.FC = () => {
                             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
                               {reviewImages.map((url, idx) => (
                                 <div key={idx} style={{ position: 'relative' }}>
-                                  <img src={url} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)' }} />
+                                  <ProductImage src={url} alt="Review image" width={56} height={56} sizes="56px" objectFit="cover" style={{ width: 56, height: 56, borderRadius: 8, border: '1px solid var(--border)' }} />
                                   <button type="button" onClick={() => handleRemoveReviewImage(idx)} style={{
                                     position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: 9999,
                                     background: '#ef4444', color: '#fff', border: 'none', fontSize: 10, cursor: 'pointer',
@@ -1118,7 +1128,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="carousel-scroll pulse-related-scroll">
             {related.map((p) => (
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
-                <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
+                <ProductImage className="pulse-related-img" src={p.images?.[0]} alt={p.name} width={180} height={180} sizes="180px" objectFit="cover" />
                 <div style={{ padding: '8px 10px' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)'  , marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}
@@ -1145,7 +1155,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="carousel-scroll pulse-related-scroll">
             {alsoViewed.map((p) => (
               <Link key={p._id} href={`/products/${p._id}`} className="product-card pulse-related-card">
-                <img className="pulse-related-img" src={(p.images?.[0] || PLACEHOLDER_IMG)} alt={p.name} />
+                <ProductImage className="pulse-related-img" src={p.images?.[0]} alt={p.name} width={180} height={180} sizes="180px" objectFit="cover" />
                 <div style={{ padding: '8px 10px' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)'  , marginBottom: 3, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.name}

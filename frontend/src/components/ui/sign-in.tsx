@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { Boxes } from '@/components/ui/background-boxes';
+import ProductImage from '@/components/ProductImage';
 import './sign-in.css';
 
 export interface Testimonial {
@@ -53,7 +54,6 @@ export function SignInPage({
 }: SignInPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
-  const [imgOk, setImgOk] = useState(true);
 
   const items = testimonials.length > 0 ? testimonials : DEFAULT_TESTIMONIALS;
 
@@ -186,12 +186,14 @@ export function SignInPage({
       {/* Right — hero + testimonials */}
       <div className="signin-hero">
         <Boxes />
-        {heroImageSrc && imgOk ? (
-          <img
+        {heroImageSrc ? (
+          <ProductImage
             className="signin-hero-img"
             src={heroImageSrc}
             alt=""
-            onError={() => setImgOk(false)}
+            fill
+            sizes="50vw"
+            objectFit="cover"
           />
         ) : null}
         <div className="signin-hero-shapes">
@@ -210,11 +212,15 @@ export function SignInPage({
           <p className="signin-quote">&ldquo;{active.text}&rdquo;</p>
           <div className="signin-person">
             {active.avatarSrc ? (
-              <img
+              <ProductImage
                 className="signin-avatar"
                 src={active.avatarSrc}
                 alt={active.name}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                width={44}
+                height={44}
+                sizes="44px"
+                objectFit="cover"
+                style={{ width: 44, height: 44, borderRadius: '50%' }}
               />
             ) : (
               <span className="signin-avatar-fallback">{active.name.charAt(0)}</span>

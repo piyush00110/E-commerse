@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
 import { paymentMethodLabel } from '../lib/paymentMethods';
+import ProductImage from '../components/ProductImage';
 
 interface OrderItem {
   product: string;
@@ -639,7 +640,7 @@ const SellerOrders: React.FC = () => {
               <div style={{ padding: '12px 20px' }}>
                 {order.items?.map((item: OrderItem, idx: number) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: idx < (order.items?.length || 0) - 1 ? '1px solid var(--bg-container)' : 'none' }}>
-                    <img src={item.image || ''} alt="" style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                    <ProductImage src={item.image} alt={item.name} width={40} height={40} sizes="40px" objectFit="cover" style={{ width: 40, height: 40, borderRadius: 6 }} />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{item.name}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Qty: {item.quantity} x ${(item.price || 0).toFixed(2)}</div>

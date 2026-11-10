@@ -6,6 +6,7 @@ import { productAPI, orderAPI, categoryAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { paymentMethodLabel } from '../lib/paymentMethods';
 import AdminUsersPage from './AdminUsersPage';
+import ProductImage from '../components/ProductImage';
 
 type ManageTab = 'dashboard' | 'products' | 'orders' | 'analytics' | 'users' | 'categories';
 
@@ -386,6 +387,38 @@ const ManagePage: React.FC = () => {
             ))}
           </div>
 
+          {stats.lowStock > 0 && (
+            <div className="mg-card" style={{ borderLeft: '4px solid var(--error)', marginBottom: 16 }}>
+              <div className="mg-card-header">
+                <h2>⚠ Low stock alert ({stats.lowStock})</h2>
+                <button className="mg-btn-sm" onClick={() => setActiveTab('products')}>
+                  Manage inventory
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '12px 16px' }}>
+                {products
+                  .filter((p) => p.countInStock < 10)
+                  .sort((a, b) => a.countInStock - b.countInStock)
+                  .slice(0, 10)
+                  .map((p) => (
+                    <button
+                      key={p._id}
+                      className="mg-btn-sm"
+                      onClick={() => { setProductSearch(p.name); setActiveTab('products'); }}
+                      title="Restock this product"
+                    >
+                      {p.name.length > 32 ? `${p.name.slice(0, 32)}…` : p.name} · {p.countInStock} left
+                    </button>
+                  ))}
+                {stats.lowStock > 10 && (
+                  <button className="mg-btn-sm" onClick={() => setActiveTab('products')}>
+                    +{stats.lowStock - 10} more
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="mg-card">
             <div className="mg-card-header"><h2>Recent Orders</h2></div>
             {orders.length === 0 ? <div className="mg-empty">No orders yet</div> : (
@@ -466,7 +499,7 @@ const ManagePage: React.FC = () => {
                             <td><input type="checkbox" aria-label={`Select ${p.name}`} checked={selectedIds.has(p._id)} onChange={() => toggleSelect(p._id)} /></td>
                             <td>
                               <div className="mg-product-cell">
-                                <img src={p.images?.[0] || ''} alt="" className="mg-product-thumb" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                                <ProductImage src={p.images?.[0]} alt={p.name} width={40} height={40} sizes="40px" className="mg-product-thumb" style={{ width: 40, height: 40, borderRadius: 6 }} />
                                 <div><div className="mg-product-name">{p.name}</div><div className="mg-product-id">ID: {p._id.slice(-8)}</div></div>
                               </div>
                             </td>
@@ -554,7 +587,7 @@ const ManagePage: React.FC = () => {
                       <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>All items ({order.items?.length || 0})</div>
                       {(order.items || []).map((item, idx) => (
                         <div key={idx} className="mg-item-chip" style={{ marginBottom: 6 }}>
-                          <img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <ProductImage src={item.image} alt={item.name} width={32} height={32} sizes="32px" objectFit="cover" style={{ width: 32, height: 32, borderRadius: 6 }} />
                           <span>{item.name}</span>
                           <span className="mg-item-qty">x{item.quantity}</span>
                           <span className="mg-price">${((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</span>
@@ -575,7 +608,7 @@ const ManagePage: React.FC = () => {
                   </div>
                   <div className="mg-order-items">
                     {order.items?.slice(0, 3).map((item, idx) => (
-                        <div key={idx} className="mg-item-chip"><img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} /><span>{item.name.slice(0, 28)}</span><span className="mg-item-qty">x{item.quantity}</span></div>
+                        <div key={idx} className="mg-item-chip"><ProductImage src={item.image} alt={item.name} width={32} height={32} sizes="32px" objectFit="cover" style={{ width: 32, height: 32, borderRadius: 6 }} /><span>{item.name.slice(0, 28)}</span><span className="mg-item-qty">x{item.quantity}</span></div>
                     ))}
                     {(order.items?.length || 0) > 3 && <div className="mg-more">+{(order.items?.length ?? 0) - 3} more</div>}
                   </div>

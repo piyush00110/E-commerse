@@ -3,10 +3,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { cartAPI } from '../services/api';
+import { cartAPI, productAPI } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 import { useScrollProgress } from '../hooks/useScrollProgress';
 import { isAllowedAdminEmail } from '../lib/admin';
+import ProductImage from './ProductImage';
+import type { Product } from '../types';
 
 interface User {
   name: string;
@@ -35,6 +37,8 @@ const BuyerNavbar: React.FC = () => {
   const [cartCount, setCartCount] = useState(0);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [deliverCity, setDeliverCity] = useState('New York');
   const [showCityPicker, setShowCityPicker] = useState(false);
@@ -117,6 +121,125 @@ const BuyerNavbar: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Live product suggestions while typing (debounced, top matches only).
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await productAPI.getAll({ search: query, limit: 6, sort: '-rating' });
+        if (!cancelled) setSuggestions((res.data.data as Product[]) || []);
+      } catch {
+        if (!cancelled) setSuggestions([]);
+      }
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  const goToSuggestion = (id: string) => {
+    setShowSuggestions(false);
+    setSearchQuery('');
+    router.push(`/products/${id}`);
+  };
+
+  const searchAll = () => {
+    const query = searchQuery.trim();
+    if (!query) return;
+    setShowSuggestions(false);
+    setShowMobileSearch(false);
+    router.push(`/products?search=${encodeURIComponent(query)}`);
+  };
+
+  const renderSuggestions = (absolute: boolean) => {
+    if (!showSuggestions || searchQuery.trim().length < 2 || suggestions.length === 0) {
+      return null;
+    }
+    return (
+      <div
+        role="listbox"
+        aria-label="Search suggestions"
+        style={{
+          position: absolute ? 'absolute' : 'static',
+          top: absolute ? 'calc(100% + 6px)' : undefined,
+          left: 0,
+          right: 0,
+          marginTop: absolute ? 0 : 8,
+          background: 'var(--bg-card, #fff)',
+          border: '1px solid var(--border, #e5e7eb)',
+          borderRadius: 14,
+          boxShadow: '0 12px 32px rgba(0,0,0,0.16)',
+          overflow: 'hidden',
+          zIndex: 1060,
+        }}
+      >
+        {suggestions.map((product) => (
+          <button
+            key={product._id}
+            type="button"
+            role="option"
+            aria-selected={false}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => goToSuggestion(product._id)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              width: '100%',
+              padding: '10px 14px',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: '1px solid var(--border, #f1f5f9)',
+              cursor: 'pointer',
+              textAlign: 'left',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-container, #f8fafc)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            <ProductImage
+              src={product.images?.[0]}
+              alt={product.name}
+              width={40}
+              height={40}
+              sizes="40px"
+              style={{ width: 40, height: 40, borderRadius: 8, flexShrink: 0 }}
+            />
+            <span style={{ flex: 1, minWidth: 0, fontSize: 13, fontWeight: 500, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {product.name}
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary, #6366f1)' }}>
+              ${Number(product.price || 0).toFixed(2)}
+            </span>
+          </button>
+        ))}
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={searchAll}
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '11px 14px',
+            background: 'var(--bg-container, #f8fafc)',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 12,
+            fontWeight: 700,
+            color: 'var(--primary, #6366f1)',
+          }}
+        >
+          See all results for “{searchQuery.trim()}”
+        </button>
+      </div>
+    );
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -367,7 +490,7 @@ const BuyerNavbar: React.FC = () => {
                   <div className="mini-cart-items">
                     {cartItems.slice(0, 4).map((item: any, idx: number) => (
                       <div key={idx} className="mini-cart-item" onClick={() => { setShowMiniCart(false); router.push('/cart'); }}>
-                        <img src={item.image || item.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="%23e5e7eb"><rect width="60" height="60" rx="8"/><text x="30" y="34" text-anchor="middle" fill="%239ca3af" font-size="10">No Img</text></svg>')} alt={item.name} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="%23e5e7eb"><rect width="60" height="60" rx="8"/><text x="30" y="34" text-anchor="middle" fill="%239ca3af" font-size="10">No Img</text></svg>'); }} className="mini-cart-img" />
+                        <ProductImage src={item.image || item.images?.[0]} alt={item.name} width={60} height={60} sizes="60px" className="mini-cart-img" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover' }} />
                         <div className="mini-cart-info">
                           <div className="mini-cart-name">{item.name}</div>
                           <div className="mini-cart-qty">Qty: {item.quantity}</div>
@@ -436,7 +559,9 @@ const BuyerNavbar: React.FC = () => {
               type="text"
               placeholder="Search products, brands, categories..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
               style={{ borderRadius: 'var(--radius-full)' }}
             />
             <button type="button" aria-label="Voice search" style={{
@@ -478,6 +603,7 @@ const BuyerNavbar: React.FC = () => {
               </svg>
             </button>
           </div>
+          {renderSuggestions(true)}
         </form>
 
         {/* ── Mobile Menu Overlay ── */}
@@ -621,7 +747,9 @@ const BuyerNavbar: React.FC = () => {
                 type="text"
                 placeholder="Search products, brands, categories..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
               />
             </div>
             <button type="submit" aria-label="Search" className="search-btn">
@@ -631,6 +759,7 @@ const BuyerNavbar: React.FC = () => {
               </svg>
             </button>
           </form>
+          {renderSuggestions(false)}
         </div>
       )}
 

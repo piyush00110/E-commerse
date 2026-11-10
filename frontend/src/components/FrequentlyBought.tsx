@@ -6,6 +6,7 @@ import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ProductImage from './ProductImage';
 
 interface Props {
   product: Product;
@@ -66,7 +67,15 @@ const FrequentlyBought: React.FC<Props> = ({ product, relatedProducts }) => {
                     {selected.includes(item._id) ? '\u2713' : ''}
                   </div>
                 </div>
-                <img src={item.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')} alt={item.name} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} onClick={(e) => { e.stopPropagation(); router.push(`/products/${item._id}`); }} />
+                <ProductImage
+                  src={item.images?.[0]}
+                  alt={item.name}
+                  width={200}
+                  height={200}
+                  sizes="120px"
+                  style={{ width: '100%', height: 'auto' }}
+                  onClick={(e) => { e.stopPropagation(); router.push(`/products/${item._id}`); }}
+                />
                 <div className="fbt-item-info">
                   <div className="fbt-item-name">{item.name}</div>
                   <div className="fbt-item-price">${(item.price ?? 0).toFixed(2)}</div>

@@ -8,6 +8,7 @@ import { Product } from '../types';
 import { useToast } from '../context/ToastContext';
 import { GridSkeleton } from '../components/Skeleton';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ProductImage from '../components/ProductImage';
 
 const WishlistPage: React.FC = () => {
   const router = useRouter();
@@ -109,8 +110,14 @@ const WishlistPage: React.FC = () => {
                     aspectRatio: '1/1', background: 'var(--bg-card)', display: 'flex',
                     alignItems: 'center', justifyContent: 'center', padding: 16,
                   }}>
-                    <img src={(product.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>'))} alt={product.name}
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 8 }} />
+                    <ProductImage
+                      src={product.images?.[0]}
+                      alt={product.name}
+                      width={400}
+                      height={400}
+                      sizes="(max-width: 640px) 100vw, 25vw"
+                      style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 8 }}
+                    />
                   </div>
                 </Link>
 

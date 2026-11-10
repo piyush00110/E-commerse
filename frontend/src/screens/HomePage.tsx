@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ProductCard from '../components/ProductCard';
+import ProductImage from '../components/ProductImage';
 import CountdownTimer from '../components/CountdownTimer';
 import { productAPI, categoryAPI } from '../services/api';
 import { Product, Category } from '../types';
@@ -517,16 +518,17 @@ const HomePage: React.FC = () => {
               overflow: 'hidden',
               boxShadow: '0 20px 48px rgba(0,0,0,0.25)',
             }}>
-              <img
-                src={featured[bannerIdx]?.images?.[0] || featured[0]?.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="%23f43f5e"><rect width="400" height="240" rx="0"/><text x="200" y="128" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48">' + banner.icon + '</text></svg>')}
+              <ProductImage
+                src={featured[bannerIdx]?.images?.[0] || featured[0]?.images?.[0]}
                 alt={banner.title}
-                loading="eager"
-                decoding="async"
-                onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="%23ff3f6c"><rect width="400" height="240" rx="0"/><text x="200" y="128" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48">' + banner.icon + '</text></svg>'); }}
+                width={400}
+                height={240}
+                priority
+                sizes="(max-width: 768px) 100vw, 260px"
+                objectFit="cover"
                 style={{
                   width: '100%',
                   height: 240,
-                  objectFit: 'cover',
                   display: 'block',
                 }}
               />
@@ -673,10 +675,11 @@ const HomePage: React.FC = () => {
                 justifyContent: 'center',
                 fontSize: 26,
                 overflow: 'hidden',
+                position: 'relative',
                 transition: 'transform 0.2s, border-color 0.2s',
               }}>
                 {cat.image ? (
-                  <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.textContent = getCategoryEmoji(cat.name); }} />
+                  <ProductImage src={cat.image} alt={cat.name} fill sizes="58px" objectFit="cover" />
                 ) : (
                   getCategoryEmoji(cat.name)
                 )}
@@ -785,14 +788,16 @@ const HomePage: React.FC = () => {
                     -{discount}%
                   </span>
 
-                  <img
-                    src={product.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="140" fill="%23e5e7eb"><rect width="400" height="140"/><text x="200" y="76" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
+                  <ProductImage
+                    src={product.images?.[0]}
                     alt={product.name}
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="140" fill="%23e5e7eb"><rect width="400" height="140"/><text x="200" y="76" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>'); }}
+                    width={400}
+                    height={140}
+                    sizes="(max-width: 768px) 50vw, 220px"
+                    objectFit="cover"
                     style={{
                       width: '100%',
                       height: 140,
-                      objectFit: 'cover',
                       borderRadius: '12px 12px 0 0',
                     }}
                   />
@@ -944,10 +949,14 @@ const HomePage: React.FC = () => {
                   border: '2px solid var(--border)',
                 }}>
                   {cat.image ? (
-                    <img
+                    <ProductImage
                       src={cat.image}
                       alt={cat.name}
-                      style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
+                      width={32}
+                      height={32}
+                      sizes="32px"
+                      objectFit="cover"
+                      style={{ width: 32, height: 32, borderRadius: '50%' }}
                     />
                   ) : (
                     cat.name.charAt(0)
@@ -1108,13 +1117,16 @@ const HomePage: React.FC = () => {
                   overflow: 'hidden',
                   boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
                 }}>
-                  <img
-                    src={topDeal.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
+                  <ProductImage
+                    src={topDeal.images?.[0]}
                     alt={topDeal.name}
+                    width={400}
+                    height={200}
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    objectFit="cover"
                     style={{
                       width: '100%',
                       height: 200,
-                      objectFit: 'cover',
                       display: 'block',
                     }}
                   />
@@ -1152,13 +1164,16 @@ const HomePage: React.FC = () => {
                 }}
                 onClick={() => router.push(`/products/${p._id}`)}
               >
-                <img
-                  src={p.images?.[0] || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="%239ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>')}
+                <ProductImage
+                  src={p.images?.[0]}
                   alt={p.name}
+                  width={180}
+                  height={140}
+                  sizes="180px"
+                  objectFit="cover"
                   style={{
                     width: '100%',
                     height: 140,
-                    objectFit: 'cover',
                   }}
                 />
                 <div style={{ padding: 10 }}>

@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext';
 import Plan from '@/components/ui/agent-plan';
 import { isOnlinePaymentPending, paymentMethodLabel } from '../lib/paymentMethods';
 import { payOrderWithRazorpay, RazorpayCheckoutError } from '../lib/razorpay';
+import ProductImage from '../components/ProductImage';
 
 interface TrackingEvent {
   date: string;
@@ -378,8 +379,8 @@ const OrderDetailPage: React.FC = () => {
                   borderBottom: idx < order.items.length - 1 ? '1px solid var(--bg-container)' : 'none',
                 }}>
                   <Link href={`/products/${item.product}`}>
-                    <img src={item.image || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="%23e5e7eb"><rect width="64" height="64" rx="8"/><text x="32" y="36" text-anchor="middle" fill="%239ca3af" font-size="11">No Image</text></svg>')} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="%23e5e7eb"><rect width="64" height="64" rx="8"/><text x="32" y="36" text-anchor="middle" fill="%239ca3af" font-size="11">No Image</text></svg>'); }} style={{
-                      width: 64, height: 64, borderRadius: 10, objectFit: 'contain',
+                    <ProductImage src={item.image} alt={item.name} width={64} height={64} sizes="64px" style={{
+                      width: 64, height: 64, borderRadius: 10,
                       background: 'var(--bg-card)', border: '1px solid var(--border)',
                     }} />
                   </Link>
@@ -434,7 +435,7 @@ const OrderDetailPage: React.FC = () => {
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = 'none'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; }}
                 >
-                  <img src={item.image || 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="%23e5e7eb"><rect width="80" height="80" rx="8"/><text x="40" y="44" text-anchor="middle" fill="%239ca3af" font-size="12">No Image</text></svg>')} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="%23e5e7eb"><rect width="80" height="80" rx="8"/><text x="40" y="44" text-anchor="middle" fill="%239ca3af" font-size="12">No Image</text></svg>'); }} style={{ width: '100%', height: 100, objectFit: 'contain', borderRadius: 8, background: 'var(--bg-card)', marginBottom: 8 }} />
+                  <ProductImage src={item.image} alt={item.name} width={120} height={100} sizes="120px" style={{ width: '100%', height: 100, borderRadius: 8, background: 'var(--bg-card)', marginBottom: 8 }} />
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', lineHeight: 1.3, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
                   <div style={{ fontSize: 14, fontWeight: 800, color: '#4f46e5', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>${(item.price ?? 0).toFixed(2)}</div>
                 </Link>

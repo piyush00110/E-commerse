@@ -69,6 +69,4 @@ export function RadialOrbitalTimelineDemo() {
   );
 }
 
-export default {
-  RadialOrbitalTimelineDemo,
-};
+export default RadialOrbitalTimelineDemo;

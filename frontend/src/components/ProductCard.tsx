@@ -7,6 +7,7 @@ import { Product } from '../types';
 import { cartAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ProductImage from './ProductImage';
 
 interface Props {
   product: Product;
@@ -85,8 +86,7 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
     router.push(`/products/${product._id}`);
   }, [router, product._id]);
 
-  const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="#e5e7eb"><rect width="400" height="400"/><text x="200" y="208" text-anchor="middle" fill="#9ca3af" font-family="sans-serif" font-size="14">No Image</text></svg>');
-  const imageUrl = product.images?.[0] || PLACEHOLDER_IMG;
+  const imageUrl = product.images?.[0] || '';
 
   return (
     <Link
@@ -100,13 +100,13 @@ const ProductCardInner: React.FC<Props> = ({ product, badge }) => {
       }}
     >
       <div className="product-card-image" style={{ position: 'relative' }}>
-        <img
+        <ProductImage
           src={imageUrl}
           alt={product.name}
-          loading="lazy"
-          decoding="async"
-          onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          objectFit="contain"
+          style={{ padding: 8 }}
         />
 
         {(badge === 'bestseller' || badge === 'amazons_choice' || (discount >= 5)) && (

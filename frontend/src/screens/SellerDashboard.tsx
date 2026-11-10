@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { productAPI, orderAPI } from '../services/api';
+import ProductImage from '../components/ProductImage';
 
 const SellerDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -10,6 +11,7 @@ const SellerDashboard: React.FC = () => {
   });
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<'week' | 'month' | 'year'>('month');
 
@@ -37,6 +39,12 @@ const SellerDashboard: React.FC = () => {
           deliveredOrders,
         });
         setRecentOrders(orders.slice(0, 5));
+        setLowStockProducts(
+          products
+            .filter((p: any) => p.countInStock < 10)
+            .sort((a: any, b: any) => a.countInStock - b.countInStock)
+            .slice(0, 5),
+        );
         setTopProducts(products.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0)).slice(0, 5));
       } catch (err) {
         console.error('Failed to load seller data', err);
@@ -54,6 +62,7 @@ const SellerDashboard: React.FC = () => {
     { label: 'Total Orders', value: stats.totalOrders, icon: '\u{1F4CB}', color: 'var(--primary)', bg: 'rgba(99,102,241,0.1)' },
     { label: 'Products', value: stats.totalProducts, icon: '\u{1F4E6}', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
     { label: 'Pending Shipments', value: stats.pendingOrders, icon: '\u{1F4E8}', color: 'var(--warning)', bg: 'rgba(245,158,11,0.1)' },
+    { label: 'Low Stock', value: stats.lowStock, icon: '\u26A0', color: stats.lowStock > 0 ? 'var(--error)' : 'var(--success)', bg: 'rgba(239,68,68,0.1)' },
   ];
 
   const statusColor = (order: any) => {
@@ -102,6 +111,39 @@ const SellerDashboard: React.FC = () => {
         ))}
       </div>
 
+      {lowStockProducts.length > 0 && (
+        <div className="card" style={{ padding: '16px 20px', marginBottom: 24, borderLeft: '4px solid var(--error)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
+              ⚠ Low stock — restock soon
+            </h2>
+            <Link href="/seller/products" style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)' }}>
+              Manage inventory →
+            </Link>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {lowStockProducts.map((p: any) => (
+              <Link
+                key={p._id}
+                href="/seller/products"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'var(--text)',
+                  background: 'var(--bg-container)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  textDecoration: 'none',
+                }}
+              >
+                {p.name.length > 30 ? `${p.name.slice(0, 30)}…` : p.name} · {p.countInStock} left
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -148,7 +190,7 @@ const SellerDashboard: React.FC = () => {
                     width: 28, height: 28, borderRadius: 8, background: 'var(--primary)', color: 'var(--bg-card)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0,
                   }}>{i + 1}</div>
-                  {p.images?.[0] && <img src={p.images[0]} alt="" style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'cover' }} onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />}
+                  {p.images?.[0] && <ProductImage src={p.images[0]} alt={p.name || 'Product'} width={36} height={36} sizes="36px" objectFit="cover" style={{ width: 36, height: 36, borderRadius: 6 }} />}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>

@@ -1,62 +1,39 @@
 'use client';
-import React, { useState } from 'react';
-
-interface Coupon {
-  code: string;
-  discount: number;
-  description: string;
-  minPurchase?: number;
-}
+import React, { useEffect, useState } from 'react';
+import {
+  AVAILABLE_COUPONS,
+  clipCoupon,
+  getClippedCouponCodes,
+  unclipCoupon,
+  type CouponDefinition,
+} from '../lib/coupons';
 
 interface Props {
   productPrice: number;
   productName: string;
 }
 
-const AVAILABLE_COUPONS: Coupon[] = [
-  { code: 'SAVE10', discount: 10, description: 'Save 10% on this item', minPurchase: 20 },
-  { code: 'WELCOME5', discount: 5, description: '$5 off your purchase', minPurchase: 15 },
-];
-
-const getAppliedCoupons = (): Coupon[] => {
-  try {
-    if (typeof window === 'undefined') return [];
-    return JSON.parse(localStorage.getItem('clippedCoupons') || '[]');
-  } catch { return []; }
-};
-
-const saveAppliedCoupons = (coupons: Coupon[]) => {
-  try {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('clippedCoupons', JSON.stringify(coupons));
-  } catch { /* storage unavailable */ }
-};
-
-const CouponClip: React.FC<Props> = ({ productPrice, productName }) => {
-  const [clipped, setClipped] = useState<Coupon[]>([]);
+const CouponClip: React.FC<Props> = ({ productPrice }) => {
+  const [clippedCodes, setClippedCodes] = useState<string[]>([]);
   const [showAll, setShowAll] = useState(false);
 
-  React.useEffect(() => {
-    setClipped(getAppliedCoupons());
+  useEffect(() => {
+    setClippedCodes(getClippedCouponCodes());
   }, []);
 
   const eligibleCoupons = AVAILABLE_COUPONS.filter(
-    (c) => !c.minPurchase || productPrice >= c.minPurchase
+    (c) => !c.minPurchase || productPrice >= c.minPurchase,
   );
 
-  const isClipped = (code: string) => clipped.some((c) => c.code === code);
+  const isClipped = (code: string) => clippedCodes.includes(code);
 
-  const handleClip = (coupon: Coupon) => {
+  const handleClip = (coupon: CouponDefinition) => {
     if (isClipped(coupon.code)) return;
-    const updated = [...clipped, coupon];
-    setClipped(updated);
-    saveAppliedCoupons(updated);
+    setClippedCodes(clipCoupon(coupon.code));
   };
 
   const handleUnclip = (code: string) => {
-    const updated = clipped.filter((c) => c.code !== code);
-    setClipped(updated);
-    saveAppliedCoupons(updated);
+    setClippedCodes(unclipCoupon(code));
   };
 
   if (!eligibleCoupons.length) return null;
@@ -79,12 +56,18 @@ const CouponClip: React.FC<Props> = ({ productPrice, productName }) => {
                 <div className="coupon-clip-left">
                   <div className="coupon-clip-code">{coupon.code}</div>
                   <div className="coupon-clip-desc">{coupon.description}</div>
-                  {coupon.minPurchase && (
-                    <div className="coupon-clip-min">Min. purchase ${coupon.minPurchase}</div>
+                  {coupon.minPurchase > 0 && (
+                    <div className="coupon-clip-min">
+                      Min. purchase ${coupon.minPurchase.toFixed(2)}
+                    </div>
                   )}
                 </div>
-                <button className={`coupon-clip-btn ${clipped ? 'clipped' : ''}`}
-                  onClick={() => clipped ? handleUnclip(coupon.code) : handleClip(coupon)}>
+                <button
+                  className={`coupon-clip-btn ${clipped ? 'clipped' : ''}`}
+                  onClick={() =>
+                    clipped ? handleUnclip(coupon.code) : handleClip(coupon)
+                  }
+                >
                   {clipped ? 'Clipped \u2713' : 'Clip Coupon'}
                 </button>
               </div>
@@ -96,5 +79,4 @@ const CouponClip: React.FC<Props> = ({ productPrice, productName }) => {
   );
 };
 
-export { AVAILABLE_COUPONS, getAppliedCoupons };
 export default CouponClip;

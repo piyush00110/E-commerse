@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { mapProduct, mapProducts, mapCategory, mapCategories } from '../lib/apiUtils';
+import { calculateCouponDiscount } from '../lib/coupons';
 import type { Category } from '../types';
 
 const db = supabase as any;
@@ -444,7 +445,13 @@ export const orderAPI = {
     // total is calculated — the Razorpay amount is later read from this row.
     const addressExtras = (data.shippingAddress || {}) as Record<string, unknown>;
     const giftWrapPrice = addressExtras.giftWrap ? 4.99 : 0;
-    const promoDiscount = Math.max(0, Math.min(Number(addressExtras.promoDiscount) || 0, subtotal));
+    // Validate the coupon against the real subtotal instead of trusting a
+    // client-supplied dollar amount. Unknown/expired codes simply discount $0.
+    const promo = calculateCouponDiscount(
+      typeof addressExtras.promoCode === 'string' ? addressExtras.promoCode : '',
+      subtotal,
+    );
+    const promoDiscount = promo.discount;
     const shippingPrice = subtotal >= 50 ? 0 : 9.99;
     const taxPrice = subtotal * 0.08;
     const beforeWallet = Math.max(0, subtotal - promoDiscount + shippingPrice + taxPrice + giftWrapPrice);

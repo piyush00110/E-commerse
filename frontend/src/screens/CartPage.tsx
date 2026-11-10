@@ -8,6 +8,8 @@ import { Cart, Product } from '../types';
 import { useToast } from '../context/ToastContext';
 import { CartSkeleton } from '../components/Skeleton';
 import { GradientButton } from '@/components/ui/gradient-button';
+import ProductImage from '../components/ProductImage';
+import { calculateCouponDiscount, clipCoupon } from '../lib/coupons';
 
 const CartPage: React.FC = () => {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -16,8 +18,32 @@ const CartPage: React.FC = () => {
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
   const [hoveredRemoveId, setHoveredRemoveId] = useState<string | null>(null);
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponMessage, setCouponMessage] = useState('');
   const router = useRouter();
   const { showToast } = useToast();
+
+  const handleApplyCoupon = (code?: string) => {
+    const value = code ?? couponInput;
+    const result = calculateCouponDiscount(value, cart?.totalPrice || 0);
+    if (result.error || !result.coupon) {
+      const message = result.error || 'Invalid coupon code';
+      setCouponMessage(message);
+      showToast(message, 'error');
+      return;
+    }
+    clipCoupon(result.coupon.code);
+    try {
+      localStorage.setItem('pendingCoupon', result.coupon.code);
+    } catch {
+      /* storage unavailable */
+    }
+    setCouponInput(result.coupon.code);
+    setCouponMessage(
+      `${result.coupon.code} applied — $${result.discount.toFixed(2)} off at checkout`,
+    );
+    showToast(`Coupon ${result.coupon.code} applied!`, 'success');
+  };
 
   const fetchCart = async () => {
     try {
@@ -217,13 +243,13 @@ const CartPage: React.FC = () => {
               <Link href={`/products/${typeof item.product === 'string' ? item.product : item.product?._id ?? ''}`}
                 style={{ flexShrink: 0 }}>
                 <div style={{ width: 110, height: 110, borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-container, #f8fafc)' }}>
-                  <img
-                    src={item.image || ''}
+                  <ProductImage
+                    src={item.image}
                     alt={item.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
-                    }}
+                    width={110}
+                    height={110}
+                    sizes="110px"
+                    style={{ width: '100%', height: '100%' }}
                   />
                 </div>
               </Link>
@@ -326,18 +352,27 @@ const CartPage: React.FC = () => {
             <input
               type="text"
               placeholder="Enter coupon code"
+              value={couponInput}
+              onChange={(e) => { setCouponInput(e.target.value); setCouponMessage(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleApplyCoupon(); }}
               className="form-input"
               style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid var(--border, #e2e8f0)', fontSize: 13, background: 'var(--bg-container, #f8fafc)' }}
             />
-            <GradientButton size="sm" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <GradientButton size="sm" onClick={() => handleApplyCoupon()} style={{ padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
               Apply
             </GradientButton>
           </div>
+          {couponMessage && (
+            <div style={{ marginTop: 8, fontSize: 12, color: couponMessage.includes('applied') ? 'var(--success, #16a34a)' : 'var(--danger, #dc2626)' }}>
+              {couponMessage}
+            </div>
+          )}
           <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {['SAVE10', 'FIRST20', 'FLAT50'].map((coupon) => (
-              <div key={coupon} className="coupon-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px dashed var(--primary, #6366f1)', background: 'rgba(99,102,241,0.04)', cursor: 'pointer', transition: 'background 0.15s' }}
+              <div key={coupon} className="coupon-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px dashed var(--primary, #6366f1)', background: couponInput === coupon ? 'rgba(99,102,241,0.14)' : 'rgba(99,102,241,0.04)', cursor: 'pointer', transition: 'background 0.15s' }}
+                onClick={() => handleApplyCoupon(coupon)}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.04)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = couponInput === coupon ? 'rgba(99,102,241,0.14)' : 'rgba(99,102,241,0.04)'; }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #6366f1)" strokeWidth="2">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
@@ -440,11 +475,13 @@ const CartPage: React.FC = () => {
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
                 <div style={{ width: '100%', height: 140, background: 'var(--bg-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  <img
-                    src={product.images?.[0] || ''}
+                  <ProductImage
+                    src={product.images?.[0]}
                     alt={product.name}
-                    style={{ width: '80%', height: '80%', objectFit: 'contain' }}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    width={160}
+                    height={140}
+                    sizes="160px"
+                    style={{ width: '80%', height: '80%' }}
                   />
                 </div>
                 <div style={{ padding: '10px 12px' }}>

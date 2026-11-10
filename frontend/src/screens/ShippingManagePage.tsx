@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import ProductImage from '../components/ProductImage';
 
 interface OrderItem {
   product: string;
@@ -202,7 +203,7 @@ const ShippingManagePage: React.FC = () => {
                   <div className="shipping-order-items">
                     {order.items?.slice(0, 3).map((item, idx) => (
                       <div key={idx} className="shipping-item-chip">
-                        <img src={item.image || ''} alt="" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2E2YThiNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='; }} />
+                        <ProductImage src={item.image} alt={item.name} width={40} height={40} sizes="40px" objectFit="cover" style={{ width: 40, height: 40, borderRadius: 6 }} />
                         <span>{item.name.slice(0, 30)}...</span>
                         <span className="shipping-item-qty">x{item.quantity}</span>
                       </div>
