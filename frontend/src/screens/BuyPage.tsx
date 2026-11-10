@@ -7,6 +7,8 @@ import { Cart, Address } from '../types';
 import { useToast } from '../context/ToastContext';
 import { getAppliedCoupons } from '../components/CouponClip';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { PAYMENT_METHODS, paymentMethodLabel } from '../lib/paymentMethods';
+import { getRazorpayStatus, payOrderWithRazorpay, RazorpayCheckoutError } from '../lib/razorpay';
 
 interface SavedAddress extends Address {
   id: string;
@@ -31,12 +33,17 @@ const saveAddresses = (addrs: SavedAddress[]) => {
 
 const EMPTY_ADDRESS: Address = { street: '', city: '', state: '', zip: '', country: 'US', phone: '' };
 
-const PAYMENT_METHODS = [
-  { id: 'credit_card', label: 'Credit / Debit Card', desc: 'Visa, Mastercard, Amex, Discover', icon: '\u{1F4B3}' },
-  { id: 'paypal', label: 'PayPal', desc: 'Fast & secure online payments', icon: '\u{1F4B1}' },
-  { id: 'upi', label: 'UPI', desc: 'Google Pay, PhonePe, Paytm', icon: '\u{1F4F1}' },
-  { id: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive', icon: '\u{1F4B5}' },
-];
+const readCustomer = (): { name?: string; email?: string } => {
+  try {
+    if (typeof window === 'undefined') return {};
+    const raw = localStorage.getItem('user');
+    if (!raw) return {};
+    const user = JSON.parse(raw) as { name?: string; email?: string };
+    return { name: user?.name, email: user?.email };
+  } catch {
+    return {};
+  }
+};
 
 const BuyPage: React.FC = () => {
   const router = useRouter();
@@ -53,11 +60,12 @@ const BuyPage: React.FC = () => {
   const [newAddr, setNewAddr] = useState<Address>({ ...EMPTY_ADDRESS });
   const [useNewAddr, setUseNewAddr] = useState(false);
 
-  const [paymentMethod, setPaymentMethod] = useState('credit_card');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
-  const [cardName, setCardName] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const [razorpayReady, setRazorpayReady] = useState<boolean | null>(null);
+  const [razorpayConfigured, setRazorpayConfigured] = useState(false);
+  const [razorpayOrderSync, setRazorpayOrderSync] = useState(false);
+  const [razorpayCurrency, setRazorpayCurrency] = useState('USD');
+  const [razorpayRate, setRazorpayRate] = useState(0);
   const [giftWrap, setGiftWrap] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
   const [promoCode, setPromoCode] = useState('');
@@ -112,6 +120,21 @@ const BuyPage: React.FC = () => {
     else { setUseNewAddr(true); setShowNewAddr(true); }
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    getRazorpayStatus()
+      .then((status) => {
+        if (cancelled) return;
+        setRazorpayReady(status.ready);
+        setRazorpayConfigured(status.configured);
+        setRazorpayOrderSync(status.orderSync);
+        setRazorpayCurrency(status.currency);
+        setRazorpayRate(status.exchangeRate);
+      })
+      .catch(() => { if (!cancelled) setRazorpayReady(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   const getActiveAddress = (): Address | null => {
     if (useNewAddr) return newAddr;
     const found = savedAddresses.find((a) => a.id === selectedAddrId);
@@ -128,11 +151,9 @@ const BuyPage: React.FC = () => {
       return true;
     }
     if (step === 2) {
-      if (paymentMethod === 'credit_card') {
-        if (!cardNumber || !cardExpiry || !cardCvv || !cardName) {
-          showToast('Please fill in all card details', 'warning');
-          return false;
-        }
+      if (paymentMethod === 'razorpay' && (razorpayReady === false || (razorpayCurrency === 'INR' && razorpayRate <= 0))) {
+        showToast('Online payments are not available right now. Please choose Cash on Delivery.', 'warning');
+        return false;
       }
       return true;
     }
@@ -175,11 +196,52 @@ const BuyPage: React.FC = () => {
     if (!validateStep()) return;
     const addr = getActiveAddress();
     if (!addr) { showToast('Please provide a shipping address', 'warning'); return; }
+    if (paymentMethod === 'razorpay' && razorpayReady === false) {
+      showToast('Online payments are not available right now. Please choose Cash on Delivery.', 'error');
+      return;
+    }
     setSubmitting(true);
     try {
-      const res = await orderAPI.create({ shippingAddress: addr, paymentMethod });
+      const res = await orderAPI.create({
+        shippingAddress: {
+          ...addr,
+          giftWrap,
+          giftMessage: giftWrap ? giftMessage : '',
+          walletApplied,
+          promoDiscount: promoDiscountValue,
+        },
+        paymentMethod,
+      });
+      const order = res.data.data;
+
+      if (paymentMethod === 'razorpay') {
+        try {
+          const result = await payOrderWithRazorpay({
+            orderId: order._id,
+            amount: order.totalPrice,
+            customer: { ...readCustomer(), contact: addr.phone },
+            description: `Order #${order._id.slice(-8).toUpperCase()}`,
+          });
+          if (!result.orderUpdated) {
+            showToast('Payment received. Your order is being confirmed — this can take a moment.', 'info');
+            router.push(`/orders/${order._id}`);
+            return;
+          }
+          showToast('Payment successful! Your order is confirmed.', 'success');
+          router.push(`/order-confirmation/${order._id}`);
+        } catch (paymentErr) {
+          const message = paymentErr instanceof RazorpayCheckoutError
+            ? paymentErr.message
+            : 'Payment could not be completed. Please try again.';
+          const dismissed = paymentErr instanceof RazorpayCheckoutError && paymentErr.code === 'DISMISSED';
+          showToast(message, dismissed ? 'info' : 'error');
+          router.push(`/orders/${order._id}`);
+        }
+        return;
+      }
+
       showToast('Order placed successfully!', 'success');
-      router.push(`/order-confirmation/${res.data.data._id}`);
+      router.push(`/order-confirmation/${order._id}`);
     } catch (err: any) {
       showToast(err?.response?.data?.message || 'Failed to place order', 'error');
     } finally {
@@ -204,12 +266,13 @@ const BuyPage: React.FC = () => {
   if (!cart) return null;
 
   const taxPrice = Math.round(cart.totalPrice * 0.08 * 100) / 100;
-  const shippingPrice = cart.totalPrice > 50 ? 0 : 9.99;
+  const shippingPrice = cart.totalPrice >= 50 ? 0 : 9.99;
   const giftWrapPrice = giftWrap ? GIFT_WRAP_PRICE : 0;
   const promoDiscountValue = promoDiscount > 10 ? cart.totalPrice * (promoDiscount / 100) : promoDiscount;
-  const walletApplied = applyWallet ? Math.min(walletBalance, cart.totalPrice + taxPrice + shippingPrice + giftWrapPrice) : 0;
   const subtotalAfterDiscount = Math.max(0, cart.totalPrice - promoDiscountValue);
-  const totalPrice = Math.max(0, subtotalAfterDiscount + taxPrice + shippingPrice + giftWrapPrice - walletApplied);
+  const beforeWallet = Math.max(0, subtotalAfterDiscount + taxPrice + shippingPrice + giftWrapPrice);
+  const walletApplied = applyWallet ? Math.min(walletBalance, beforeWallet) : 0;
+  const totalPrice = Math.max(0, beforeWallet - walletApplied);
   const activeAddr = getActiveAddress();
 
   return (
@@ -371,38 +434,57 @@ const BuyPage: React.FC = () => {
                   ))}
                 </div>
 
-                {paymentMethod === 'credit_card' && (
+                {paymentMethod === 'razorpay' && (
                   <div className="card-form animate-in">
-                    <div className="buy-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                      <span style={{ fontWeight: 600 }}>Enter card details</span>
-                      <div className="buy-card-logos" style={{ display: 'flex', gap: 6 }}>
-                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>VISA</span>
-                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>MC</span>
-                        <span style={{ padding: '3px 6px', border: '1px solid var(--border)', borderRadius: 3, fontSize: 10, fontWeight: 800 }}>AMEX</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+                      <div style={{
+                        width: 46, height: 46, borderRadius: 12, flexShrink: 0,
+                        background: 'linear-gradient(135deg, #0b72e7 0%, #3395ff 100%)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontSize: 22, fontWeight: 800,
+                        boxShadow: '0 6px 16px rgba(11,114,231,0.25)',
+                      }}>R</div>
+                      <div>
+                        <strong style={{ display: 'block', fontSize: 15 }}>Pay securely with Razorpay</strong>
+                        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                          Complete payment in Razorpay&apos;s PCI-DSS compliant checkout.
+                        </span>
                       </div>
                     </div>
-                    <div className="form-group">
-                      <label>Card Number</label>
-                      <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim())}
-                        placeholder="1234 5678 9012 3456" maxLength={19} />
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                      {['Cards', 'UPI', 'NetBanking', 'Wallets', 'EMI'].map((method) => (
+                        <span key={method} style={{
+                          padding: '6px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+                          background: 'var(--bg-container, #f1f5f9)', color: 'var(--text-secondary)',
+                          border: '1px solid var(--border, #e2e8f0)',
+                        }}>{method}</span>
+                      ))}
                     </div>
-                    <div className="form-group">
-                      <label>Name on Card</label>
-                      <input type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="John Doe" />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Expiry Date</label>
-                        <input type="text" value={cardExpiry} onChange={(e) => {
-                          const v = e.target.value.replace(/\D/g, '');
-                          if (v.length <= 4) setCardExpiry(v.length > 2 ? v.slice(0, 2) + '/' + v.slice(2) : v);
-                        }} placeholder="MM/YY" maxLength={5} />
+                    {(razorpayReady === false || (razorpayCurrency === 'INR' && razorpayRate <= 0)) && (
+                      <div style={{
+                        padding: '12px 14px', borderRadius: 10, marginBottom: 12,
+                        background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)',
+                        fontSize: 13, color: '#92400e', lineHeight: 1.5,
+                      }}>
+                        {razorpayCurrency === 'INR' && razorpayRate <= 0
+                          ? 'INR payments are not configured. Set RAZORPAY_USD_TO_INR or choose Cash on Delivery.'
+                          : razorpayConfigured && !razorpayOrderSync
+                            ? 'Online payments are being set up. Add SUPABASE_SERVICE_ROLE_KEY on the server so payments can be recorded, or choose Cash on Delivery.'
+                            : 'Online payments are not configured yet. Add your Razorpay keys to enable cards/UPI, or choose Cash on Delivery.'}
                       </div>
-                      <div className="form-group">
-                        <label>CVV</label>
-                        <input type="text" value={cardCvv} onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="123" maxLength={4} />
-                      </div>
+                    )}
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                      {'\u{1F512}'} 256-bit SSL encrypted &middot; We never see or store your card details
                     </div>
+                    {razorpayCurrency !== 'USD' && (
+                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 10 }}>
+                        {razorpayCurrency === 'INR' && razorpayRate > 0 ? (
+                          <>You&apos;ll be charged approximately <strong>{'\u20B9'}{(totalPrice * razorpayRate).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong> at the current exchange rate.</>
+                        ) : (
+                          <>Payment will be charged in <strong>{razorpayCurrency}</strong>.</>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -451,8 +533,8 @@ const BuyPage: React.FC = () => {
                     <button className="edit-link" onClick={() => setStep(2)}>Edit</button>
                   </div>
                   <div className="review-payment">
-                    {PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.icon} {PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.label}
-                    {paymentMethod === 'credit_card' && cardNumber && <span> ending in {cardNumber.slice(-4)}</span>}
+                    {PAYMENT_METHODS.find((p) => p.id === paymentMethod)?.icon} {paymentMethodLabel(paymentMethod)}
+                    {paymentMethod === 'razorpay' && <span> · secure Razorpay checkout</span>}
                   </div>
                 </div>
 
@@ -493,9 +575,11 @@ const BuyPage: React.FC = () => {
                   </GradientButton>
                   <GradientButton onClick={handlePlaceOrder} disabled={submitting} loading={submitting}>
                     {submitting ? (
-                      <>Placing Order...</>
+                      <>{paymentMethod === 'razorpay' ? 'Opening Razorpay...' : 'Placing Order...'}</>
                     ) : (
-                      `Place Order — $${totalPrice.toFixed(2)}`
+                      paymentMethod === 'razorpay'
+                        ? `Pay Securely — $${totalPrice.toFixed(2)}`
+                        : `Place Order — $${totalPrice.toFixed(2)}`
                     )}
                   </GradientButton>
                 </div>

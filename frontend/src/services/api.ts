@@ -438,9 +438,18 @@ export const orderAPI = {
       if (!prod || prod.count_in_stock < item.quantity) throw { response: { data: { message: `Insufficient stock for ${item.name}` } } };
     }
     const subtotal = items.reduce((s: number, i: any) => s + Number(i.price) * i.quantity, 0);
+
+    // Checkout can add gift wrapping, coupons and gift-card credit. These are
+    // stored inside the shipping_address JSON, so honour them when the order
+    // total is calculated — the Razorpay amount is later read from this row.
+    const addressExtras = (data.shippingAddress || {}) as Record<string, unknown>;
+    const giftWrapPrice = addressExtras.giftWrap ? 4.99 : 0;
+    const promoDiscount = Math.max(0, Math.min(Number(addressExtras.promoDiscount) || 0, subtotal));
     const shippingPrice = subtotal >= 50 ? 0 : 9.99;
     const taxPrice = subtotal * 0.08;
-    const totalPrice = subtotal + shippingPrice + taxPrice;
+    const beforeWallet = Math.max(0, subtotal - promoDiscount + shippingPrice + taxPrice + giftWrapPrice);
+    const walletApplied = Math.max(0, Math.min(Number(addressExtras.walletApplied) || 0, beforeWallet));
+    const totalPrice = Math.max(0, beforeWallet - walletApplied);
     const { data: order, error: orderError } = await db.from('orders').insert({
       user_id: uid, shipping_address: data.shippingAddress, payment_method: data.paymentMethod,
       tax_price: Math.round(taxPrice * 100) / 100, shipping_price: Math.round(shippingPrice * 100) / 100,
@@ -493,11 +502,16 @@ export const orderAPI = {
     return { data: { success: true } };
   },
 
+  // Admin-only manual payment (e.g. marking a COD order as paid). The database
+  // trigger blocks customers from changing payment fields themselves.
   pay: async (id: string, payData: unknown) => {
-    const { error } = await db.from('orders').update({
+    const { data: result, error } = await db.from('orders').update({
       is_paid: true, paid_at: new Date().toISOString(), payment_result: payData, updated_at: new Date().toISOString(),
-    }).eq('id', id);
+    }).eq('id', id).select('id');
     if (error) throw { response: { data: { message: error.message } } };
+    if (!result || result.length === 0) {
+      throw { response: { data: { message: 'Could not mark this order as paid. Only an admin can update payment details.' } } };
+    }
     return { data: { success: true } };
   },
 };

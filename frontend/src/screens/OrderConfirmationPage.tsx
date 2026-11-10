@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { paymentMethodLabel } from '../lib/paymentMethods';
 
 interface OrderData {
   _id: string;
@@ -79,6 +80,18 @@ const OrderConfirmationPage: React.FC = () => {
         <p style={{ color: 'var(--success)', fontSize: 14, fontWeight: 500, marginTop: 12 }}>
           {'\u{1F4E6}'} We&apos;ll send a confirmation when it ships.
         </p>
+        {!order.isPaid && (
+          <div style={{
+            marginTop: 16, padding: '12px 16px', borderRadius: 10, display: 'inline-flex',
+            alignItems: 'center', gap: 10, background: 'rgba(245,158,11,0.1)',
+            border: '1px solid rgba(245,158,11,0.35)', fontSize: 13, color: '#92400e',
+          }}>
+            <span>Payment is still pending.</span>
+            <Link href={`/orders/${order._id}`} style={{ color: '#92400e', fontWeight: 800 }}>
+              Complete payment {'\u2192'}
+            </Link>
+          </div>
+        )}
       </div>
 
       <div style={{ background: 'var(--surface)', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 16 }}>
@@ -94,7 +107,7 @@ const OrderConfirmationPage: React.FC = () => {
           </div>
           <div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>Payment</div>
-            <div style={{ fontWeight: 600, textTransform: 'capitalize' }}>{order.paymentMethod.replace('_', ' ')}</div>
+            <div style={{ fontWeight: 600 }}>{paymentMethodLabel(order.paymentMethod)}</div>
           </div>
           <div>
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>Status</div>

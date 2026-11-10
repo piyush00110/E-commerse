@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Plan from '@/components/ui/agent-plan';
+import { isOnlinePaymentPending, paymentMethodLabel } from '../lib/paymentMethods';
+import { payOrderWithRazorpay, RazorpayCheckoutError } from '../lib/razorpay';
 
 interface TrackingEvent {
   date: string;
@@ -116,6 +118,7 @@ const OrderDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [tracking, setTracking] = useState<TrackingEvent[]>([]);
   const [trackingNumber, setTrackingNumber] = useState('');
+  const [paying, setPaying] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -139,6 +142,45 @@ const OrderDetailPage: React.FC = () => {
     };
     fetchOrder();
   }, [id, router, showToast]);
+
+  const handlePayNow = async () => {
+    if (!order || paying) return;
+    setPaying(true);
+    try {
+      let customer: { name?: string; email?: string; contact?: string } = {};
+      try {
+        const raw = typeof window === 'undefined' ? null : localStorage.getItem('user');
+        if (raw) {
+          const user = JSON.parse(raw) as { name?: string; email?: string };
+          customer = { name: user?.name, email: user?.email };
+        }
+      } catch { /* ignore */ }
+      customer.contact = order.shippingAddress?.phone;
+
+      const result = await payOrderWithRazorpay({
+        orderId: order._id,
+        amount: order.totalPrice,
+        customer,
+        description: `Order #${order._id.slice(-8).toUpperCase()}`,
+      });
+
+      if (!result.orderUpdated) {
+        showToast('Payment received. We are confirming your order — this can take a moment.', 'info');
+      } else {
+        showToast('Payment successful! Your order is confirmed.', 'success');
+      }
+      const refreshed = await orderAPI.getById(order._id);
+      setOrder(refreshed.data.data);
+    } catch (error) {
+      const message = error instanceof RazorpayCheckoutError
+        ? error.message
+        : 'Payment could not be completed. Please try again.';
+      const dismissed = error instanceof RazorpayCheckoutError && error.code === 'DISMISSED';
+      showToast(message, dismissed ? 'info' : 'error');
+    } finally {
+      setPaying(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -201,6 +243,29 @@ const OrderDetailPage: React.FC = () => {
           </span>
         </div>
       </div>
+
+      {order.status !== 'cancelled' && isOnlinePaymentPending(order) && (
+        <div className="card" style={{
+          padding: '16px 20px', marginBottom: 20, display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 14, flexWrap: 'wrap',
+          border: '1px solid rgba(245,158,11,0.45)', background: 'rgba(245,158,11,0.08)',
+        }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#92400e' }}>Payment pending</div>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>
+              Complete your Razorpay payment to confirm this order.
+            </div>
+          </div>
+          <button
+            onClick={handlePayNow}
+            disabled={paying}
+            className="btn btn-primary"
+            style={{ padding: '11px 24px', fontWeight: 700, whiteSpace: 'nowrap', opacity: paying ? 0.7 : 1 }}
+          >
+            {paying ? 'Opening Razorpay...' : `Pay Now — $${order.totalPrice.toFixed(2)}`}
+          </button>
+        </div>
+      )}
 
       {order.status === 'cancelled' ? (
         <div className="card" style={{ padding: 48, textAlign: 'center', marginBottom: 20 }}>
@@ -404,7 +469,7 @@ const OrderDetailPage: React.FC = () => {
             <div style={{ marginTop: 20, padding: 16, background: 'var(--bg-card)', borderRadius: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div>
                 <div style={{ fontSize: 11, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: 4 }}>Payment</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', textTransform: 'capitalize' }}>{order.paymentMethod.replace('_', ' ')}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', textTransform: 'capitalize' }}>{paymentMethodLabel(order.paymentMethod)}</div>
                 <div style={{ fontSize: 12, color: order.isPaid ? 'var(--success)' : '#f59e0b', marginTop: 2 }}>{order.isPaid ? '\u2713 Paid' : 'Pending'}</div>
               </div>
               <div>
@@ -422,6 +487,11 @@ const OrderDetailPage: React.FC = () => {
         <Link href="/orders" className="btn btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex', padding: '12px 24px' }}>
           {'\u2190'} Back to Orders
         </Link>
+        {order.status !== 'cancelled' && isOnlinePaymentPending(order) && (
+          <button onClick={handlePayNow} disabled={paying} className="btn btn-primary" style={{ padding: '12px 28px', opacity: paying ? 0.7 : 1 }}>
+            {paying ? 'Opening Razorpay...' : 'Pay Now'}
+          </button>
+        )}
         {order.status !== 'cancelled' && (
           <button onClick={() => {
             navigator.clipboard?.writeText(trackingNumber);

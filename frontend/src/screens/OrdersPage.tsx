@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { isOnlinePaymentPending, paymentMethodLabel } from '../lib/paymentMethods';
 
 interface OrderItem {
   product: string;
@@ -163,7 +164,10 @@ const OrdersPage: React.FC = () => {
                 {/* Footer */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, paddingTop: 12, borderTop: '1px solid var(--border-light)' }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--text-secondary)' }}>
-                    <span>{order.paymentMethod?.replace('_', ' ')}</span>
+                    <span>{paymentMethodLabel(order.paymentMethod)}</span>
+                    {isOnlinePaymentPending(order) && (
+                      <span style={{ color: '#b45309', fontWeight: 700 }}>Payment pending</span>
+                    )}
                     <span style={{ color: '#cbd5e1' }}>{'\u2022'}</span>
                     <span>{order.shippingAddress?.city || 'N/A'}</span>
                     {order.isDelivered && order.deliveredAt && (

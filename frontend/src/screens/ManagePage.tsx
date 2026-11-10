@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { productAPI, orderAPI, categoryAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { paymentMethodLabel } from '../lib/paymentMethods';
 import AdminUsersPage from './AdminUsersPage';
 
 type ManageTab = 'dashboard' | 'products' | 'orders' | 'analytics' | 'users' | 'categories';
@@ -562,14 +563,14 @@ const ManagePage: React.FC = () => {
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginTop: 10, fontSize: 13 }}>
                         <div><span className="mg-label">Full Address</span><div>{order.shippingAddress?.street}, {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zip}</div><div className="mg-sub">{order.shippingAddress?.phone}</div></div>
                         <div><span className="mg-label">Totals</span><div>Items: ${((order.totalPrice ?? 0) - (order.taxPrice ?? 0) - (order.shippingPrice ?? 0)).toFixed(2)}</div><div className="mg-sub">Ship: ${(order.shippingPrice ?? 0).toFixed(2)} · Tax: ${(order.taxPrice ?? 0).toFixed(2)}</div></div>
-                        <div><span className="mg-label">Payment</span><div style={{ textTransform: 'capitalize' }}>{order.paymentMethod?.replace('_', ' ')}</div><div className="mg-sub">{order.isPaid ? '✅ Paid' : '❌ Unpaid'}</div></div>
+                        <div><span className="mg-label">Payment</span><div style={{ textTransform: 'capitalize' }}>{paymentMethodLabel(order.paymentMethod)}</div><div className="mg-sub">{order.isPaid ? '✅ Paid' : '❌ Unpaid'}</div></div>
                       </div>
                     </div>
                   )}
                   <div className="mg-order-info">
                     <div className="mg-order-detail"><span className="mg-label">Customer</span><span>{order.user?.name || 'N/A'}</span><span className="mg-sub">{order.user?.email || ''}</span></div>
                     <div className="mg-order-detail"><span className="mg-label">Ship To</span><span>{order.shippingAddress?.city}, {order.shippingAddress?.state}</span><span className="mg-sub">{order.shippingAddress?.street}</span></div>
-                    <div className="mg-order-detail"><span className="mg-label">Payment</span><span style={{ textTransform: 'capitalize' }}>{order.paymentMethod?.replace('_', ' ')}</span><span className="mg-sub">{order.isPaid ? 'Paid' : 'Unpaid'}</span></div>
+                    <div className="mg-order-detail"><span className="mg-label">Payment</span><span style={{ textTransform: 'capitalize' }}>{paymentMethodLabel(order.paymentMethod)}</span><span className="mg-sub">{order.isPaid ? 'Paid' : 'Unpaid'}</span></div>
                     <div className="mg-order-detail"><span className="mg-label">Date</span><span>{new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
                   </div>
                   <div className="mg-order-items">

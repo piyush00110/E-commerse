@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
+import { paymentMethodLabel } from '../lib/paymentMethods';
 
 interface OrderItem {
   product: string;
@@ -103,6 +104,7 @@ const SellerOrders: React.FC = () => {
 
     const paymentLabel = (m: string) => {
       const map: Record<string, string> = {
+        razorpay: 'Razorpay',
         credit_card: 'Credit / Debit Card',
         paypal: 'PayPal',
         upi: 'UPI',
@@ -651,7 +653,7 @@ const SellerOrders: React.FC = () => {
                 <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                   {order.shippingAddress?.city}, {order.shippingAddress?.state}
                   <span className="badge badge-info" style={{ marginLeft: 8 }}>
-                    {order.paymentMethod?.replace('_', ' ')}
+                    {paymentMethodLabel(order.paymentMethod)}
                   </span>
                 </div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>${order.totalPrice?.toFixed(2)}</div>
