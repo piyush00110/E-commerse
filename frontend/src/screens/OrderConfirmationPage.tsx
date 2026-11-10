@@ -155,6 +155,11 @@ const OrderConfirmationPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Link href={`/invoice/${order._id}`} style={{
+          padding: '12px 32px', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--outline-variant)', borderRadius: 8, fontWeight: 600, fontSize: 15, textDecoration: 'none',
+        }}>
+          🧾 View Invoice
+        </Link>
         <Link href="/orders" style={{
           padding: '12px 32px', background: 'var(--tertiary-dim)', color: 'var(--surface)', borderRadius: 8, fontWeight: 600, fontSize: 15, textDecoration: 'none',
         }}>

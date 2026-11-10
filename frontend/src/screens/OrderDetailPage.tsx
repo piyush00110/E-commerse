@@ -239,9 +239,28 @@ const OrderDetailPage: React.FC = () => {
               {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
-          <span className={statusInfo.className} style={{ fontSize: 13, padding: '6px 16px' }}>
-            {statusInfo.label}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span className={statusInfo.className} style={{ fontSize: 13, padding: '6px 16px' }}>
+              {statusInfo.label}
+            </span>
+            <Link
+              href={`/invoice/${order._id}`}
+              className="btn btn-ghost"
+              style={{
+                padding: '8px 14px',
+                borderRadius: 8,
+                border: '1px solid var(--border)',
+                background: 'var(--bg-card)',
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              🧾 Invoice
+            </Link>
+          </div>
         </div>
       </div>
 

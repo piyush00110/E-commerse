@@ -1,10 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authAPI, orderAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import {
+  MIN_REDEEM_POINTS,
+  POINTS_PER_DOLLAR_REDEEM,
+  calculateRewards,
+  redeemPointsToWallet,
+} from '../lib/rewards';
 
 interface SavedAddress {
   id: string;
@@ -36,6 +42,7 @@ const AccountPage: React.FC = () => {
     } catch { return 0; }
   });
   const [walletInput, setWalletInput] = useState('');
+  const [rewardsVersion, setRewardsVersion] = useState(0);
   const [showAddrForm, setShowAddrForm] = useState(false);
   const [editAddrId, setEditAddrId] = useState<string | null>(null);
   const [addrForm, setAddrForm] = useState({ street: '', city: '', state: '', zip: '', phone: '' });
@@ -116,6 +123,20 @@ const AccountPage: React.FC = () => {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const rewards = useMemo(() => calculateRewards(orders), [orders, rewardsVersion]);
+
+  const handleRedeemPoints = () => {
+    const result = redeemPointsToWallet(rewards.redeemPoints, rewards.available);
+    if (!result.ok) {
+      showToast(result.message, 'warning');
+      return;
+    }
+    setWalletBalance((prev) => Math.round((prev + result.value) * 100) / 100);
+    setRewardsVersion((v) => v + 1);
+    showToast(result.message, 'success');
   };
 
   if (loading) return (
@@ -582,6 +603,84 @@ const AccountPage: React.FC = () => {
               Add Funds
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Rewards */}
+      <div className="card" style={{
+        padding: '28px',
+        borderRadius: '12px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        background: 'var(--bg-card)',
+        marginTop: '24px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text)', margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{
+              width: '32px', height: '32px', borderRadius: '8px',
+              background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
+            }}>
+              🏆
+            </span>
+            Rewards
+          </h2>
+          <span style={{
+            fontSize: '12px', fontWeight: 700, padding: '5px 12px', borderRadius: 999,
+            color: rewards.tier.color, background: rewards.tier.bg,
+          }}>
+            {rewards.tier.name} member
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: "'Plus Jakarta Sans', sans-serif", color: 'var(--text)' }}>
+            {rewards.available.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: 7 }}>
+            points available &middot; worth ${(rewards.available / POINTS_PER_DOLLAR_REDEEM).toFixed(2)}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: 6 }}>
+            <span>{rewards.earned.toLocaleString()} lifetime points</span>
+            <span>
+              {rewards.nextTier
+                ? `${(rewards.nextTier.min - rewards.earned).toLocaleString()} to ${rewards.nextTier.name}`
+                : 'Top tier reached'}
+            </span>
+          </div>
+          <div style={{ height: 8, borderRadius: 999, background: 'var(--bg-container, #f1f5f9)', overflow: 'hidden' }}>
+            <div style={{
+              width: `${rewards.progress}%`, height: '100%', borderRadius: 999,
+              background: 'linear-gradient(90deg, #f59e0b, #f97316)',
+              transition: 'width 0.4s ease',
+            }} />
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 20 }}>
+          <button
+            onClick={handleRedeemPoints}
+            disabled={!rewards.canRedeem}
+            style={{
+              padding: '12px 24px',
+              borderRadius: 8,
+              border: 'none',
+              background: rewards.canRedeem ? 'linear-gradient(135deg, #f59e0b, #f97316)' : 'var(--bg-container, #f1f5f9)',
+              color: rewards.canRedeem ? '#fff' : 'var(--text-tertiary)',
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: rewards.canRedeem ? 'pointer' : 'not-allowed',
+              boxShadow: rewards.canRedeem ? '0 2px 8px rgba(245,158,11,0.28)' : 'none',
+            }}
+          >
+            Redeem {rewards.redeemPoints.toLocaleString()} pts for ${rewards.redeemableValue.toFixed(2)}
+          </button>
+          <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
+            Earn 1 point per $1 spent. {POINTS_PER_DOLLAR_REDEEM} points = $1. Minimum {MIN_REDEEM_POINTS} points.
+          </span>
         </div>
       </div>
 

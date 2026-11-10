@@ -12,6 +12,7 @@ import CouponClip from '../components/CouponClip';
 import CountdownTimer from '../components/CountdownTimer';
 import { GradientButton } from '@/components/ui/gradient-button';
 import ProductImage from '../components/ProductImage';
+import { COMPARE_MAX, isInCompare, toggleCompare } from '../lib/compare';
 
 type SortMode = 'newest' | 'highest' | 'lowest';
 
@@ -36,6 +37,11 @@ const ProductDetailPage: React.FC = () => {
   const [sortReviews, setSortReviews] = useState<SortMode>('newest');
   const [wishlisted, setWishlisted] = useState(false);
   const [wishlistAnimating, setWishlistAnimating] = useState(false);
+  const [compared, setCompared] = useState(false);
+
+  useEffect(() => {
+    if (id) setCompared(isInCompare(id));
+  }, [id]);
 
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
@@ -195,6 +201,17 @@ const ProductDetailPage: React.FC = () => {
     } catch {
       showToast('Failed to process', 'error');
     }
+  };
+
+  const handleCompareToggle = () => {
+    if (!product?._id) return;
+    const result = toggleCompare(product._id);
+    if (result.full) {
+      showToast(`You can compare up to ${COMPARE_MAX} products`, 'warning');
+      return;
+    }
+    setCompared(result.added);
+    showToast(result.added ? 'Added to compare' : 'Removed from compare', 'info');
   };
 
   const handleToggleWishlist = async () => {
@@ -889,6 +906,37 @@ const ProductDetailPage: React.FC = () => {
           </GradientButton>
         </div>
       )}
+
+      {/* Compare */}
+      <div style={{ padding: '0 16px 20px' }}>
+        <button
+          type="button"
+          onClick={handleCompareToggle}
+          aria-pressed={compared}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '10px 16px',
+            borderRadius: 10,
+            border: `1.5px solid ${compared ? 'var(--primary, #6366f1)' : 'var(--border, #e5e7eb)'}`,
+            background: compared ? 'rgba(99,102,241,0.08)' : 'var(--bg-card, #fff)',
+            color: compared ? 'var(--primary, #6366f1)' : 'var(--text-secondary)',
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 3v18" />
+            <path d="M5 7l-3 6h6L5 7z" />
+            <path d="M19 7l-3 6h6l-3-6z" />
+            <path d="M5 7h14" />
+          </svg>
+          {compared ? 'Added to compare' : 'Add to compare'}
+        </button>
+      </div>
 
       {/* Bento Feature Deck */}
       <div style={{ borderTop: '8px solid var(--bg-container)' }}>
